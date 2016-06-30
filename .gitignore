@@ -45,3 +45,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+
+#Project Related
+
+DatabaseManager.php
