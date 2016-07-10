@@ -42,14 +42,18 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Please Sign In</h3>
                 </div>
+
                 <div class="panel-body">
                     <form role="form" id="loginForm">
                         <fieldset>
-                            <div class="form-group">
-                                <input class="form-control" placeholder="E-mail" name="username" type="username" autofocus>
+
+                            <div class="form-group has-feedback">
+                                <input class="form-control" placeholder="Username" name="username" type="text" >
+                                <span class="help-block"></span>
                             </div>
-                            <div class="form-group">
-                                <input class="form-control" placeholder="Password" name="password" type="password" value="">
+                            <div class="form-group has-feedback">
+                                <input class="form-control" placeholder="Password" name="password" type="password">
+                                <span class="help-block"></span>
                             </div>
                             <div class="checkbox">
                                 <label>
@@ -60,12 +64,14 @@
                             <button id="login" name="login" type="submit" class="btn btn-lg btn-primary btn-block">
                                 Login
                             </button>
+
                         </fieldset>
-                    </form>
+
 
                     <div id="results"></div>
-
+                    </form>
                 </div>
+
             </div>
         </div>
     </div>
@@ -89,12 +95,33 @@
 <script>
     $(function(){
         // Validate the login form
-        $('form#loginForm').validate({
-            errorClass: "text-danger",
-            validClass: "text-success",
-            success: function (label) {
-                label.closest('div').removeClass('has-error').addClass('has-success');
+
+
+        jQuery.validator.setDefaults({
+            highlight: function (element, errorClass, validClass) {
+                if (element.type === "radio") {
+                    this.findByName(element.name).addClass(errorClass).removeClass(validClass);
+                } else {
+                    $(element).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback');
+                    $(element).closest('.form-group').find('span.glyphicon').remove();
+                    $(element).closest('.form-group').append('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>');
+                }
             },
+            unhighlight: function (element, errorClass, validClass) {
+                if (element.type === "radio") {
+                    this.findByName(element.name).removeClass(errorClass).addClass(validClass);
+                } else {
+                    $(element).closest('.form-group').removeClass('has-error has-feedback').addClass('has-success has-feedback');
+                    $(element).closest('.form-group').find('span.glyphicon').remove();
+                    $(element).closest('.form-group').append('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>');
+                }
+            },
+            errorElement: 'span',
+            errorClass: 'help-block'
+
+        });
+
+        $('form#loginForm').validate({
             rules: {
                 username: {
                     required: true
@@ -102,10 +129,6 @@
                 password: {
                     required: true
                 }
-            },
-            errorPlacement: function (error, element) {
-                element.closest('div').addClass('has-error');
-                error.insertAfter(element);
             },
             submitHandler: function (form) {
 
