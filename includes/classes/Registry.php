@@ -37,8 +37,16 @@ class Registry
             {
                 throw new RuntimeException('No config set, cannot create connection');
             }
+            self::$connection = null;
+            try
+            {
+                self::$connection = new PDO(self::$config->getDSN(), self::$config->getUsername(), self::$config->getPassword(), self::$config->getDriverOptions());
+            }
+            catch(PDOException $e)
+            {
+                echo $e->getMessage();
+            }
 
-            self::$connection = new PDO(self::$config->getDSN(), self::$config->getUsername(), self::$config->getPassword(), self::$config->getDriverOptions());
         }
 
         return self::$connection;
