@@ -14,7 +14,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title><?php echo CoreConfig::settings()['appname']; ?></title>
 
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -56,10 +56,12 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h1 class="page-header">Blank</h1>
+                        <h1 class="page-header">Home</h1>
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
+
+
                 <?php echo 'Hello, '.$_SESSION['username'];?>
                 <!-- /.row -->
             </div>

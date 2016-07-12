@@ -1,4 +1,6 @@
-
+<?php
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,7 +12,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title><?php echo CoreConfig::settings()['appname']; ?></title>
 
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -66,8 +68,7 @@
                             </button>
 
                         </fieldset>
-
-
+                       
                     <div id="results"></div>
                     </form>
                 </div>
