@@ -62,7 +62,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 </div>
 
 
-                <?php echo 'Hello, '.$_SESSION['username'];?>
+                <?php echo 'Hello, '.$_SESSION['username'] . ', with uid ' .$_SESSION['uid'];?>
                 <!-- /.row -->
             </div>
             <!-- /.container-fluid -->
