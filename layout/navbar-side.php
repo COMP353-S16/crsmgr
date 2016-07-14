@@ -17,14 +17,19 @@
             </li>
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Courses<span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                    <li>
-                        <a href="flot.html">Flot Charts</a>
-                    </li>
-                    <li>
-                        <a href="morris.html">Morris.js Charts</a>
-                    </li>
-                </ul>
+
+                <?php
+                for($i = 0 ; $i < 10; $i++) {
+                    ?>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a href="<?php echo 'page.php?cid='.$i;?>">COMP <?php echo $i; ?></a>
+                        </li>
+                    </ul>
+
+                    <?php
+                }
+                ?>
                 <!-- /.nav-second-level -->
             </li>
             <li>
