@@ -66,9 +66,12 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
 
 
-                <label class="btn btn-default btn-file">
-                    Browse <input  type="file" name="fileUpload" style="display: none;" /><span id="progress"></span>
+                <label class="btn btn-success btn-file">
+                    Browse <input  type="file" name="fileUpload" class="fileUpload" style="display: none;" />
                 </label>
+                <span id="progress"></span>
+
+              
 
                 <!-- /.row -->
             </div>
@@ -99,13 +102,16 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     <script>
         $(function(){
             $(".fileUpload").liteUploader({
-                script: "test.php",
+                script: "fileuploads/",
                 params: {
                     gid : 1,
                     did : 1
                 },
                 headers: {
                     "xxx": "foobar"
+                },
+                rules : {
+                    maxSize : <?php echo $max_upload = (int)(ini_get('upload_max_filesize'));?> * 1024
                 }
             })  .on("lu:success", function (e, response) {
                 $('#progress').html(response);

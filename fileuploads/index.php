@@ -1,5 +1,5 @@
 <?php
-define('UPLOAD_DIR', 'files/');
+define('UPLOAD_DIR', 'uploads/');
 //echo "<pre>";
 //print_r($_POST);
 //print_r($_FILES);
@@ -29,7 +29,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_FILES["fileUpload"])) {
     }
     // set proper permissions on the new file
     chmod(UPLOAD_DIR . $name, 0644);
-    echo "<p>Uploaded file saved as " . $name . ".</p>";
+    ?>
+    <br>
+    <div class="alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        Uploaded file saved as <?php echo $name;?>
+    </div>
+    <?php
+
 } else
     echo 'no';
 die;
