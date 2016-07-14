@@ -36,6 +36,16 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
     <![endif]-->
 
+    <style>
+        #progress {
+            font-family: Consolas;
+            font-size: 16px;
+        }
+        #uploadResult {
+
+        }
+    </style>
+
 </head>
 
 <body>
@@ -67,10 +77,12 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
 
                 <label class="btn btn-success btn-file">
-                    Browse <input  type="file" name="fileUpload" class="fileUpload" style="display: none;" />
+                    Browse
+                    <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;"  multiple />
                 </label>
+                <button class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
                 <span id="progress"></span>
-
+                <div id="uploadResult"></div>
               
 
                 <!-- /.row -->
@@ -101,27 +113,41 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
     <script>
         $(function(){
-            $(".fileUpload").liteUploader({
+            $("#fileUpload").liteUploader({
                 script: "fileuploads/",
                 params: {
                     gid : 1,
                     did : 1
                 },
-                headers: {
-                    "xxx": "foobar"
-                },
-                rules : {
-                    maxSize : <?php echo $max_upload = (int)(ini_get('upload_max_filesize'));?> * 1024
-                }
-            })  .on("lu:success", function (e, response) {
-                $('#progress').html(response);
-            })
-                .on("lu:progress", function (e, percentage) {
-                    $('#progress').html(percentage);
-                });
+                singleFileUploads : true,
 
-            $(".fileUpload").change(function () {
+                rules : {
+                    allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
+                    maxSize : <?php echo $max_upload = (int)(ini_get('upload_max_filesize'));?> * 1024 * 1024
+                }
+            }).on("lu:success", function (e, response) {
+                $('#uploadResult').html(response);
+            }).on("lu:progress", function (e, percentage) {
+                $('#progress').html(percentage + "%");
+            }).on("lu:errors", function (e, errors) {
+                console.log(errors);
+
+                for(var i = 0; i < errors.length; i++)
+                {
+                    if(errors[i].type = "type")
+                    {
+                        console.log('Invalid file type');
+                    }
+                }
+
+            });
+
+            $("#fileUpload").change(function () {
                 $(this).data("liteUploader").startUpload();
+            });
+
+            $("#cancelUpload").click(function () {
+                $("#fileUpload").data("liteUploader").cancelUpload();
             });
         });
 
