@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 ?>
 
 <!DOCTYPE html>
@@ -22,136 +22,230 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     <!-- MetisMenu CSS -->
     <link href="bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
+    <!-- DataTables CSS -->
+    <link href="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+
+    <!-- DataTables Responsive CSS -->
+
     <!-- Custom CSS -->
     <link href="dist/css/sb-admin-2.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
+
+    <link href="bower_components/datatables-responsive/css/responsive.dataTables.scss" rel="stylesheet">
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 
     <![endif]-->
 
-    <style>
-        #progress {
-            font-family: Consolas;
-            font-size: 16px;
-        }
-        #uploadResult {
-
-        }
-    </style>
 
 </head>
 
 <body>
 
-    <div id="wrapper">
+<div id="wrapper">
 
-        <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
-            <?php
-            require_once ($_SERVER['DOCUMENT_ROOT'].'/layout/header.php');
-            require_once ($_SERVER['DOCUMENT_ROOT'].'/layout/navbar-right.php');
-            require_once ($_SERVER['DOCUMENT_ROOT'].'/layout/navbar-side.php');
-            ?>
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <?php
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/header.php');
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navbar-right.php');
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navbar-side.php');
+        ?>
 
-        </nav>
+    </nav>
 
-        <!-- Page Content -->
-        <div id="page-wrapper">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <h1 class="page-header">Home</h1>
-                    </div>
-                    <!-- /.col-lg-12 -->
+    <!-- Page Content -->
+    <div id="page-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Home</h1>
                 </div>
+                <!-- /.col-lg-12 -->
+            </div>
 
+            <!-- File Uploader -->
+            <form id="uploadForm">
 
-
-
-
-                <label class="btn btn-success btn-file">
+                <label id="label-browser" class="btn btn-success btn-file">
                     Browse
-                    <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;"  multiple />
+                    <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
                 </label>
                 <button class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
-                <span id="progress"></span>
+                Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
+                <p>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+                         aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
+                </div>
                 <div id="uploadResult"></div>
-              
+                </p>
+            </form>
 
-                <!-- /.row -->
-            </div>
-            <!-- /.container-fluid -->
+            <!-- /File Uploader -->
+
+
+
+
+
+            <table width="100%" border="0" cellpadding="table table-bordered" id="groupfiles">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>File Name</th>
+                    <th>Latest Date</th>
+                    <th>Revision</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- /.row -->
         </div>
-        <!-- /#page-wrapper -->
-
+        <!-- /.container-fluid -->
     </div>
-    <!-- /#wrapper -->
+    <!-- /#page-wrapper -->
 
-    <!-- jQuery -->
-    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+</div>
+<!-- /#wrapper -->
 
-    <!-- Bootstrap Core JavaScript -->
-    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- jQuery -->
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
 
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="bower_components/metisMenu/dist/metisMenu.min.js"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
-    <!-- Custom Theme JavaScript -->
-    <script src="dist/js/sb-admin-2.js"></script>
+<!-- Metis Menu Plugin JavaScript -->
+<script src="bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="dist/js/sb-admin-2.js"></script>
+
+<!-- File Uploader -->
+<script src="bower_components/fileuploader/liteuploader.js"></script>
+
+<!-- DataTables JavaScript -->
+<script src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+<script src="bower_components/datatables-plugins/ajaxreloader/fnReloadAjax.js"></script>
 
 
-    <script src="bower_components/fileuploader/liteuploader.js"></script>
 
+<script>
+    $(function () {
+        $("#fileUpload").liteUploader({
+            script: "fileuploads/",
+            params: {
+                gid: 1,  // group id
+                did: 1   // deliverable id
+            },
+            singleFileUploads: true,
 
+            rules: {
+                //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
+                maxSize: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))) * 1024 * 1024; ?>
+            }
+        }).on("lu:before", function (e, files) {
 
-    <script>
-        $(function(){
-            $("#fileUpload").liteUploader({
-                script: "fileuploads/",
-                params: {
-                    gid : 1,
-                    did : 1
-                },
-                singleFileUploads : true,
+            $('.progress-bar').attr('aria-valuenow', 0)
+                .width(0 + "%")
+                .text(0 + '%');
+            $('#uploadResult').html("");
 
-                rules : {
-                    allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
-                    maxSize : <?php echo $max_upload = (int)(ini_get('upload_max_filesize'));?> * 1024 * 1024
+        }).on("lu:cancel", function (e) {
+
+            $('.progress-bar').attr('aria-valuenow', 0)
+                .removeClass('progress-bar-danger').addClass('progress-bar-success')
+                .width(0 + "%")
+                .text(0 + '%');
+
+            $('#progress').html(percentage + "%");
+
+        }).on("lu:success", function (e, response) {
+
+            $('#uploadResult').html(response);
+
+            // reset browse button
+           var e = $('#uploadForm');
+            e.wrap('<form>').closest('form').get(0).reset();
+            e.unwrap();
+
+        }).on("lu:progress", function (e, percentage) {
+
+            $('.progress-bar').attr('aria-valuenow', percentage)
+                .removeClass('progress-bar-danger').addClass('progress-bar-success')
+                .width(percentage + "%")
+                .text(percentage + '%');
+
+            $('#progress').html(percentage + "%");
+
+        }).on("lu:errors", function (e, errors) {
+            console.log(errors);
+
+            for (var i = 0; i < errors.length; i++) {
+                if (errors[i].type = "type") {
+                    console.log('Invalid file type');
                 }
-            }).on("lu:success", function (e, response) {
-                $('#uploadResult').html(response);
-            }).on("lu:progress", function (e, percentage) {
-                $('#progress').html(percentage + "%");
-            }).on("lu:errors", function (e, errors) {
-                console.log(errors);
+            }
 
-                for(var i = 0; i < errors.length; i++)
-                {
-                    if(errors[i].type = "type")
-                    {
-                        console.log('Invalid file type');
-                    }
-                }
-
-            });
-
-            $("#fileUpload").change(function () {
-                $(this).data("liteUploader").startUpload();
-            });
-
-            $("#cancelUpload").click(function () {
-                $("#fileUpload").data("liteUploader").cancelUpload();
-            });
+        }).change(function () {
+            $(this).data("liteUploader").startUpload();
         });
 
-    </script>
+        $("#cancelUpload").click(function () {
+            $("#fileUpload").data("liteUploader").cancelUpload();
+        });
+
+
+
+
+
+
+
+
+
+        var T = $('#groupfiles').dataTable({
+            "bProcessing": true,
+            "bServerSide": false,
+            "sAjaxSource": "fileuploads/groupFiles.php",
+            "fnServerData": function (sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = $.ajax({
+                    "dataType": 'json',
+                    "url": sSource,
+                   // "data": "employeeID=" + $('#employeeID').val(),
+                    cache: false,
+                    "success": fnCallback,
+                });
+            },
+            "columns": [
+                {"data": "id"},
+                {"data": "filename"},
+                {"data": "ldate"},
+                {"data": "version"}
+            ],
+            'aaSorting': [[0, "asc"]],
+            'iDisplayLength': 25
+        });
+
+        T.fnReloadAjax(null, null, true);
+
+    });
+
+</script>
 
 </body>
 

@@ -20,6 +20,8 @@ class UploadHandler
 
     protected $_directory = 'uploads/';
 
+    protected $_allowed = array ( );
+
     private $_file = array (
         "save_as" => ""
     );
@@ -35,7 +37,12 @@ class UploadHandler
         $this->_cid = $cid;
         $this->_did = $did;
         $this->_uid = $uid;
+
+
+
         $this->setFile($file);
+
+        $this->_allowed = CoreConfig::settings()['uploads']['allowed_files'] + $this->_allowed ;
     }
 
     private function setFile($file)
@@ -45,6 +52,17 @@ class UploadHandler
 
         $this->_file['save_as'] = $this->_File->getFileName();
 
+    }
+
+    /**
+     *
+     */
+    protected function validate()
+    {
+        if(!in_array($this->_File->getFileExtension(), $this->_allowed))
+        {
+            $this->_errors[] = "File type not allowed. Allow";
+        }
     }
 
     /**
@@ -158,7 +176,8 @@ class UploadHandler
 
     public function upload()
     {
-        if(UPLOAD_ERR_OK === $this->_File->getFileError())
+        $this->validate();
+        if(empty($this->_errors) && UPLOAD_ERR_OK === $this->_File->getFileError())
         {
             $uploadDirectory =  $this->getBuildDirectory();
             $this->createDirectory($uploadDirectory);
