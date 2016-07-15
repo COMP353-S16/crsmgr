@@ -1,0 +1,42 @@
+{
+  "name": "lite-uploader",
+  "description": "Lightweight nodeJS/jQuery File Uploader",
+  "version": "3.3.3",
+  "scripts": {
+    "php-server": "php -S localhost:8000"
+  },
+  "keywords": [
+    "lightweight",
+    "html5",
+    "jQuery",
+    "file",
+    "uploader",
+    "upload",
+    "AJAX",
+    "lite",
+    "jquery-plugin",
+    "ecosystem:jquery",
+    "node",
+    "nodeJS"
+  ],
+  "homepage": "https://github.com/burt202/lite-uploader",
+  "license": "MIT",
+  "main": "liteuploader.js",
+  "author": "Aaron Burtnyk <aaron@burtdev.net>",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/burt202/lite-uploader.git"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "eslint": "^2.7.0",
+    "gulp": "^3.9.0",
+    "gulp-istanbul": "^0.10.2",
+    "gulp-mocha": "^2.2.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.5.1",
+    "jsdom": "^9.4.1",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0"
+  }
+}

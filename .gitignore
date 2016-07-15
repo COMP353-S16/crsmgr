@@ -50,3 +50,6 @@ fabric.properties
 #Project Related
 
 DatabaseManager.php
+
+#don't upload files
+fileuploads/uploads
