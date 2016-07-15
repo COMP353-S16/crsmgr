@@ -23,10 +23,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <link href="bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
     <!-- DataTables CSS -->
-    <link href="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="bower_components/datatables/media/css/dataTables.bootstrap.min.css" rel="stylesheet">
 
 
+    <link href="bower_components/datatables/extensions/Buttons/css/buttons.bootstrap.css" rel="stylesheet">
 
+    <link href="bower_components/datatables/extensions/Select/css/select.bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="dist/css/sb-admin-2.css" rel="stylesheet">
 
@@ -106,17 +108,21 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
 
-            <table width="100%" border="0" class="table table-bordered table-hover" id="groupfiles">
+            <table width="100%" border="0" class="table table-bordered" id="groupfiles">
                 <thead>
                 <tr>
+
                     <th>ID</th>
                     <th>File Name</th>
                     <th>Latest Revision</th>
                     <th>Revisions</th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
+
+                    <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
@@ -158,9 +164,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 <!-- DataTables JavaScript -->
 <script src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
-<script src="bower_components/datatables-plugins/ajaxreloader/fnReloadAjax.js"></script>
-
+<script src="bower_components/datatables/media/js/dataTables.bootstrap.min.js"></script>
+<!-- DataTable extensions -->
+<script src="bower_components/datatables/extensions/Buttons/js/dataTables.buttons.js"></script>
+<script src="bower_components/datatables/extensions/Buttons/js/buttons.bootstrap.min.js"></script>
+<script src="bower_components/datatables/extensions/Select/js/dataTables.select.min.js"></script>
+<script src="bower_components/datatables/extensions/Buttons/js/buttons.flash.js"></script>
 <!-- jQuery UI -->
 
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
@@ -204,7 +213,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             e.wrap('<form>').closest('form').get(0).reset();
             e.unwrap();
 
-            groupFiles.fnReloadAjax(null, null, true);
+            groupFiles.ajax.reload();
 
         }).on("lu:progress", function (e, percentage) {
 
@@ -240,46 +249,107 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
         /* Group Files table */
-        groupFiles = $('#groupfiles').dataTable({
-            "bProcessing": true,
-            "bServerSide": false,
-            "sAjaxSource": "fileuploads/groupFiles.php",
-            "fnServerData": function (sSource, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    "dataType": 'json',
-                    "url": sSource,
-                    "data": "gid=" + 1 + "&did=" + 1,
-                    cache: false,
-                    "success": fnCallback,
-                });
+        groupFiles = $('#groupfiles').DataTable({
+            "processing": true,
+            "serverSide": false,
+            dom: 'Bfrtip',
+            select: {
+                style : "os",
+                selector: 'td:has(:checkbox)'
+            },
+            buttons:[
+                {
+                    "extend": "selectAll",
+                    "action": function ()
+                    {
+                        var rows = groupFiles.rows();
+                        for(var i = 0; i < rows.length; i++)
+                        {
+                            $(rows[i]).find(':checkbox').prop("checked", true);
+                        }
+
+                        groupFiles.rows().select();
+                    }
+                },
+                {
+                    "extend": "selectNone",
+                    "action": function ()
+                    {
+                        var rows = groupFiles.rows();
+                        for(var i = 0; i < rows.length; i++)
+                        {
+                            $(rows[i]).find(':checkbox').prop("checked", false);
+                        }
+                        groupFiles.rows().deselect();
+                    }
+                },
+                {
+                    "text" : "Delete",
+                    "action": deleteFiles
+                }
+
+            ],
+            "ajax": {
+                "url" : "fileuploads/groupFiles.php",
+                "type" : "POST",
+                "data" : {
+                    "gid" : 1,
+                    "did" : 1
+                }
             },
             "columns": [
+
                 {"data": "fid"},
                 {"data": "filename"},
                 {"data": "ldate"},
-                {"data": "version"}
+                {"data": "version"},
+                {
+                    'render': function ( data, type, row )
+                    {
+                        return '<input type="checkbox" data-fid="'+row.fid+'" name="fid[]">';
+                    }
+                }
             ],
-            'aaSorting': [[0, "asc"]],
-            'iDisplayLength': 25,
-            "fnCreatedRow": function (nRow, aData, iDataIndex) {
+            columnDefs: [{
+                orderable: false,
+                targets:   4
+            }],
+            'order': [[0, "asc"]],
+            "rowCallback": function (nRow, aData)
+            {
+                // when row is created
                 console.log(aData);
-
-
-                //$(nRow).attr('fid', aData.status)
-                 //   .attr('userID', aData.id);
             }
         });
+
+
+        // delete files
+        function deleteFiles( e, dt, node, config )
+        {
+            // collect all fids
+            var ids = $.map(dt.rows('.selected').data(), function (item) {
+
+                return item.fid;
+            });
+            if(ids.length == 0)
+            {
+                alert('nothing to delete!');
+            }
+            console.log(ids);
+
+        }
 
 
         /**
          * when clicking on a row
          */
 
-        $(document).on('click', '#groupfiles  tbody tr', function () {
-            var fileData = groupFiles.fnGetData($(this).closest("tr"));
+        $(document).on('click', '#groupfiles  tbody tr td:not(:first-child)', function () {
+            var fileData = groupFiles.row(this).data();
 
+            //console.log(fileData);
 
-            $("#fileInfoModal").dialog({
+           /* $("#fileInfoModal").dialog({
                 modal: true,
                 width: 600,
                 height: 600,
@@ -288,7 +358,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 close: function (ev, ui) {
                     $(this).html("");
                 }
-            });
+            });*/
 
 
         });
