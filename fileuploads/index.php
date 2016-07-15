@@ -1,8 +1,4 @@
 <?php
-define('UPLOAD_DIR', 'uploads/');
-//echo "<pre>";
-//print_r($_POST);
-//print_r($_FILES);
 
 if(empty($_FILES) && empty($_POST) && isset($_SERVER['REQUEST_METHOD']) && strtolower($_SERVER['REQUEST_METHOD']) == 'post')
 {
@@ -15,6 +11,7 @@ else
     session_start();
     require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     $UploadHandler = new UploadHandler(1,1,1,1,$_FILES['fileUpload']);
+    $UploadHandler->setUploadDirectory(CoreConfig::settings()['uploads']['upload_dir']);
     $success = $UploadHandler->upload();
 
     if (!$success) {
