@@ -12,7 +12,10 @@ class Login
     protected $_credentials;
 
     protected $_error_messages;
-    
+
+    /**
+     * @var User
+     */
     protected $_user;
 
     public function __construct(array $credentials)
@@ -36,6 +39,9 @@ class Login
         $query->bindValue(":user", $this->_credentials['username']);
         $query->bindValue(":pwd", sha1($this->_credentials['password']));
         $query->execute();
+        $user = $query->fetch();
+
+        $this->_user = new User($user['uid']);
 
         if($query->rowCount() == 1)
             return true;
@@ -58,8 +64,7 @@ class Login
             session_start();
             @session_regenerate_id(true);
             $_SESSION['username'] = $this->_credentials['username'];
-            $User = new User($this->_credentials['username']);
-            $_SESSION['uid'] = $User->getUid();
+            $_SESSION['uid'] = $this->_user->getUid();
 
             return true;
 
