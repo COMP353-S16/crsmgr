@@ -226,7 +226,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 oSettings.jqXHR = $.ajax({
                     "dataType": 'json',
                     "url": sSource,
-                   // "data": "employeeID=" + $('#employeeID').val(),
+                    "data": "gid=" + 1 + "&did=" + 1,
                     cache: false,
                     "success": fnCallback,
                 });
@@ -241,7 +241,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             'iDisplayLength': 25
         });
 
-        T.fnReloadAjax(null, null, true);
+
 
     });
 
