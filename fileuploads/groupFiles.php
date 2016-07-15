@@ -8,7 +8,18 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
  * Time: 7:49 PM
  */
 $pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT * FROM Files f WHERE f.did=:did AND f.gid=:gid");
+$query = $pdo->prepare("SELECT f.*,
+  v.uploaderId AS UPLOADER_ID,
+  v.location AS FILE_LOCATION,
+  v.size AS FILE_SIZE,
+  (SELECT COUNT(*) FROM Versions ver WHERE f.fid = ver.fid AND ver.vid < v.vid) AS REVISIONS
+  FROM Files f, Versions v
+    WHERE f.fid = v.fid AND v.vid =
+                            (SELECT MAX(v.vid)
+                              FROM Versions v
+                                WHERE v.fid = f.fid)
+  AND f.did = :did AND f.gid = :gid");
+
 $query->bindValue(":did", 1);
 $query->bindValue(":gid", 1);
 $query->execute();
@@ -21,8 +32,8 @@ while($files = $query->fetch()) {
     $info['data'][] = array(
         "fid" => $files['fid'],
         "filename" => $files['fName'],
-        "ldate" => "",
-        "version" => ""
+        "ldate" => $files['dateUpload'],
+        "version" => $files['REVISIONS']
 
     );
 }
