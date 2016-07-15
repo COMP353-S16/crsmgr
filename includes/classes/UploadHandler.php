@@ -224,13 +224,14 @@ class UploadHandler
 
         $fileSize = filesize($this->getBuildDirectory() . $this->getSavedAsName()) / 1024; // in KB
 
-        $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid) VALUES (:uploaderId, :name, :size, NOW(), :fid)");
+        $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip)");
 
         $params = array(
             ":uploaderId" => $this->_uid,
             ":size" => $fileSize,
             ":name" => $this->getSavedAsName(),
-            ":fid" => $this->getFileId()
+            ":fid" => $this->getFileId(),
+            ":ip" => $this->get_client_ip()
         );
 
         return $query->execute($params);
@@ -269,6 +270,16 @@ class UploadHandler
         }
 
         return false;
+    }
+
+    private function get_client_ip() {
+        $ip = getenv('HTTP_CLIENT_IP')?:
+            getenv('HTTP_X_FORWARDED_FOR')?:
+                getenv('HTTP_X_FORWARDED')?:
+                    getenv('HTTP_FORWARDED_FOR')?:
+                        getenv('HTTP_FORWARDED')?:
+                            getenv('REMOTE_ADDR');
+        return $ip;
     }
 
 }
