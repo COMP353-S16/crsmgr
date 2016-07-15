@@ -116,9 +116,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 <tr>
 
                     <th>ID</th>
+                    <th>Deliverable ID</th>
                     <th>File Name</th>
                     <th>Latest Revision</th>
                     <th>Revisions</th>
+                    <th>Size</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -304,9 +306,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             "columns": [
 
                 {"data": "fid"},
+                {"data" : "deliverable"},
                 {"data": "filename"},
                 {"data": "ldate"},
                 {"data": "revisions"},
+                {"data" : "size"},
                 {
                     'render': function ( data, type, row )
                     {

@@ -27,7 +27,9 @@ while($files = $query->fetch()) {
         "fid" => $files['fid'],
         "filename" => $DFile->getFileName(),
         "ldate" => $DFile->getLatestVersion()->getUploadDate(),
-        "revisions" => $DFile->getNumberOfRevisions()
+        "deliverable" => $DFile->getDeliverableId(),
+        "revisions" => $DFile->getNumberOfRevisions(),
+        "size" => round($DFile->getSize(),3) . " KB"
 
     );
 }

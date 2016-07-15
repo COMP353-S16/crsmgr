@@ -45,13 +45,19 @@ class UploadHandler
         $this->_allowed = CoreConfig::settings()['uploads']['allowed_files'] + $this->_allowed ;
     }
 
+    public function setUploadDirectory($dir)
+    {
+        if($dir!="")
+            $this->_directory = $dir;
+        echo $this->_directory;
+
+
+    }
+
     private function setFile($file)
     {
         $this->_File = new File($file);
-
-
         $this->_file['save_as'] = $this->_File->getFileName();
-
     }
 
     /**
