@@ -3,7 +3,8 @@ return array (
 
     'appname' => 'CRSMGR - FSS',
     'uploads' => array(
-        'allowed_files' => array( 'pdf', 'txt', 'doc', 'docx' ,'xls')
+        'upload_dir' => 'fileuploads/',
+        'allowed_files' => array('pdf', 'txt', 'doc', 'docx' ,'xls')
     )
 
 

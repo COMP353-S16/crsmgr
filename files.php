@@ -25,9 +25,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <!-- DataTables CSS -->
     <link href="bower_components/datatables/media/css/dataTables.bootstrap.min.css" rel="stylesheet">
 
+    <!-- DataTables Buttons Extension -->
+    <link href="bower_components/datatables/extensions/Buttons/css/buttons.dataTables.min.css" rel="stylesheet">
+    <link href="bower_components/datatables/extensions/Buttons/css/buttons.bootstrap.min.css" rel="stylesheet">
 
-    <link href="bower_components/datatables/extensions/Buttons/css/buttons.bootstrap.css" rel="stylesheet">
-
+    <!-- DataTable Select Extension -->
+    <link href="bower_components/datatables/extensions/Select/css/select.dataTables.min.css" rel="stylesheet">
     <link href="bower_components/datatables/extensions/Select/css/select.bootstrap.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="dist/css/sb-admin-2.css" rel="stylesheet">
@@ -139,6 +142,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
     <!-- MODAL WINDOWS -->
     <div id="fileInfoModal"></div>
+    <div id="deleteEntriesContainer"><div id="deleteEntryContent"></div></div>
 
 </div>
 <!-- /#wrapper -->
@@ -318,7 +322,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             "rowCallback": function (nRow, aData)
             {
                 // when row is created
-                console.log(aData);
+                //console.log(aData);
             }
         });
 
@@ -329,13 +333,43 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             // collect all fids
             var ids = $.map(dt.rows('.selected').data(), function (item) {
 
-                return item.fid;
+                return item;
             });
             if(ids.length == 0)
             {
                 alert('nothing to delete!');
+                return false;
             }
             console.log(ids);
+
+            var msg = "Are you sure you wish to delete the following files?";
+            msg += "<ul>";
+            for (var i in ids) {
+                msg += "<li>" + ids[i].filename + " </li>";
+            }
+            msg += "</ul>";
+            msg += "Note that all versions associated with each file will also be delete.";
+
+            $('#deleteEntryContent').html(msg);
+            $('#deleteEntriesContainer').dialog({
+                open: function () {
+                    $('.ui-widget-overlay').hide().fadeIn();
+                },
+                close: function () {
+                },
+                show: 'fade',
+                hide: 'fade',
+                width: 420,
+                height: 300,
+                modal: true,
+                title: "Delete Files",
+                buttons: {
+                    "Cancel": function () {
+                        $(this).dialog('destroy');
+
+                    }
+                }
+            });
 
         }
 
