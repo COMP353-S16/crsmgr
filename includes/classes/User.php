@@ -15,19 +15,19 @@ class User {
     protected $_email;
     protected $_privilege;
 
-    public function __construct($username)
+    public function __construct($uid)
     {
-        $this->_username = $username;
+        $this->_uid = $uid;
         $this->fetchUserInfo();
     }
 
     private function fetchUserInfo() {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Users WHERE username=:username");
-        $query->bindValue(":username", $this->_username);
+        $query = $pdo->prepare("SELECT * FROM Users WHERE uid=:uid");
+        $query->bindValue(":uid", $this->_uid);
         $query->execute();
         $user = $query->fetch();
-        $this->_uid = $user['uid'];
+        $this->_username = $user['username'];
         $this->_firstName = $user['firstName'];
         $this->_lastName = $user['lastName'];
         $this->_email = $user['email'];

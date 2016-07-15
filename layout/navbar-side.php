@@ -21,28 +21,23 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             </li>
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Courses<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
                 <?php
-                $pdo = Registry::getConnection();
-                $query = $pdo->prepare("SELECT c.cName, c.cid FROM Courses c, Groups g, GroupMembers m, Users u
-                                        WHERE u.uid=:uid AND m.gid = g.gid AND g.cid = c.cid AND m.uid = u.uid");
-                $query->bindValue(":uid", $_SESSION['uid']);
-                $query->execute();
-                $users = $query->fetchAll();
+                $User = new User($_SESSION['uid']);
+                $user_info = new UserInfo($User);
+                $user_courses = $user_info->fetchUserCourses();
 
-                //print_r($users);
-                foreach ($users as $user_data) {
+                foreach ($user_courses as $user_data) {
                     ?>
-                    <ul class="nav nav-second-level">
                         <li>
-                            <a href="<?php echo 'page.php?cid='.$user_data['cid'];?>"><?php echo $user_data['cName']; ?></a>
+                            <a href="<?php echo 'group.php?cid='.$user_data['cid'];?>"><?php echo $user_data['cName']; ?></a>
                         </li>
-                    </ul>
                     <?php
                 }
                 ?>
-                
+                </ul>
                 <!-- /.nav-second-level -->
-                <a href="#"><i class="fa fa-book fa-fw"></i> Courses<span class="fa arrow"></span></a>
+
             </li>
             <li>
                 <a href="tables.html"><i class="fa fa-wrench fa-fw"></i>Admin</a>

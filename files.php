@@ -26,7 +26,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <link href="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
 
     <!-- DataTables Responsive CSS -->
-
+    <link href="bower_components/datatables-responsive/css/responsive.dataTables.scss" rel="stylesheet">
+    
     <!-- Custom CSS -->
     <link href="dist/css/sb-admin-2.css" rel="stylesheet">
 
@@ -34,7 +35,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 
-    <link href="bower_components/datatables-responsive/css/responsive.dataTables.scss" rel="stylesheet">
+    
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
