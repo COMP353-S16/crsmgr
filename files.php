@@ -34,7 +34,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 
-    <
+    <!-- jQuery UI -->
+    <link href="bower_components/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
+
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -43,6 +45,15 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 
     <![endif]-->
+
+    <style>
+        /*fixes modal window issue */
+        .ui-widget-overlay {
+            position: fixed;
+            z-index:10000
+        }
+
+    </style>
 
 
 </head>
@@ -95,13 +106,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
 
-            <table width="100%" border="0" class="table" id="groupfiles">
+            <table width="100%" border="0" class="table table-bordered table-hover" id="groupfiles">
                 <thead>
                 <tr>
                     <th>ID</th>
                     <th>File Name</th>
-                    <th>Latest Date</th>
-                    <th>Revision</th>
+                    <th>Latest Revision</th>
+                    <th>Revisions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -120,8 +131,15 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     </div>
     <!-- /#page-wrapper -->
 
+    <!-- MODAL WINDOWS -->
+    <div id="fileInfoModal"></div>
+
 </div>
 <!-- /#wrapper -->
+
+
+
+
 
 <!-- jQuery -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
@@ -143,7 +161,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 <script src="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
 <script src="bower_components/datatables-plugins/ajaxreloader/fnReloadAjax.js"></script>
 
+<!-- jQuery UI -->
 
+<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
 
 <script>
     $(function () {
@@ -184,7 +204,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             e.wrap('<form>').closest('form').get(0).reset();
             e.unwrap();
 
-            T.fnReloadAjax(null, null, true);
+            groupFiles.fnReloadAjax(null, null, true);
 
         }).on("lu:progress", function (e, percentage) {
 
@@ -240,9 +260,38 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 {"data": "version"}
             ],
             'aaSorting': [[0, "asc"]],
-            'iDisplayLength': 25
+            'iDisplayLength': 25,
+            "fnCreatedRow": function (nRow, aData, iDataIndex) {
+                console.log(aData);
+
+
+                //$(nRow).attr('fid', aData.status)
+                 //   .attr('userID', aData.id);
+            }
         });
 
+
+        /**
+         * when clicking on a row
+         */
+
+        $(document).on('click', '#groupfiles  tbody tr', function () {
+            var fileData = groupFiles.fnGetData($(this).closest("tr"));
+
+
+            $("#fileInfoModal").dialog({
+                modal: true,
+                width: 600,
+                height: 600,
+                title: "File: " + fileData.filename,
+                show: "fade",
+                close: function (ev, ui) {
+                    $(this).html("");
+                }
+            });
+
+
+        });
 
 
 

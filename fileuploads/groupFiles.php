@@ -10,8 +10,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 $pdo = Registry::getConnection();
 $query = $pdo->prepare("SELECT f.*,
   v.uploaderId AS UPLOADER_ID,
-  v.location AS FILE_LOCATION,
+  v.physicalName AS FILE_SAVED_NAME,
   v.size AS FILE_SIZE,
+  v.uploadDate as LAST_DATE,
   (SELECT COUNT(*) FROM Versions ver WHERE f.fid = ver.fid AND ver.vid < v.vid) AS REVISIONS
   FROM Files f, Versions v
     WHERE f.fid = v.fid AND v.vid =
@@ -32,7 +33,7 @@ while($files = $query->fetch()) {
     $info['data'][] = array(
         "fid" => $files['fid'],
         "filename" => $files['fName'],
-        "ldate" => $files['dateUpload'],
+        "ldate" => $files['LAST_DATE'],
         "version" => $files['REVISIONS']
 
     );

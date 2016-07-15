@@ -126,6 +126,10 @@ class UploadHandler
         return $this->_directory . $this->_cid . '/' . $this->_did . '/' . $this->_did . '/';  // Directory to upload file;
     }
 
+    /**
+     * @param $dir directory name
+     * @param int $permissions directory permissions
+     */
     protected function createDirectory($dir, $permissions = 0777)
     {
         if (!file_exists($dir)) {
@@ -133,6 +137,10 @@ class UploadHandler
         }
     }
 
+
+    /**
+     * @return array returns an array of various errors that might have occurred
+     */
     public function getErrors()
     {
         return $this->_errors;
@@ -141,10 +149,15 @@ class UploadHandler
     /**
      * Inserts the record in the database
      */
-    protected function insert()
+    private function insert()
     {
-        $pdo = Registry::getConnection();
 
+        // if it's a revision, skip the rest
+        if($this->isRevision())
+            return $this->insertRevision();
+
+
+        $pdo = Registry::getConnection();
         $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType) VALUES (:gid, :did, :fName, :fType)");
 
         $params = array (
@@ -159,21 +172,75 @@ class UploadHandler
             $fileSize = filesize($this->getBuildDirectory() . $this->getSavedAsName()) / 1024; // in KB
             $userID = $this->_uid;
 
-            $query = $pdo->prepare("INSERT INTO Versions (uploaderId, size, uploadDate, fid) VALUES (:uploaderId, :size, NOW(), :fid)");
+            $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid) VALUES (:uploaderId, :name, :size, NOW(), :fid)");
 
             $params = array(
                 ":uploaderId" => $userID,
                 ":size" => $fileSize,
+                ":name" => $this->getSavedAsName(),
                 ":fid" => $fid
             );
 
             return $query->execute($params);
-        } else
-        {
-            return false;
         }
+
+        return false;
     }
 
+    /**
+     * @return bool returns true if filename already exists for particular deliverable of group
+     */
+    private function isRevision()
+    {
+        $id = $this->getFileId();
+        return $id   != NULL || $id != "";
+    }
+
+
+    /**
+     * @return mixed returns null if no FID exists for certain file. This should be in its own class.
+     */
+    private function getFileId()
+    {
+        $pdo = Registry::getConnection();
+        // does this file name already exist?
+        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name LIMIT 1");
+        $params = array(
+            ":did" => $this->_did,
+            ":gid" => $this->_gid,
+            ":name" => $this->_File->getBaseName()
+        );
+
+        $query->execute($params);
+        $data = $query->fetch();
+        return $data['fid'];
+    }
+
+
+    private function insertRevision()
+    {
+
+        $pdo = Registry::getConnection();
+
+        $fileSize = filesize($this->getBuildDirectory() . $this->getSavedAsName()) / 1024; // in KB
+
+        $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid) VALUES (:uploaderId, :name, :size, NOW(), :fid)");
+
+        $params = array(
+            ":uploaderId" => $this->_uid,
+            ":size" => $fileSize,
+            ":name" => $this->getSavedAsName(),
+            ":fid" => $this->getFileId()
+        );
+
+        return $query->execute($params);
+
+    }
+
+
+    /**
+     * @return bool returns true if file successu'ly uploaded in directory
+     */
     public function upload()
     {
         $this->validate();
