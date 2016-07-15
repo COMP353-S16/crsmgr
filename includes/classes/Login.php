@@ -12,6 +12,8 @@ class Login
     protected $_credentials;
 
     protected $_error_messages;
+    
+    protected $_user;
 
     public function __construct(array $credentials)
     {
@@ -56,6 +58,9 @@ class Login
             session_start();
             @session_regenerate_id(true);
             $_SESSION['username'] = $this->_credentials['username'];
+            $User = new User($this->_credentials['username']);
+            $_SESSION['uid'] = $User->getUid();
+
             return true;
 
         }
