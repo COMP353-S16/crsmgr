@@ -95,7 +95,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
 
-            <table width="100%" border="0" cellpadding="table table-bordered" id="groupfiles">
+            <table width="100%" border="0" class="table" id="groupfiles">
                 <thead>
                 <tr>
                     <th>ID</th>
@@ -184,6 +184,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             e.wrap('<form>').closest('form').get(0).reset();
             e.unwrap();
 
+            T.fnReloadAjax(null, null, true);
+
         }).on("lu:progress", function (e, percentage) {
 
             $('.progress-bar').attr('aria-valuenow', percentage)
@@ -218,7 +220,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
 
-        var T = $('#groupfiles').dataTable({
+        T = $('#groupfiles').dataTable({
             "bProcessing": true,
             "bServerSide": false,
             "sAjaxSource": "fileuploads/groupFiles.php",
@@ -232,7 +234,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 });
             },
             "columns": [
-                {"data": "id"},
+                {"data": "fid"},
                 {"data": "filename"},
                 {"data": "ldate"},
                 {"data": "version"}
@@ -240,6 +242,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             'aaSorting': [[0, "asc"]],
             'iDisplayLength': 25
         });
+
 
 
 

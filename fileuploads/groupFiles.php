@@ -13,13 +13,13 @@ $query->bindValue(":did", 1);
 $query->bindValue(":gid", 1);
 $query->execute();
 
-$info['data'][] = array();
+$info =array("data" => array());
 
 while($files = $query->fetch()) {
 
 
     $info['data'][] = array(
-        "id" => $files['fid'],
+        "fid" => $files['fid'],
         "filename" => $files['fName'],
         "ldate" => "",
         "version" => ""
