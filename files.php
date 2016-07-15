@@ -258,6 +258,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         groupFiles = $('#groupfiles').DataTable({
             "processing": true,
             "serverSide": false,
+            "displayLength": 25,
             dom: 'Bfrtip',
             select: {
                 style : "os",
@@ -296,7 +297,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
             ],
             "ajax": {
-                "url" : "fileuploads/groupFiles.php",
+                "url" : "ajax/groupFiles.php",
                 "type" : "POST",
                 "data" : {
                     "gid" : 1,
