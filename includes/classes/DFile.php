@@ -13,12 +13,15 @@ class DFile
 
     private $_file;
 
+    private $_versions;
+
     /**
      * DFile constructor.
      * @param $fid File ID
      */
     public function __construct($fid)
     {
+
         $this->_fid = $fid;
         $this->extract();
     }
@@ -29,6 +32,8 @@ class DFile
         $query = $pdo->prepare("SELECT * FROM Files WHERE fid = :fid LIMIT 1");
         $query->execute(array(":fid" => $this->_fid));
         $this->_file = $query->fetch();
+
+        $this->getFileVersions();
     }
 
     /**
@@ -63,24 +68,83 @@ class DFile
         return $this->_file['gid'];
     }
 
+    /**
+     * @param $id
+     * @return Versions returns a Version object based on the version id given
+     */
+    public function getVersionById($id)
+    {
+        return new Versions($this->_versions, $id);
+    }
 
     /**
-     * @return array returns all the version ids associated with the file.
+     * @return int returns the earliest version id (first) ever uploaded
      */
-    public function getFileVersions()
+    public function getEarliestVersionsId()
     {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT vid FROM Versions WHERE fid = :fid");
-        $query->execute(array(":fid" => $this->_fid));
-        $data = $query->fetchAll();
-
         $vids = array();
-        foreach($data as $fileInfo)
+        foreach($this->_versions as $i => $d)
         {
-            $vids[] = $fileInfo['vid'];
+            $vids[] = $this->_versions[$i]['vid'];
         }
 
+        return min($vids);
+    }
 
-        return $vids;
+    /**
+     * @return float returns the file size based on the last version
+     */
+    public function getSize()
+    {
+        return $this->getLatestVersion()->getSize();
+    }
+
+    /**
+     * @return Versions returns the earliest Version object
+     */
+    public function getEarliestVersion()
+    {
+        return new Versions($this->_versions, $this->getEarliestVersion());
+    }
+
+
+    public function getLatestVersionId()
+    {
+        
+        $vids = array();
+        foreach($this->_versions as $i => $d)
+        {
+            $vids[] = $this->_versions[$i]['vid'];
+        }
+
+        return max($vids);
+    }
+
+    /**
+     * @return Versions returns the latest Version object
+     */
+    public function getLatestVersion()
+    {
+        return new Versions($this->_versions, $this->getLatestVersionId());
+    }
+
+    /**
+     * extracts all related versions to file
+     */
+    private function getFileVersions()
+    {
+        $pdo = Registry::getConnection();
+        $query = $pdo->prepare("SELECT * FROM Versions WHERE fid = :fid");
+        $query->execute(array(":fid" => $this->_fid));
+        $this->_versions = $query->fetchAll();
+
+    }
+
+    /**
+     * @return int returns the number of existing revisions
+     */
+    public function getNumberOfRevisions()
+    {
+        return count($this->_versions);
     }
 }

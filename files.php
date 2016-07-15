@@ -306,7 +306,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 {"data": "fid"},
                 {"data": "filename"},
                 {"data": "ldate"},
-                {"data": "version"},
+                {"data": "revisions"},
                 {
                     'render': function ( data, type, row )
                     {
@@ -381,7 +381,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         $(document).on('click', '#groupfiles  tbody tr td:not(:first-child)', function () {
             var fileData = groupFiles.row(this).data();
 
-            //console.log(fileData);
+            console.log(fileData);
 
            /* $("#fileInfoModal").dialog({
                 modal: true,
