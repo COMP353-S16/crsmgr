@@ -66,14 +66,8 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <?php
-                    $cid = $_GET['cid'];
-                    $Course = new Course($cid);
-                    $User = new User($_SESSION['uid']);
-                    $gid = $User->getGroupId($cid);
-                    $Group = new Group($gid);
-                    ?>
-                    <h1 class="page-header"><?php echo 'Group ' .$Group->getGName() .' - ' .$Course->getCourseName()?></h1>
+
+                    <h1 class="page-header">Group ? ?</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -145,10 +139,10 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         </div>
                         <div class="panel-body">
                             <ul>
-                                <li><?php echo 'Group id: ' .$Group->getGid() ?></li>
-                                <li><?php echo 'Group name: ' .$Group->getGName()?></li>
-                                <li><?php $group_leader = new User($Group->getLeaderId());
-                                    echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
+                                <li><?php //echo 'Group id: ' .$Group->getGid() ?></li>
+                                <li><?php //echo 'Group name: ' .$Group->getGName()?></li>
+                                <li><?php //$group_leader = new User($Group->getLeaderId());
+                                    //echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
                             </ul>
                         </div>
                     </div>

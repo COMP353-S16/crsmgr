@@ -19,26 +19,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             <li>
                 <a href="index.html"><i class="fa fa-home fa-fw"></i> Home</a>
             </li>
-            <li>
-                <a href="#"><i class="fa fa-book fa-fw"></i>My Courses<span class="fa arrow"></span></a>
-                <ul class="nav nav-second-level">
-                <?php
-                $User = new User($_SESSION['uid']);
-                $user_info = new UserInfo($User);
-                $user_courses = $user_info->fetchUserCourses();
 
-                foreach ($user_courses as $user_data) {
-                    ?>
-                        <li>
-                            <a href="<?php echo 'group.php?cid='.$user_data['cid'];?>"><?php echo $user_data['cName']; ?></a>
-                        </li>
-                    <?php
-                }
-                ?>
-                </ul>
-                <!-- /.nav-second-level -->
-
-            </li>
             <li>
                 <a href="tables.html"><i class="fa fa-wrench fa-fw"></i>Admin</a>
                 <ul class="nav nav-second-level">
