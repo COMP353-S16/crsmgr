@@ -27,6 +27,7 @@ class User {
         $query->bindValue(":uid", $this->_uid);
         $query->execute();
         $user = $query->fetch();
+        
         $this->_username = $user['username'];
         $this->_firstName = $user['firstName'];
         $this->_lastName = $user['lastName'];
@@ -56,5 +57,17 @@ class User {
 
     public function getPrivilege() {
         return $this->_privilege;
+    }
+
+    public function getGroupId($cid) {
+        $pdo = Registry::getConnection();
+        $query = $pdo->prepare("SELECT g.gid FROM Groups g, Users u, GroupMembers m, Courses c 
+                                WHERE u.uid=:uid AND m.uid = u.uid AND m.gid = g.gid AND g.cid=:cid");
+        $query->bindValue(":uid", $this->_uid);
+        $query->bindValue(":cid", $cid);
+        $query->execute();
+        $data = $query->fetch();
+
+        return $data['gid'];
     }
 }

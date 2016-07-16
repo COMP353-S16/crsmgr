@@ -21,7 +21,7 @@ class Course
 
     private function fetchCourseInfo() {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Courses c WHERE c.cid=:cid");
+        $query = $pdo->prepare("SELECT * FROM Courses WHERE cid=:cid");
         $query->bindValue(":cid", $this->cid);
         $query->execute();
         $course = $query->fetch();

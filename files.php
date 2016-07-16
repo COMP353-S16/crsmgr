@@ -144,8 +144,26 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <!-- /#page-wrapper -->
 
     <!-- MODAL WINDOWS -->
-    <div id="fileInfoModal"></div>
+    <div id="fileInfoModal">
+        <div id="versionsContainer">
+
+            <table width="100%" border="0" class="table table-bordered" id="versionsTable">
+                <thead>
+                <tr>
+
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
     <div id="deleteEntriesContainer"><div id="deleteEntryContent"></div></div>
+
 
 </div>
 <!-- /#wrapper -->
@@ -247,7 +265,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         $("#cancelUpload").click(function () {
             $("#fileUpload").data("liteUploader").cancelUpload();
         });
-
 
 
 
@@ -389,17 +406,48 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
             console.log(fileData);
 
-           /* $("#fileInfoModal").dialog({
+            t = $('#versionsTable').DataTable({
+
+                "processing": true,
+                "destroy" : true,
+                "serverSide": false,
+                "displayLength": 25,
+                "ajax": {
+                    "url" : "ajax/fileVersions.php",
+                    "type" : "POST",
+                    "data" : {
+                        "fid" : fileData.fid
+                    }
+                },
+                "columns": [
+
+                    {"data": "vid"},
+                    {"data": "user"},
+                    {"data": "date"},
+                    {"data": "size"},
+
+                ],
+                'order': [[0, "dsc"]]
+            });
+
+           $("#fileInfoModal").dialog({
                 modal: true,
                 width: 600,
                 height: 600,
                 title: "File: " + fileData.filename,
                 show: "fade",
                 close: function (ev, ui) {
-                    $(this).html("");
-                }
-            });*/
 
+                    t.destroy();
+                }
+            });
+
+
+            $(document).on('click', '#versionsTable  tbody tr', function () {
+                var versionData = t.row(this).data();
+                console.log(versionData);
+
+            });
 
         });
 

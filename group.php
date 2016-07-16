@@ -66,14 +66,8 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <?php
-                    $cid = $_GET['cid'];
-                    $Course = new Course($cid);
-                    $User = new User($_SESSION['uid']);
-                    $user_info = new UserInfo($User);
-                    $group_info = $user_info->getGroup($cid);
-                    ?>
-                    <h1 class="page-header"><?php echo 'Group ' .$group_info['gName'] .' - ' .$Course->getCourseName()?></h1>
+
+                    <h1 class="page-header">Group ? ?</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -84,6 +78,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         <li class="active"><a href="#members" data-toggle="tab">Members</a></li>
                         <li><a href="#deliverables" data-toggle="tab">Deliverables</a></li>
                         <li><a href="#files" data-toggle="tab">All Files</a></li>
+                        <li><a href="#filesubmission" data-toggle="tab">File Submission</a> </li>
                     </ul>
 
                     <div class="tab-content">
@@ -111,11 +106,29 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         </div>
                         <div class="tab-pane fade" id="deliverables">
                             <h4>Deliverables</h4>
-
+                            <table width="100%" border="0" class="table" id="deliverablestable">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date Posted</th>
+                                    <th>Due Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane fade" id="files">
                             <h4>Files</h4>
 
+                        </div>
+                        <div class="tab-pane fade" id="filesubmission">
+                            <h4>File Submission</h4>
                         </div>
                     </div>
                 </div>
@@ -126,10 +139,10 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         </div>
                         <div class="panel-body">
                             <ul>
-                                <li><?php echo 'Group id: ' .$group_info['gid'] ?></li>
-                                <li><?php echo 'Group name: ' .$group_info['gName']?></li>
-                                <li><?php $group_leader = new User($group_info['leaderId']);
-                                    echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
+                                <li><?php //echo 'Group id: ' .$Group->getGid() ?></li>
+                                <li><?php //echo 'Group name: ' .$Group->getGName()?></li>
+                                <li><?php //$group_leader = new User($Group->getLeaderId());
+                                    //echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
                             </ul>
                         </div>
                     </div>
@@ -180,7 +193,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 "url" : "ajax/membersInfo.php",
                 "type" : "POST",
                 "data" : {
-                    "gid" : <?php echo $group_info['gid']; ?>,
+                    "gid" : <?php echo $Group->getGid(); ?>,
 
                 }
             },
@@ -191,7 +204,27 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
             ]
         });
 
+    });
 
+    $(function (){
+
+        deliverables = $('#deliverablestable').dataTable({
+            "processing": true,
+            "serverSide": false,
+            "displayLength": 25,
+            "ajax": {
+                "url" : "ajax/deliverablesInfo.php",
+                "type" : "POST",
+                "data" : {
+                    "cid" : <?php echo $_GET['cid']; ?>,
+                }
+            },
+            "columns": [
+                {"data": "name"},
+                {"data": "datePosted"},
+                {"data": "dueDate"}
+            ]
+        });
 
     });
 </script>
