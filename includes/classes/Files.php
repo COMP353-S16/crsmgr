@@ -6,7 +6,7 @@
  * Date: 7/15/2016
  * Time: 1:14 PM
  */
-class DFile
+class Files
 {
 
     private $_fid;
@@ -69,12 +69,26 @@ class DFile
     }
 
     /**
+     *
+     */
+    public function getVersions()
+    {
+        $a = array();
+        foreach($this->_versions as $i => $d)
+        {
+            $vid = $this->_versions[$i]['vid'];
+            $a[] = new Version($this->_versions, $vid);
+        }
+        return $a;
+    }
+
+    /**
      * @param $id
      * @return Versions returns a Version object based on the version id given
      */
     public function getVersionById($id)
     {
-        return new Versions($this->_versions, $id);
+        return new Version($this->_versions, $id);
     }
 
     /**
@@ -104,7 +118,7 @@ class DFile
      */
     public function getEarliestVersion()
     {
-        return new Versions($this->_versions, $this->getEarliestVersion());
+        return new Version($this->_versions, $this->getEarliestVersion());
     }
 
 
@@ -125,7 +139,7 @@ class DFile
      */
     public function getLatestVersion()
     {
-        return new Versions($this->_versions, $this->getLatestVersionId());
+        return new Version($this->_versions, $this->getLatestVersionId());
     }
 
     /**

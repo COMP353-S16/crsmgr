@@ -8,7 +8,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
  * Time: 7:49 PM
  */
 $pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT * FROM Files f WHERE f.did = :did AND f.gid = :gid");
+$query = $pdo->prepare("SELECT f.fid FROM Files f WHERE f.did = :did AND f.gid = :gid");
 
 $query->bindValue(":did", 1);
 $query->bindValue(":gid", 1);
@@ -19,7 +19,7 @@ $info =array("data" => array());
 
 while($files = $query->fetch()) {
 
-    $DFile = new DFile($files['fid']);
+    $DFile = new Files($files['fid']);
 
 
 

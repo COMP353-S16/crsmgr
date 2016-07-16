@@ -6,7 +6,7 @@
  * Date: 7/15/2016
  * Time: 2:53 PM
  */
-class Versions
+class Version
 {
 
     private $_version;
@@ -76,5 +76,11 @@ class Versions
     public function getVersionId()
     {
         return $this->_version['vid'];
+    }
+
+    public function getUrl()
+    {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        return $protocol . $_SERVER['HTTP_HOST']. '/fileuploads/' .CoreConfig::settings()['uploads']['upload_dir'] . $this->getSavedName();
     }
 }
