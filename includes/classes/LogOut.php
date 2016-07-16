@@ -9,10 +9,23 @@
 class LogOut
 {
 
+    public function __construct()
+    {
 
-session_start();
+    }
 
-session_destroy();
+    public function logout()
+    {
+        session_start();
+
+        session_destroy();
+
+        header("location: ../../index.php");
+
+        exit ;
+    }
+
+
 
 
 }
