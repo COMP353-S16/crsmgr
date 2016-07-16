@@ -29,17 +29,5 @@ class UserInfo
         return $userCourses;
     }
 
-    public function getGroup($cid) {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT g.gid, g.leaderId, g.cid, g.creatorId, g.gName FROM Groups g, Users u, GroupMembers m, Courses c 
-                                WHERE u.uid=:uid AND m.uid = u.uid AND m.gid = g.gid AND g.cid=:cid");
-        $query->bindValue(":uid", $this->_User->getUid());
-        $query->bindValue(":cid", $cid);
-        $query->execute();
-        $user_group = $query->fetch();
-
-        return $user_group;
-    }
-
 
 }

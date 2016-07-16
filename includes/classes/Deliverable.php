@@ -2,50 +2,74 @@
 
 /**
  * Created by PhpStorm.
- * User: dimitri
- * Date: 2016-07-15
- * Time: 11:31 PM
+ * User: josep
+ * Date: 7/15/2016
+ * Time: 12:36 AM
  */
 class Deliverable
 {
-    private $_did;
-
-    private $_del;
-
+    protected $_did;
+    protected $_cid;
+    protected $_dName;
+    protected $_startDate;
+    protected $_endDate;
+    
     public function __construct($did)
     {
         $this->_did = $did;
-        $this->extract();
+        $this->fetchDeliverableInfo();
     }
     
-    private function extract()
-    {
+    private function fetchDeliverableInfo() {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Deliverables WHERE did = :did LIMIT 1");
-        $query->execute(array(":did" => $this->_did));
-        $this->_del = $query->fetch();
+        $query = $pdo->prepare("SELECT * FROM Deliverables WHERE did=:did");
+        $query->bindValue("did", $this->_did);
+        $query->execute();
+        $deliverable = $query->fetch();
 
+        $this->_cid = $deliverable['cid'];
+        $this->_dName = $deliverable['dName'];
+        $this->_startDate = $deliverable['startDate'];
+        $this->_endDate = $deliverable['endDate'];
     }
 
-    public function getName()
+    /**
+     * @return mixed
+     */
+    public function getDid()
     {
-        return $this->_del['dName'];
+        return $this->_did;
     }
 
-    public function startDate()
+    /**
+     * @return mixed
+     */
+    public function getCid()
     {
-        return $this->_del['startDate'];
+        return $this->_cid;
     }
 
-    public function endDate()
+    /**
+     * @return mixed
+     */
+    public function getDName()
     {
-        return $this->_del['endDate'];
+        return $this->_dName;
     }
 
-    public function getCourseId()
+    /**
+     * @return mixed
+     */
+    public function getStartDate()
     {
-        return $this->_del['cid'];
+        return $this->_startDate;
     }
 
-
+    /**
+     * @return mixed
+     */
+    public function getEndDate()
+    {
+        return $this->_endDate;
+    }
 }
