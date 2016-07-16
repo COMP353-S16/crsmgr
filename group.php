@@ -22,11 +22,13 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     <!-- MetisMenu CSS -->
     <link href="bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
-    <!-- DataTables CSS -->
-    <link href="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+    <!-- DataTables Buttons Extension -->
+    <link href="bower_components/datatables/extensions/Buttons/css/buttons.dataTables.min.css" rel="stylesheet">
+    <link href="bower_components/datatables/extensions/Buttons/css/buttons.bootstrap.min.css" rel="stylesheet">
 
-    <!-- DataTables Responsive CSS -->
-    <link href="bower_components/datatables-responsive/css/responsive.dataTables.scss" rel="stylesheet">
+    <!-- DataTable Select Extension -->
+    <link href="bower_components/datatables/extensions/Select/css/select.dataTables.min.css" rel="stylesheet">
+    <link href="bower_components/datatables/extensions/Select/css/select.bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link href="dist/css/sb-admin-2.css" rel="stylesheet">
@@ -159,33 +161,34 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
 <!-- DataTables JavaScript -->
 <script src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
-<script src="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
-<script src="bower_components/datatables-plugins/ajaxreloader/fnReloadAjax.js"></script>
+<script src="bower_components/datatables/media/js/dataTables.bootstrap.min.js"></script>
+<!-- DataTable extensions -->
+<script src="bower_components/datatables/extensions/Buttons/js/dataTables.buttons.js"></script>
+<script src="bower_components/datatables/extensions/Buttons/js/buttons.bootstrap.min.js"></script>
+<script src="bower_components/datatables/extensions/Select/js/dataTables.select.min.js"></script>
+<script src="bower_components/datatables/extensions/Buttons/js/buttons.flash.js"></script>
 
 <script>
 
     $(function (){
 
-        T = $('#memberstable').dataTable({
-            "bProcessing": true,
-            "bServerSide": false,
-            "sAjaxSource": "ajax/membersInfo.php",
-            "fnServerData": function (sSource, aoData, fnCallback, oSettings) {
-                oSettings.jqXHR = $.ajax({
-                    "dataType": 'json',
-                    "url": sSource,
-                    "data": "gid=" + <?php echo $group_info['gid']; ?>,
-                    cache: false,
-                    "success": fnCallback,
-                });
+        members = $('#memberstable').dataTable({
+            "processing": true,
+            "serverSide": false,
+            "displayLength": 25,
+            "ajax": {
+                "url" : "ajax/membersInfo.php",
+                "type" : "POST",
+                "data" : {
+                    "gid" : <?php echo $group_info['gid']; ?>,
+
+                }
             },
             "columns": [
                 {"data": "name"},
                 {"data": "username"},
                 {"data": "email"}
-            ],
-            'aaSorting': [[0, "asc"]],
-            'iDisplayLength': 25
+            ]
         });
 
 

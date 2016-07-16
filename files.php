@@ -32,6 +32,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <!-- DataTable Select Extension -->
     <link href="bower_components/datatables/extensions/Select/css/select.dataTables.min.css" rel="stylesheet">
     <link href="bower_components/datatables/extensions/Select/css/select.bootstrap.min.css" rel="stylesheet">
+    
     <!-- Custom CSS -->
     <link href="dist/css/sb-admin-2.css" rel="stylesheet">
 

@@ -20,7 +20,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 <a href="index.html"><i class="fa fa-home fa-fw"></i> Home</a>
             </li>
             <li>
-                <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Courses<span class="fa arrow"></span></a>
+                <a href="#"><i class="fa fa-book fa-fw"></i>My Courses<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                 <?php
                 $User = new User($_SESSION['uid']);
