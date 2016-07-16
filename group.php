@@ -68,10 +68,10 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                     $cid = $_GET['cid'];
                     $Course = new Course($cid);
                     $User = new User($_SESSION['uid']);
-                    $user_info = new UserInfo($User);
-                    $group_info = $user_info->getGroup($cid);
+                    $gid = $User->getGroupId($cid);
+                    $Group = new Group($gid);
                     ?>
-                    <h1 class="page-header"><?php echo 'Group ' .$group_info['gName'] .' - ' .$Course->getCourseName()?></h1>
+                    <h1 class="page-header"><?php echo 'Group ' .$Group->getGName() .' - ' .$Course->getCourseName()?></h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -103,13 +103,25 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                                 </tr>
                                 </tbody>
                             </table>
-                            <ul>
-
-                            </ul>
                         </div>
                         <div class="tab-pane fade" id="deliverables">
                             <h4>Deliverables</h4>
-
+                            <table width="100%" border="0" class="table" id="deliverablestable">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Date Posted</th>
+                                    <th>Due Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane fade" id="files">
                             <h4>Files</h4>
@@ -124,9 +136,9 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         </div>
                         <div class="panel-body">
                             <ul>
-                                <li><?php echo 'Group id: ' .$group_info['gid'] ?></li>
-                                <li><?php echo 'Group name: ' .$group_info['gName']?></li>
-                                <li><?php $group_leader = new User($group_info['leaderId']);
+                                <li><?php echo 'Group id: ' .$Group->getGid() ?></li>
+                                <li><?php echo 'Group name: ' .$Group->getGName()?></li>
+                                <li><?php $group_leader = new User($Group->getLeaderId());
                                     echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
                             </ul>
                         </div>
@@ -174,7 +186,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 oSettings.jqXHR = $.ajax({
                     "dataType": 'json',
                     "url": sSource,
-                    "data": "gid=" + <?php echo $group_info['gid']; ?>,
+                    "data": "gid=" + <?php echo $Group->getGid(); ?>,
                     cache: false,
                     "success": fnCallback,
                 });
@@ -183,6 +195,34 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 {"data": "name"},
                 {"data": "username"},
                 {"data": "email"}
+            ],
+            'aaSorting': [[0, "asc"]],
+            'iDisplayLength': 25
+        });
+
+
+
+    });
+
+    $(function (){
+
+        T = $('#deliverablestable').dataTable({
+            "bProcessing": true,
+            "bServerSide": false,
+            "sAjaxSource": "ajax/deliverablesInfo.php",
+            "fnServerData": function (sSource, aoData, fnCallback, oSettings) {
+                oSettings.jqXHR = $.ajax({
+                    "dataType": 'json',
+                    "url": sSource,
+                    "data": "cid=" + <?php echo $_GET['cid']; ?>,
+                    cache: false,
+                    "success": fnCallback,
+                });
+            },
+            "columns": [
+                {"data": "name"},
+                {"data": "datePosted"},
+                {"data": "dueDate"}
             ],
             'aaSorting': [[0, "asc"]],
             'iDisplayLength': 25
