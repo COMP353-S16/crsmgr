@@ -25,7 +25,7 @@ foreach($files as $i => $fid) {
     {
         $info['data'][] = array(
             "fid" => $Files->getId(),
-            "filename" => $Files->getFileName(),
+            "filename" => $Files->getFileName() . '.' . $Files->getFileExtension(),
             "ldate" => $Files->getLatestVersion()->getUploadDate(),
             "deliverable" => $Files->getDeliverableId(),
             "revisions" => $Files->getNumberOfRevisions(),

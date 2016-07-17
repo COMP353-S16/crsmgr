@@ -166,6 +166,11 @@ class Files
         return count($this->_versions);
     }
 
+    public function getBaseUrl()
+    {
+       return $_SERVER['DOCUMENT_ROOT']. '/fileuploads/' .CoreConfig::settings()['uploads']['upload_dir'] . $this->getGroupId() .'/'. $this->getLatestVersion()->getSavedName();
+    }
+
     public function getUrl()
     {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";

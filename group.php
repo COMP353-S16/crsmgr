@@ -140,7 +140,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         <div class="tab-pane fade" id="files">
                             <h4>Files</h4>
 
-                            <table width="100%" border="0" class="table table-bordered" id="groupfiles">
+                            <table width="100%" border="0" class="table table-bordered table-hover" id="groupfiles">
                                 <thead>
                                 <tr>
 
@@ -400,7 +400,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
             dom: 'Bfrtip',
             select: {
                 style : "os",
-                selector: 'td:has(:checkbox)'
+                selector: ':checkbox'
             },
             buttons:[
                 {
@@ -460,9 +460,9 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
             ],
             columnDefs: [{
                 orderable: false,
-                targets:   4
+                targets:   6
             }],
-            'order': [[0, "asc"]],
+            'order': [[2, "asc"]],
             "rowCallback": function (nRow, aData)
             {
 
@@ -521,12 +521,12 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
          * when clicking on a row
          */
 
-        $(document).on('click', '#groupfiles  tbody tr td:not(:first-child)', function () {
+        $(document).on('click', '#groupfiles  tbody tr td:not(:last-child)', function () {
             var fileData = groupFiles.row(this).data();
 
             console.log(fileData);
-            
-            window.open(fileData.url)
+
+            window.open("view.php?fid=" + fileData.fid)
 
             // This is probably a window that the group leader would have open in order to change the file version... the rollback option
             /*
