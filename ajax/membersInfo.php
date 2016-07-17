@@ -5,8 +5,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 $gid = $_REQUEST['gid'];
 
 $pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT u.uid FROM Groups g, Users u, GroupMembers m
-                                WHERE g.gid=:gid AND g.gid = m.gid AND m.uid = u.uid");
+$query = $pdo->prepare("SELECT u.uid FROM Groups g, Users u, Students s
+                                WHERE g.gid=:gid AND g.gid = s.gid AND s.uid = u.uid");
 $query->bindValue(":gid", $gid);
 $query->execute();
 
