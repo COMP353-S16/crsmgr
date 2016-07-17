@@ -7,31 +7,36 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
  * Date: 7/14/2016
  * Time: 7:49 PM
  */
-$pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT f.fid FROM Files f WHERE f.did = :did AND f.gid = :gid");
 
-$query->bindValue(":did", 1);
-$query->bindValue(":gid", 1);
-$query->execute();
+$gid = 1;/// should be sent via ajax
+
+$GroupFiles = new GroupFiles($gid);
+$files = $GroupFiles->getFileIds();
 
 $info =array("data" => array());
 
 
-while($files = $query->fetch()) {
-
-    $DFile = new Files($files['fid']);
+foreach($files as $i => $fid) {
 
 
+    $Files = new Files($fid);
 
-    $info['data'][] = array(
-        "fid" => $files['fid'],
-        "filename" => $DFile->getFileName(),
-        "ldate" => $DFile->getLatestVersion()->getUploadDate(),
-        "deliverable" => $DFile->getDeliverableId(),
-        "revisions" => $DFile->getNumberOfRevisions(),
-        "size" => round($DFile->getSize(),3) . " KB"
+    if(!$GroupFiles->isDeleted($fid))
+    {
+        $info['data'][] = array(
+            "fid" => $Files->getId(),
+            "filename" => $Files->getFileName(),
+            "ldate" => $Files->getLatestVersion()->getUploadDate(),
+            "deliverable" => $Files->getDeliverableId(),
+            "revisions" => $Files->getNumberOfRevisions(),
+            "size" => round($Files->getSize(),2) . " KB",
+            "isDeleted" => $GroupFiles->isDeleted($fid),
+            "url" => $Files->getUrl()
 
-    );
+        );
+    }
+
+
 }
 
 echo json_encode($info);

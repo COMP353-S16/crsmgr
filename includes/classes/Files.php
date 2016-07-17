@@ -36,6 +36,10 @@ class Files
         $this->getFileVersions();
     }
 
+    public function getId()
+    {
+        return $this->_fid;
+    }
     /**
      * @return string returns tbe original file name
      */
@@ -84,7 +88,7 @@ class Files
 
     /**
      * @param $id
-     * @return Versions returns a Version object based on the version id given
+     * @return Version returns a Version object based on the version id given
      */
     public function getVersionById($id)
     {
@@ -114,11 +118,11 @@ class Files
     }
 
     /**
-     * @return Versions returns the earliest Version object
+     * @return Version returns the earliest Version object
      */
     public function getEarliestVersion()
     {
-        return new Version($this->_versions, $this->getEarliestVersion());
+        return new Version($this->_versions, $this->getEarliestVersionsId());
     }
 
 
@@ -135,7 +139,7 @@ class Files
     }
 
     /**
-     * @return Versions returns the latest Version object
+     * @return Version returns the latest Version object
      */
     public function getLatestVersion()
     {
@@ -160,5 +164,11 @@ class Files
     public function getNumberOfRevisions()
     {
         return count($this->_versions);
+    }
+
+    public function getUrl()
+    {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        return $protocol . $_SERVER['HTTP_HOST']. '/fileuploads/' .CoreConfig::settings()['uploads']['upload_dir'] . $this->getGroupId() .'/'. $this->getLatestVersion()->getSavedName();
     }
 }

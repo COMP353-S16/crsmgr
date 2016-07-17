@@ -10,7 +10,11 @@ else
 
     session_start();
     require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
-    $UploadHandler = new UploadHandler(1,1,1,1,$_FILES['fileUpload']);
+
+
+    $UploadHandler = new UploadHandler(1,1,1,$_FILES['fileUpload']);
+
+    
     $UploadHandler->setUploadDirectory(CoreConfig::settings()['uploads']['upload_dir']);
     $success = $UploadHandler->upload();
 

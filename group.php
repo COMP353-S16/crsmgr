@@ -91,6 +91,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         <li class="active"><a href="#members" data-toggle="tab">Members</a></li>
                         <li><a href="#deliverables" data-toggle="tab">Deliverables</a></li>
                         <li><a href="#files" data-toggle="tab">All Files</a></li>
+                        <li><a href="#deletedfiles" data-toggle="tab">Deleted Files</a></li>
                         <li><a href="#filesubmission" data-toggle="tab">File Submission</a> </li>
                     </ul>
 
@@ -164,6 +165,11 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                                 </tbody>
                             </table>
                         </div>
+                        <div class="tab-pan fade" id="deletedfiles">
+                            <h4>Deleted Files</h4>
+                            Below is a list of deleted files. Files may only be recovered within 24 hours of their deletion.
+                        </div>
+
                         <div class="tab-pane fade" id="filesubmission">
                             <h4>File Submission</h4>
 
@@ -214,7 +220,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     </div>
     <!-- /#page-wrapper -->
     <!-- MODAL WINDOWS -->
-    <div id="fileInfoModal">
+    <div id="fileInfoModal" style="display:none;">
         <div id="versionsContainer">
 
             <table width="100%" border="0" class="table table-bordered" id="versionsTable">
@@ -448,6 +454,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                     'render': function ( data, type, row )
                     {
                         return '<input type="checkbox" data-fid="'+row.fid+'" name="fid[]">';
+
                     }
                 }
             ],
@@ -458,8 +465,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
             'order': [[0, "asc"]],
             "rowCallback": function (nRow, aData)
             {
-                // when row is created
-                //console.log(aData);
+
             }
         });
 
@@ -519,6 +525,11 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
             var fileData = groupFiles.row(this).data();
 
             console.log(fileData);
+            
+            window.open(fileData.url)
+
+            // This is probably a window that the group leader would have open in order to change the file version... the rollback option
+            /*
 
             t = $('#versionsTable').DataTable({
 
@@ -562,6 +573,8 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 console.log(versionData);
 
             });
+
+            */
 
         });
 
