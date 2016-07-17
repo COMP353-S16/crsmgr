@@ -22,6 +22,9 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     <!-- MetisMenu CSS -->
     <link href="bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
+    <!-- DataTables CSS -->
+    <link href="bower_components/datatables/media/css/dataTables.bootstrap.min.css" rel="stylesheet">
+
     <!-- DataTables Buttons Extension -->
     <link href="bower_components/datatables/extensions/Buttons/css/buttons.dataTables.min.css" rel="stylesheet">
     <link href="bower_components/datatables/extensions/Buttons/css/buttons.bootstrap.min.css" rel="stylesheet">
@@ -36,7 +39,8 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     <!-- Custom Fonts -->
     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
-
+    <!-- jQuery UI -->
+    <link href="bower_components/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -45,6 +49,15 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    
+    <style>
+        /*fixes modal window issue */
+        .ui-widget-overlay {
+            position: fixed;
+            z-index:10000
+        }
+
+    </style>
 </head>
 
 <body>
@@ -126,9 +139,53 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         <div class="tab-pane fade" id="files">
                             <h4>Files</h4>
 
+                            <table width="100%" border="0" class="table table-bordered" id="groupfiles">
+                                <thead>
+                                <tr>
+
+                                    <th>ID</th>
+                                    <th>Deliverable ID</th>
+                                    <th>File Name</th>
+                                    <th>Latest Revision</th>
+                                    <th>Revisions</th>
+                                    <th>Size</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                         <div class="tab-pane fade" id="filesubmission">
                             <h4>File Submission</h4>
+
+                            <!-- File Uploader -->
+                            <form id="uploadForm">
+
+                                <label id="label-browser" class="btn btn-success btn-file">
+                                    Browse
+                                    <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
+                                </label>
+                                <button class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
+                                Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
+                                <p>
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+                                         aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
+                                </div>
+                                <div id="uploadResult"></div>
+                                </p>
+                            </form>
+
+                            <!-- /File Uploader -->
                         </div>
                     </div>
                 </div>
@@ -156,6 +213,27 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
         <!-- /.container-fluid -->
     </div>
     <!-- /#page-wrapper -->
+    <!-- MODAL WINDOWS -->
+    <div id="fileInfoModal">
+        <div id="versionsContainer">
+
+            <table width="100%" border="0" class="table table-bordered" id="versionsTable">
+                <thead>
+                <tr>
+
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Date</th>
+                    <th>Size</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="deleteEntriesContainer"><div id="deleteEntryContent"></div></div>
+
 
 </div>
 <!-- /#wrapper -->
@@ -172,6 +250,9 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 <!-- Custom Theme JavaScript -->
 <script src="dist/js/sb-admin-2.js"></script>
 
+<!-- File Uploader -->
+<script src="bower_components/fileuploader/liteuploader.js"></script>
+
 <!-- DataTables JavaScript -->
 <script src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
 <script src="bower_components/datatables/media/js/dataTables.bootstrap.min.js"></script>
@@ -180,6 +261,10 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 <script src="bower_components/datatables/extensions/Buttons/js/buttons.bootstrap.min.js"></script>
 <script src="bower_components/datatables/extensions/Select/js/dataTables.select.min.js"></script>
 <script src="bower_components/datatables/extensions/Buttons/js/buttons.flash.js"></script>
+<!-- jQuery UI -->
+
+<script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+
 
 <script>
 
@@ -193,7 +278,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 "url" : "ajax/membersInfo.php",
                 "type" : "POST",
                 "data" : {
-                    "gid" : <?php echo $Group->getGid(); ?>,
+                    "gid" : '<?php //echo $Group->getGid(); ?>',
 
                 }
             },
@@ -216,7 +301,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 "url" : "ajax/deliverablesInfo.php",
                 "type" : "POST",
                 "data" : {
-                    "cid" : <?php echo $_GET['cid']; ?>,
+                    "cid" : '<?php echo $_GET['cid']; ?>',
                 }
             },
             "columns": [
@@ -225,6 +310,262 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 {"data": "dueDate"}
             ]
         });
+
+    });
+
+
+    $(function () {
+        $("#fileUpload").liteUploader({
+            script: "fileuploads/",
+            params: {
+                gid: 1,  // group id
+                did: 1   // deliverable id
+            },
+            singleFileUploads: true,
+
+            rules: {
+                //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
+                maxSize: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))) * 1024 * 1024; ?>
+            }
+        }).on("lu:before", function (e, files) {
+
+            $('.progress-bar').attr('aria-valuenow', 0)
+                .width(0 + "%")
+                .text(0 + '%');
+            $('#uploadResult').html("");
+
+        }).on("lu:cancel", function (e) {
+
+            $('.progress-bar').attr('aria-valuenow', 0)
+                .removeClass('progress-bar-danger').addClass('progress-bar-success')
+                .width(0 + "%")
+                .text(0 + '%');
+
+            $('#progress').html(percentage + "%");
+
+        }).on("lu:success", function (e, response) {
+
+            $('#uploadResult').html(response);
+
+            // reset browse button
+            var e = $('#uploadForm');
+            e.wrap('<form>').closest('form').get(0).reset();
+            e.unwrap();
+
+            groupFiles.ajax.reload();
+
+        }).on("lu:progress", function (e, percentage) {
+
+            $('.progress-bar').attr('aria-valuenow', percentage)
+                .removeClass('progress-bar-danger').addClass('progress-bar-success')
+                .width(percentage + "%")
+                .text(percentage + '%');
+
+            $('#progress').html(percentage + "%");
+
+        }).on("lu:errors", function (e, errors) {
+            console.log(errors);
+
+            for (var i = 0; i < errors.length; i++) {
+                if (errors[i].type = "type") {
+                    console.log('Invalid file type');
+                }
+            }
+
+        }).change(function () {
+            $(this).data("liteUploader").startUpload();
+        });
+
+        $("#cancelUpload").click(function () {
+            $("#fileUpload").data("liteUploader").cancelUpload();
+        });
+
+
+
+
+
+
+
+        /* Group Files table */
+        groupFiles = $('#groupfiles').DataTable({
+            "processing": true,
+            "serverSide": false,
+            "displayLength": 25,
+            dom: 'Bfrtip',
+            select: {
+                style : "os",
+                selector: 'td:has(:checkbox)'
+            },
+            buttons:[
+                {
+                    "extend": "selectAll",
+                    "action": function ()
+                    {
+                        var rows = groupFiles.rows();
+                        for(var i = 0; i < rows.length; i++)
+                        {
+                            $(rows[i]).find(':checkbox').prop("checked", true);
+                        }
+
+                        groupFiles.rows().select();
+                    }
+                },
+                {
+                    "extend": "selectNone",
+                    "action": function ()
+                    {
+                        var rows = groupFiles.rows();
+                        for(var i = 0; i < rows.length; i++)
+                        {
+                            $(rows[i]).find(':checkbox').prop("checked", false);
+                        }
+                        groupFiles.rows().deselect();
+                    }
+                },
+                {
+                    "text" : "Delete",
+                    "action": deleteFiles
+                }
+
+            ],
+            "ajax": {
+                "url" : "ajax/groupFiles.php",
+                "type" : "POST",
+                "data" : {
+                    "gid" : 1,
+                    "did" : 1
+                }
+            },
+            "columns": [
+
+                {"data": "fid"},
+                {"data" : "deliverable"},
+                {"data": "filename"},
+                {"data": "ldate"},
+                {"data": "revisions"},
+                {"data" : "size"},
+                {
+                    'render': function ( data, type, row )
+                    {
+                        return '<input type="checkbox" data-fid="'+row.fid+'" name="fid[]">';
+                    }
+                }
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets:   4
+            }],
+            'order': [[0, "asc"]],
+            "rowCallback": function (nRow, aData)
+            {
+                // when row is created
+                //console.log(aData);
+            }
+        });
+
+
+        // delete files
+        function deleteFiles( e, dt, node, config )
+        {
+            // collect all fids
+            var ids = $.map(dt.rows('.selected').data(), function (item) {
+
+                return item;
+            });
+            if(ids.length == 0)
+            {
+                alert('nothing to delete!');
+                return false;
+            }
+            console.log(ids);
+
+            var msg = "Are you sure you wish to delete the following files?";
+            msg += "<ul>";
+            for (var i in ids) {
+                msg += "<li>" + ids[i].filename + " </li>";
+            }
+            msg += "</ul>";
+            msg += "Note that all versions associated with each file will also be delete.";
+
+            $('#deleteEntryContent').html(msg);
+            $('#deleteEntriesContainer').dialog({
+                open: function () {
+                    $('.ui-widget-overlay').hide().fadeIn();
+                },
+                close: function () {
+                },
+                show: 'fade',
+                hide: 'fade',
+                width: 420,
+                height: 300,
+                modal: true,
+                title: "Delete Files",
+                buttons: {
+                    "Cancel": function () {
+                        $(this).dialog('destroy');
+
+                    }
+                }
+            });
+
+        }
+
+
+        /**
+         * when clicking on a row
+         */
+
+        $(document).on('click', '#groupfiles  tbody tr td:not(:first-child)', function () {
+            var fileData = groupFiles.row(this).data();
+
+            console.log(fileData);
+
+            t = $('#versionsTable').DataTable({
+
+                "processing": true,
+                "destroy" : true,
+                "serverSide": false,
+                "displayLength": 25,
+                "ajax": {
+                    "url" : "ajax/fileVersions.php",
+                    "type" : "POST",
+                    "data" : {
+                        "fid" : fileData.fid
+                    }
+                },
+                "columns": [
+
+                    {"data": "vid"},
+                    {"data": "user"},
+                    {"data": "date"},
+                    {"data": "size"},
+
+                ],
+                'order': [[0, "dsc"]]
+            });
+
+            $("#fileInfoModal").dialog({
+                modal: true,
+                width: 600,
+                height: 600,
+                title: "File: " + fileData.filename,
+                show: "fade",
+                close: function (ev, ui) {
+
+                    t.destroy();
+                }
+            });
+
+
+            $(document).on('click', '#versionsTable  tbody tr', function () {
+                var versionData = t.row(this).data();
+                console.log(versionData);
+
+            });
+
+        });
+
+
 
     });
 </script>
