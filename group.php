@@ -105,7 +105,7 @@ $query->execute();
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="members">
                             <h4>Members</h4>
-                            <table width="100%" border="0" class="table" id="memberstable">
+                            <table width="100%" border="0" class="table table-bordered table-hover" id="memberstable">
                                 <thead>
                                 <tr>
                                     <th>Name</th>
@@ -127,7 +127,7 @@ $query->execute();
                         </div>
                         <div class="tab-pane fade" id="deliverables">
                             <h4>Deliverables</h4>
-                            <table width="100%" border="0" class="table" id="deliverablestable">
+                            <table width="100%" border="0" class="table table-bordered table-hover" id="deliverablestable">
                                 <thead>
                                 <tr>
                                     <th>Name</th>
@@ -322,7 +322,7 @@ $query->execute();
 
     $(function (){
 
-        /*
+
         members = $('#memberstable').dataTable({
             "processing": true,
             "serverSide": false,
@@ -341,12 +341,11 @@ $query->execute();
                 {"data": "email"}
             ]
         });
-        */
+
     });
 
     $(function (){
 
-        /*
         deliverables = $('#deliverablestable').dataTable({
             "processing": true,
             "serverSide": false,
@@ -365,7 +364,7 @@ $query->execute();
             ]
         });
 
-         */
+
     });
 
     $(function () {
