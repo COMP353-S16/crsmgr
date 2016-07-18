@@ -89,13 +89,14 @@ $query->execute();
             </div>
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-9">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#members" data-toggle="tab">Members</a></li>
-                        <li><a href="#deliverables" data-toggle="tab">Deliverables</a></li>
-                        <li><a href="#files" data-toggle="tab">All Files</a></li>
-                        <li><a href="#deletedfiles" data-toggle="tab">Deleted Files</a></li>
-                        <li><a href="#filesubmission" data-toggle="tab">File Submission</a> </li>
+                        <li class="active"><a href="#members" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a></li>
+                        <li><a href="#deliverables" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
+                        <li><a href="#files" data-toggle="tab">All Files <span class="glyphicon glyphicon-th-list"></span></a></li>
+
+                        <li><a href="#filesubmission" data-toggle="tab">File Submission <span class="glyphicon glyphicon-upload"></span></a> </li>
+                        <li><a href="#deletedfiles" data-toggle="tab">Deleted Files <span class="glyphicon glyphicon-trash"></span> </a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -147,11 +148,11 @@ $query->execute();
                                 <thead>
                                 <tr>
 
-                                    <th>ID</th>
+                                    <th>File ID</th>
                                     <th>Deliverable Name</th>
                                     <th>File Name</th>
                                     <th>Latest Revision</th>
-                                    <th>Number of Revisions</th>
+                                    <th>Revisions</th>
                                     <th>Size</th>
                                     <th></th>
                                 </tr>
@@ -210,7 +211,7 @@ $query->execute();
                                 <button class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
                                 Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
                                 <p>
-                                <div class="progress">
+                                <div class="progress" style="display: none;">
                                     <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
                                          aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
                                 </div>
@@ -233,7 +234,7 @@ $query->execute();
 
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             Group Info
@@ -276,7 +277,7 @@ $query->execute();
             </table>
         </div>
     </div>
-    <div id="deleteEntriesContainer"><div id="deleteEntryContent"></div></div>
+    <div id="deleteEntriesContainer" style="display: none;"><div id="deleteEntryContent"></div></div>
 
 
 </div>
@@ -314,6 +315,7 @@ $query->execute();
 
     $(function (){
 
+        /*
         members = $('#memberstable').dataTable({
             "processing": true,
             "serverSide": false,
@@ -332,11 +334,12 @@ $query->execute();
                 {"data": "email"}
             ]
         });
-
+        */
     });
 
     $(function (){
 
+        /*
         deliverables = $('#deliverablestable').dataTable({
             "processing": true,
             "serverSide": false,
@@ -345,7 +348,7 @@ $query->execute();
                 "url" : "ajax/deliverablesInfo.php",
                 "type" : "POST",
                 "data" : {
-                    "cid" : '<?php echo $_GET['cid']; ?>',
+                    "cid" : '<?php //echo $_GET['cid']; ?>',
                 }
             },
             "columns": [
@@ -355,6 +358,7 @@ $query->execute();
             ]
         });
 
+         */
     });
 
     $(function () {
@@ -375,10 +379,9 @@ $query->execute();
                 formData.append("did", $('#deliverableSelect').val() );
                 return Promise.resolve(formData);
             }
+        }).on("lu:start", function(e, files){
+            $('.progress').fadeIn();
         }).on("lu:before", function (e, files) {
-
-
-
 
             $('.progress-bar').attr('aria-valuenow', 0)
                 .width(0 + "%")
@@ -394,6 +397,8 @@ $query->execute();
                 .text(0 + '%');
 
             $('#progress').html(percentage + "%");
+
+
 
         }).on("lu:success", function (e, response) {
 
