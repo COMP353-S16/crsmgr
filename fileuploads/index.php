@@ -10,7 +10,11 @@ else
 
     session_start();
     require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
-    $UploadHandler = new UploadHandler(1,1,1,1,$_FILES['fileUpload']);
+
+
+    $UploadHandler = new UploadHandler(1, $_REQUEST['did'], 1, $_FILES['fileUpload']);
+
+    
     $UploadHandler->setUploadDirectory(CoreConfig::settings()['uploads']['upload_dir']);
     $success = $UploadHandler->upload();
 
@@ -45,7 +49,7 @@ else
 
         <div class="alert alert-success alert-dismissable">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            Uploaded file <?php echo $UploadHandler->getFile()->getBaseName().'.'.$UploadHandler->getFile()->getFileExtension();?> saved as <a href="<?php echo $_SERVER['REMOTE_HOST'] . '/fileuploads/' . $UploadHandler->getBuildDirectory() . $UploadHandler->getSavedAsName(); ?>"> <?php echo $UploadHandler->getSavedAsName();?></a>
+            Successfully uploaded file <?php echo $UploadHandler->getFile()->getBaseName().'.'.$UploadHandler->getFile()->getFileExtension();?>!
         </div>
         <?php
 

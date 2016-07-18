@@ -22,8 +22,7 @@ foreach($versions as $Version) {
         "vid" => $Version->getVersionId(),
         "user" => $Version->getUploaderId(),
         "date" => $Version->getUploadDate(),
-        "size" => $Version->getSize(),
-        "url" => $Version->getUrl()
+        "size" => $Version->getSize()
 
     );
 }
