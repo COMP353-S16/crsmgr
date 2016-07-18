@@ -279,8 +279,13 @@ $query->execute();
             </table>
         </div>
     </div>
-    <div id="deleteEntriesContainer" style="display: none;"><div id="deleteEntryContent"></div></div>
 
+    <div id="deleteEntriesContainer" style="display: none;"><div id="deleteEntryContent"></div>
+
+        <button id="confirmDelete" type="button" class="btn btn-danger btn-lg btn-block">Delete</button>
+    </div>
+
+    <div id="deleteProgress"></div>
 
 </div>
 <!-- /#wrapper -->
@@ -527,21 +532,23 @@ $query->execute();
         function deleteFiles( e, dt, node, config )
         {
             // collect all fids
-            var ids = $.map(dt.rows('.selected').data(), function (item) {
+            var ids = [];
+            var files = $.map(dt.rows('.selected').data(), function (item) {
 
                 return item;
             });
-            if(ids.length == 0)
+            if(files.length == 0)
             {
                 alert('nothing to delete!');
                 return false;
             }
-            console.log(ids);
+            console.log(files);
 
             var msg = "Are you sure you wish to delete the following files?";
             msg += "<ul>";
-            for (var i in ids) {
-                msg += "<li>" + ids[i].filename + " </li>";
+            for (var i in files) {
+                msg += "<li>" + files[i].filename + " </li>";
+                ids.push(files[i].fid);
             }
             msg += "</ul>";
             msg += "Note that all versions associated with each file will also be delete.";
@@ -551,22 +558,69 @@ $query->execute();
                 open: function () {
                     $('.ui-widget-overlay').hide().fadeIn();
                 },
-                close: function () {
+                close: function ()
+                {
+                    $(this).dialog("destroy");
                 },
                 show: 'fade',
                 hide: 'fade',
                 width: 420,
-                height: 300,
+                height: 500,
                 modal: true,
                 title: "Delete Files",
-                buttons: {
-                    "Cancel": function () {
-                        $(this).dialog('destroy');
+                close : function()
+                {
+                    // uncheck boxes
+                    $(":checkbox:checked").each(function(){
+                        $(this).prop("checked", false);
 
-                    }
+                    });
+                    // deselect rows
+                    groupFiles.rows().deselect();
+                },
+                buttons: {
+                    "Cancel": function ()
+                    {
+                        $(this).dialog('destroy')
+
+
+                    },
+
+
                 }
             });
 
+        }
+
+
+        function deleteSelectedFiles(ids)
+        {
+            $('#deleteEntriesContainer').dialog("close");
+            $('#deleteEntryContent').html("");
+
+            $('#deleteProgress').html("Deleting...please wait").dialog({
+                modal: true,
+                width: 300,
+                height: 200,
+                title: "Deleting...."
+            });
+
+
+            $.ajax({
+                url: 'ajax/deleteFiles.php',
+                data: {fids: ids},
+                type: 'POST',
+                error: function()
+                {
+
+                },
+                dataType: 'html',
+                success: function(data)
+                {
+                    $('#deleteProgress').html(data);
+                }
+
+            });
         }
 
 

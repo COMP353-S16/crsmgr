@@ -11,8 +11,18 @@ class DeleteFiles
 
     private $_fids;
 
-    public function __construct()
+    private $_uid;
+
+    private $_errors;
+
+    /**
+     * DeleteFiles constructor.
+     * @param $uid user id deleting files
+     */
+    public function __construct($uid, array $fids)
     {
+        $this->_uid = $uid;
+        $this->_fids = $fids;
     }
 
     public function setFiles(array $fids)
@@ -22,9 +32,33 @@ class DeleteFiles
 
     public function delete()
     {
-        foreach($this->_fids as $fid)
+        $pdo = Registry::getConnection();
+        try
         {
-            
+            $pdo->beginTransaction();
+
+            foreach($this->_fids as $fid)
+            {
+                $query = $pdo->prepare("INSERT INTO DeleteFiles (:fid, :uid, NOW(), NOW() + INTERVAL 1 DAY)");
+                $query->execute(array(
+                    ":fid" => $fid,
+                    ":uid" => $this->_uid
+                ));
+
+            }
+
+            return $pdo->commit();
         }
+        catch(Exception $e)
+        {
+            $this->_errors[] = $e->getCode();
+            $pdo->rollBack();
+        }
+        return false;
+    }
+
+    public function getErrors()
+    {
+        return $this->_errors;
     }
 }
