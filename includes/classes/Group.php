@@ -10,7 +10,7 @@ class Group
 {
     protected $_gid;
     protected $_leaderId;
-    protected $_cid;
+    protected $_sid;
     protected $_creatorId;
     protected $_gName;
     
@@ -27,7 +27,7 @@ class Group
         $query->execute();
         $group = $query->fetch();
         
-        $this->_cid = $group['cid'];
+        $this->_sid = $group['sid'];
         $this->_leaderId = $group['leaderId'];
         $this->_creatorId = $group['creatorId'];
         $this->_gName = $group['gName'];
@@ -44,9 +44,9 @@ class Group
     /**
      * @return mixed
      */
-    public function getCid()
+    public function getSid()
     {
-        return $this->_cid;
+        return $this->_sid;
     }
 
     /**
