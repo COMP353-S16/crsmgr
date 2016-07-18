@@ -21,13 +21,16 @@ foreach($files as $i => $fid) {
 
     $Files = new Files($fid);
 
+    $Deliverable = new Deliverable($Files->getDeliverableId());
+
+
     if(!$GroupFiles->isDeleted($fid))
     {
         $info['data'][] = array(
             "fid" => $Files->getId(),
             "filename" => $Files->getFileName() . '.' . $Files->getFileExtension(),
             "ldate" => $Files->getLatestVersion()->getUploadDate(),
-            "deliverable" => $Files->getDeliverableId(),
+            "deliverable" => $Deliverable->getDName(),
             "revisions" => $Files->getNumberOfRevisions(),
             "size" => round($Files->getSize(),2) . " KB",
             "isDeleted" => $GroupFiles->isDeleted($fid),

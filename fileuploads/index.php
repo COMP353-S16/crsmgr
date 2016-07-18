@@ -12,7 +12,9 @@ else
     require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
 
-    $UploadHandler = new UploadHandler(1,1,1,$_FILES['fileUpload']);
+    print_r($_REQUEST);
+
+    $UploadHandler = new UploadHandler(1, $_REQUEST['did'], 1, $_FILES['fileUpload']);
 
     
     $UploadHandler->setUploadDirectory(CoreConfig::settings()['uploads']['upload_dir']);

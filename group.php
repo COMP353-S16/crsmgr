@@ -1,6 +1,9 @@
 <?php
 session_start();
 require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
+$pdo = Registry::getConnection();
+$query = $pdo->prepare("SELECT did FROM Deliverables");
+$query->execute();
 ?>
 
 <!DOCTYPE html>
@@ -145,27 +148,19 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                                 <tr>
 
                                     <th>ID</th>
-                                    <th>Deliverable ID</th>
+                                    <th>Deliverable Name</th>
                                     <th>File Name</th>
                                     <th>Latest Revision</th>
-                                    <th>Revisions</th>
+                                    <th>Number of Revisions</th>
                                     <th>Size</th>
                                     <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-                                </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="tab-pan fade" id="deletedfiles">
+                        <div class="tab-pane fade" id="deletedfiles">
                             <h4>Deleted Files</h4>
                             Below is a list of deleted files. Files may only be recovered within 24 hours of their deletion.
                         </div>
@@ -173,13 +168,45 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                         <div class="tab-pane fade" id="filesubmission">
                             <h4>File Submission</h4>
 
+                            <?php
+                            if($query->rowCount()>0)
+                            {
+                            ?>
                             <!-- File Uploader -->
                             <form id="uploadForm">
+
+                                <div class="form-group">
+                                    <label for="sel1">Select Deliverable</label>
+                                    <select class="form-control" id="deliverableSelect">
+                                        <?php
+                                        while($del = $query->fetch())
+                                        {
+                                            $Deliverable = new Deliverable($del['did']);
+
+                                            $startDate = $Deliverable->getStartDate();
+
+                                            if(time() >= strtotime($startDate))
+                                            {
+
+
+                                                ?>
+                                                <option value="<?php echo $del['did']; ?>"><?php echo $Deliverable->getDName(); ?>
+                                                   - Due on <?php echo $Deliverable->getEndDate(); ?></option>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
 
                                 <label id="label-browser" class="btn btn-success btn-file">
                                     Browse
                                     <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
                                 </label>
+
+
+
+
                                 <button class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
                                 Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
                                 <p>
@@ -188,11 +215,22 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                                          aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
                                 </div>
                                 <div id="uploadResult"></div>
-                                </p>
-                            </form>
 
+                            </form>
                             <!-- /File Uploader -->
+
+                            <?php
+                            }
+                            else
+                            {
+                                ?>
+                                <p class="text-warning">There are no assigned deliverables.</p>
+                                <?php
+                            }
+                            ?>
+
                         </div>
+
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -319,26 +357,34 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
     });
 
-
     $(function () {
         $("#fileUpload").liteUploader({
             script: "fileuploads/",
             params: {
                 gid: 1,  // group id
-                did: 1   // deliverable id
             },
             singleFileUploads: true,
 
             rules: {
                 //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
                 maxSize: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))) * 1024 * 1024; ?>
+            },
+            beforeRequest : function(files, formData)
+            {
+
+                formData.append("did", $('#deliverableSelect').val() );
+                return Promise.resolve(formData);
             }
         }).on("lu:before", function (e, files) {
+
+
+
 
             $('.progress-bar').attr('aria-valuenow', 0)
                 .width(0 + "%")
                 .text(0 + '%');
             $('#uploadResult').html("");
+
 
         }).on("lu:cancel", function (e) {
 
