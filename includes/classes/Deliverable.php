@@ -22,7 +22,7 @@ class Deliverable
     
     private function fetchDeliverableInfo() {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Deliverables WHERE did=:did");
+        $query = $pdo->prepare("SELECT * FROM Deliverables WHERE did=:did LIMIT 1");
         $query->bindValue("did", $this->_did);
         $query->execute();
         $deliverable = $query->fetch();

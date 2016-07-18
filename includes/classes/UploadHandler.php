@@ -8,7 +8,7 @@
  */
 class UploadHandler
 {
-    private $_cid;
+
 
     private $_gid;
 
@@ -31,10 +31,18 @@ class UploadHandler
      */
     private $_File;
 
-    public function __construct($cid, $gid, $did, $uid,  $file)
+    /**
+     * UploadHandler constructor.
+
+     * @param $gid group id
+     * @param $did deliverable id
+     * @param $uid user id
+     * @param $file file
+     */
+    public function __construct($gid, $did, $uid,  $file)
     {
         $this->_gid = $gid;
-        $this->_cid = $cid;
+
         $this->_did = $did;
         $this->_uid = $uid;
 
@@ -49,7 +57,7 @@ class UploadHandler
     {
         if($dir!="")
             $this->_directory = $dir;
-        echo $this->_directory;
+
 
 
     }
@@ -129,7 +137,7 @@ class UploadHandler
 
     public function getBuildDirectory()
     {
-        return $this->_directory . $this->_cid . '/' . $this->_did . '/' . $this->_did . '/';  // Directory to upload file;
+        return $this->_directory . $this->_gid .  '/';  // Directory to upload file;
     }
 
     /**
