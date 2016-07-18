@@ -36,6 +36,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <!-- Custom Fonts -->
     <link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
+    <!-- jQuery UI -->
+    <link href="bower_components/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -43,6 +45,16 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+
+    <style>
+        /*fixes modal window issue */
+        .ui-widget-overlay {
+            position: fixed;
+            z-index:10000
+        }
+
+    </style>
 
 </head>
 
@@ -121,11 +133,22 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         </div>
         <!-- /#page-wrapper -->
 
+
+        <!-- MODAL WINDOWS -->
+        <div id="deleteGroupModal" style="display:none">
+            <button id="deleteConfirmButton" type="button" class="btn btn-danger">Delete</button>
+            <button id="deleteCancelButton" type="button" class="btn btn-default">Cancel</button>
+        </div>
+
     </div>
     <!-- /#wrapper -->
 
+
     <!-- jQuery -->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- jQuery UI -->
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+
 
     <!-- Bootstrap Core JavaScript -->
     <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
@@ -166,17 +189,43 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     {"data": "creatorId"},
                     {
                         'render': function (data, type, row) {
-                            return '<button data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-circle"><i class="fa fa-list"></i></button>&nbsp' +
-                                '<button title="Delete group" type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i> </button>';
+                            console.log(row);
+                            var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-circle"><i class="fa fa-list"></i></button>&nbsp';
+                            var deleteB = '<button  data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i> </button>';
+
+
+                            return edit + deleteB;
                         }
                     }
                 ]
             });
 
+            $(document).on('click', '#deleteConfirmButton', function () {
 
-            $(document).on('click', '#groupEdit', function(){
+            });
+
+            $(document).on('click', '#deleteCancelButton', function () {
+
+                $("#deleteGroupModal").dialog("destroy");
+            });
+<!-- TODO: change this to grab entire row instead of individual vars -->
+            $(document).on('click', '#groupDelete', function () {
                 var gid = $(this).data('gid');
-                console.log(gid);
+                var gName = $(this).data('gname');
+
+
+                console.log(gName);
+
+                $("#deleteGroupModal").dialog({
+                    modal: true,
+
+                    title: "Delete " + gName,
+                    show: "fade",
+                    close: function (ev, ui) {
+
+                    },
+
+                });
             });
 
 
