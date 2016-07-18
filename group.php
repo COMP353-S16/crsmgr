@@ -82,8 +82,11 @@ $query->execute();
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-
-                    <h1 class="page-header">Group ? ?</h1>
+                    <?php
+                    $gid = $_GET['gid'];
+                    $Group = new Group($gid);
+                    ?>
+                    <h1 class="page-header"><?php echo 'Group ' .$Group->getGName()?></h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -231,7 +234,6 @@ $query->execute();
                             ?>
 
                         </div>
-
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -241,10 +243,10 @@ $query->execute();
                         </div>
                         <div class="panel-body">
                             <ul>
-                                <li><?php //echo 'Group id: ' .$Group->getGid() ?></li>
-                                <li><?php //echo 'Group name: ' .$Group->getGName()?></li>
-                                <li><?php //$group_leader = new User($Group->getLeaderId());
-                                    //echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
+                                <li><?php echo 'Group id: ' .$Group->getGid() ?></li>
+                                <li><?php echo 'Group name: ' .$Group->getGName()?></li>
+                                <li><?php $group_leader = new User($Group->getLeaderId());
+                                    echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
                             </ul>
                         </div>
                     </div>
@@ -324,7 +326,7 @@ $query->execute();
                 "url" : "ajax/membersInfo.php",
                 "type" : "POST",
                 "data" : {
-                    "gid" : '<?php //echo $Group->getGid(); ?>',
+                    "gid" : <?php echo $Group->getGid(); ?>,
 
                 }
             },
@@ -348,7 +350,7 @@ $query->execute();
                 "url" : "ajax/deliverablesInfo.php",
                 "type" : "POST",
                 "data" : {
-                    "cid" : '<?php //echo $_GET['cid']; ?>',
+                    "gid" : <?php echo $Group->getGid(); ?>,
                 }
             },
             "columns": [

@@ -17,7 +17,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 <!-- /input-group -->
             </li>
             <li>
-                <a href="index.html"><i class="fa fa-home fa-fw"></i> Home</a>
+                <a href="home.php"><i class="fa fa-home fa-fw"></i> Home</a>
             </li>
 
             <li>

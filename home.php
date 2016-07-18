@@ -4,7 +4,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 
 <head>
 
@@ -53,6 +53,11 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
         <!-- Page Content -->
         <div id="page-wrapper">
+            <?php 
+            $User = new User($_SESSION['uid']);
+            $gid = $User->getGroupId();
+            $group = new Group($gid);
+            ?>
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
@@ -61,8 +66,21 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                     <!-- /.col-lg-12 -->
                 </div>
 
+                <div class="row">
+                    <div class="col-lg-5">
+                        <div class="well well-sm">
+                            <h3><?php echo 'Hello '.$User->getFirstName();?></h3>
+                            <blockquote>
+                                <p>Email: <?php echo $User->getEmail()?></p>
+                                <p>Group ID: <?php echo $gid?></p>
+                                <p>Group name: <?php echo $group->getGName()?></p>
+                            </blockquote>
+                            <div class="col-lg-10"></div>
+                            <button type="button" id="view" class="btn btn-primary">View Details</button>
+                        </div>
+                    </div>
+                </div>
 
-                <?php echo 'Hello, '.$_SESSION['username'] . ', with uid ' .$_SESSION['uid'];?>
                 <!-- /.row -->
             </div>
             <!-- /.container-fluid -->
@@ -84,6 +102,14 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
     <!-- Custom Theme JavaScript -->
     <script src="dist/js/sb-admin-2.js"></script>
 
+    <script>
+        $(function(){
+
+            $('#view').click(function(){
+                window.location.replace("group.php?gid=" + <?php echo $gid ?>);
+            });
+        });
+    </script>
 </body>
 
 </html>

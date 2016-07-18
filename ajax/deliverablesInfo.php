@@ -2,11 +2,12 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
-$cid = $_REQUEST['cid'];
+$gid = $_REQUEST['gid'];
 
 $pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT d.did FROM Deliverables d, Courses c WHERE c.cid=:cid AND c.cid=d.cid");
-$query->bindValue(":cid", $cid);
+$query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
+                        WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did");
+$query->bindValue(":gid", $gid);
 $query->execute();
 
 $info =array("data" => array());
