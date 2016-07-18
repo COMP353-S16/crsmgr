@@ -21,12 +21,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             </li>
 
             <li>
-                <a href="tables.html"><i class="fa fa-wrench fa-fw"></i>Admin</a>
-                <ul class="nav nav-second-level">
-                    <li>
-                        <a href="flot.html">Groups</a>
-                    </li>
-                </ul>
+                <a href="admin.php"><i class="fa fa-wrench fa-fw"></i>Admin</a>
             </li>
         </ul>
     </div>
