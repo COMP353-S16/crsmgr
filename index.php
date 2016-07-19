@@ -32,15 +32,35 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
+    <style>
+    body {
+        background: #2C3E50; /* fallback for old browsers */
+        background: -webkit-linear-gradient(to left, #2C3E50 , #4CA1AF); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to left, #2C3E50 , #4CA1AF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    }
+    .AppName {
+        position: absolute;
+        font-size: 72px;;
+        color: #FFF;
+        cursor: default;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    </style>
 </head>
-
 <body>
+
+<div class="AppName"><span id="name"><?php echo CoreConfig::settings()['appname']; ?></span>
+</div>
 
 <div class="container">
     <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <div class="login-panel panel panel-primary">
+        <div class="col-md-5 col-md-offset-3">
+            <div class="login-panel panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title">Please Sign In</h3>
                 </div>
@@ -63,7 +83,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 </label>
                             </div>
                             <!-- Change this to a button or input when using this as a form -->
-                            <button id="login" name="login" type="submit" class="btn btn-lg btn-primary btn-block">
+                            <button id="login" name="login" type="submit" class="btn btn-lg btn-info btn-block">
                                 Login
                             </button>
 
