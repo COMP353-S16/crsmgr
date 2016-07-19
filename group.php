@@ -59,6 +59,10 @@ $query->execute();
             position: fixed;
             z-index:10000
         }
+        .selectable {
+
+            cursor:pointer;
+        }
 
     </style>
 </head>
@@ -280,9 +284,13 @@ $query->execute();
         </div>
     </div>
 
-    <div id="deleteEntriesContainer" style="display: none;"><div id="deleteEntryContent"></div>
+    <div id="deleteEntriesContainer" style="display: none;">
 
-        <button id="confirmDelete" type="button" class="btn btn-danger btn-lg btn-block">Delete</button>
+
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><div id="deleteEntryContent"></div></p>
+
+
+
     </div>
 
     <div id="deleteProgress"></div>
@@ -522,7 +530,7 @@ $query->execute();
             'order': [[2, "asc"]],
             "rowCallback": function (nRow, aData)
             {
-
+                $(nRow).addClass('selectable');
             }
         });
 
@@ -554,12 +562,9 @@ $query->execute();
 
             $('#deleteEntryContent').html(msg);
             $('#deleteEntriesContainer').dialog({
-                open: function () {
-                    $('.ui-widget-overlay').hide().fadeIn();
-                },
-                close: function ()
+                open: function ()
                 {
-                    $(this).dialog("destroy");
+                    $('.ui-widget-overlay').hide().fadeIn();
                 },
                 show: 'fade',
                 hide: 'fade',
@@ -576,31 +581,36 @@ $query->execute();
                     });
                     // deselect rows
                     groupFiles.rows().deselect();
+
+                    $(this).dialog("destroy");
                 },
-                buttons: {
-                    "Cancel": function ()
+                buttons:
+                {
+                    "Delete Files" : function()
+                    {
+                        deleteGroupFiles(ids);
+                    },
+                    "Cancel": function()
                     {
                         $(this).dialog('destroy')
-
-
-                    },
-
-
+                    }
                 }
             });
 
         }
 
-
-        function deleteSelectedFiles(ids)
+        function deleteGroupFiles(ids)
         {
+
+
             $('#deleteEntriesContainer').dialog("close");
             $('#deleteEntryContent').html("");
 
-            $('#deleteProgress').html("Deleting...please wait").dialog({
+            $('#deleteProgress').html("Deleting files...please wait").dialog({
                 modal: true,
-                width: 300,
-                height: 200,
+                width: 250,
+                resizable: false,
+                height: 280,
                 title: "Deleting...."
             });
 
@@ -609,10 +619,6 @@ $query->execute();
                 url: 'ajax/deleteFiles.php',
                 data: {fids: ids},
                 type: 'POST',
-                error: function()
-                {
-
-                },
                 dataType: 'html',
                 success: function(data)
                 {
@@ -620,7 +626,7 @@ $query->execute();
                 }
 
             });
-        }
+        };
 
 
         /**
