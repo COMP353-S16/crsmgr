@@ -73,7 +73,7 @@ class Files
     }
 
     /**
-     *
+     * @return array returns an instantiated object of Version for all existing versions
      */
     public function getVersions()
     {
@@ -115,6 +115,26 @@ class Files
     public function getSize()
     {
         return $this->getLatestVersion()->getSize();
+    }
+
+
+    /**
+     * @return int returns the total size occupied by file and versions of file
+     */
+    public function getGlobalSize()
+    {
+        $size = 0;
+
+        $versions = $this->getVersions();
+        /**
+         * @var $Version Version
+        */
+        foreach($versions as $Version)
+        {
+            $size += $Version->getSize();
+        }
+
+        return $size;
     }
 
     /**

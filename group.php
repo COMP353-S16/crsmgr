@@ -171,6 +171,24 @@ $query->execute();
                         <div class="tab-pane fade" id="deletedfiles">
                             <h4>Deleted Files</h4>
                             Below is a list of deleted files. Files may only be recovered within 24 hours of their deletion.
+
+                            <table width="100%" border="0" class="table table-bordered table-hover" id="deletedFilesTable">
+                                <thead>
+                                <tr>
+
+                                    <th>File ID</th>
+                                    <th>Deliverable Name</th>
+                                    <th>File Name</th>
+                                    <th>Revisions</th>
+                                    <th>Size</th>
+                                    <th>Expires</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+
                         </div>
 
                         <div class="tab-pane fade" id="filesubmission">
@@ -285,12 +303,7 @@ $query->execute();
     </div>
 
     <div id="deleteEntriesContainer" style="display: none;">
-
-
         <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><div id="deleteEntryContent"></div></p>
-
-
-
     </div>
 
     <div id="deleteProgress"></div>
@@ -379,7 +392,7 @@ $query->execute();
         $("#fileUpload").liteUploader({
             script: "fileuploads/",
             params: {
-                gid: 1,  // group id
+                gid: "<?php echo $Group->getGid();?>",  // group id
             },
             singleFileUploads: true,
 
@@ -531,9 +544,85 @@ $query->execute();
             "rowCallback": function (nRow, aData)
             {
                 $(nRow).addClass('selectable');
-            }
+            },
         });
 
+
+        /* deleted files table */
+        deletedFilesTable = $('#deletedFilesTable').DataTable({
+            "processing": true,
+            "serverSide": false,
+            "displayLength": 25,
+            dom: 'Bfrtip',
+            select: {
+                style : "os",
+                selector: ':checkbox'
+            },
+            buttons:[
+                {
+                    "extend": "selectAll",
+                    "action": function ()
+                    {
+                        var rows = deletedFilesTable.rows();
+                        for(var i = 0; i < rows.length; i++)
+                        {
+                            $(rows[i]).find(':checkbox').prop("checked", true);
+                        }
+
+                        deletedFilesTable.rows().select();
+                    }
+                },
+                {
+                    "extend": "selectNone",
+                    "action": function ()
+                    {
+                        var rows = deletedFilesTable.rows();
+                        for(var i = 0; i < rows.length; i++)
+                        {
+                            $(rows[i]).find(':checkbox').prop("checked", false);
+                        }
+                        deletedFilesTable.rows().deselect();
+                    }
+                },
+                {
+                    "text" : "Recover",
+                    "action": function(){}
+                }
+
+            ],
+            "ajax": {
+                "url" : "ajax/deletedFilesList.php",
+                "type" : "POST",
+                "data" : {
+                    "gid" : "<?php echo $Group->getGid(); ?>"
+                }
+            },
+            "columns": [
+
+                {"data": "fid"},
+                {"data" : "deliverable"},
+                {"data": "filename"},
+                {"data": "revisions"},
+                {"data" : "size"},
+                {"data" : "expires"},
+
+                {
+                    'render': function ( data, type, row )
+                    {
+                        return '<input type="checkbox" data-fid="'+row.fid+'" name="fid[]">';
+
+                    }
+                }
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets:   6
+            }],
+            'order': [[2, "asc"]],
+            "rowCallback": function (nRow, aData)
+            {
+            }
+        });
 
         // delete files
         function deleteFiles( e, dt, node, config )

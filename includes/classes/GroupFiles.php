@@ -37,7 +37,7 @@ class GroupFiles
     private function getDeletedFiles()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT d.fid FROM DeletedFiles d LEFT JOIN Files f ON d.fid = f.fid WHERE f.gid=:gid");
+        $query = $pdo->prepare("SELECT * FROM DeletedFiles d LEFT JOIN Files f ON d.fid = f.fid WHERE f.gid=:gid");
         $query->execute(array(":gid" => $this->_gid));
         $this->_deletedFiles = $query->fetchAll();
     }
@@ -78,6 +78,9 @@ class GroupFiles
         }
         return false;
     }
+
+
+    
 
     public function getNumberOfFiles()
     {

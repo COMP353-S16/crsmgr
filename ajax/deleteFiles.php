@@ -22,21 +22,42 @@ if($DeleteFiles->delete())
     <script>
         $(function(){
 
+            // refresh both tables
+            groupFiles.ajax.reload();
+            deletedFilesTable.ajax.reload();
+            // add the close button
             $('#deleteProgress').dialog({
                 title : "Success!",
                 buttons : {
                     "Close" : function()
                     {
                         $(this).dialog("destroy");
-
                     }
                 }
             });
+
         });
     </script>
 <?php
 
 }
-else{
-    print_r($DeleteFiles->getErrors());
+else
+{
+    $errors = $DeleteFiles->getErrors();;
+    ?>
+
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <?php
+        $msg .= "<ul>";
+        foreach ($errors as $error)
+        {
+            $msg .= '<li>' . $error . '</li>';
+        }
+        $msg .= "</ul>";
+        echo $msg;
+        ?>
+    </div>
+<?php
+
 }
