@@ -18,33 +18,72 @@ class GroupFiles
     public function __construct($gid)
     {
         $this->_gid = $gid;
-        $this->extract();
-        $this->getDeletedFiles();
+        $this->extractFiles();
+        $this->extractDeletedFiles();
 
     }
 
 
-    private function extract()
+    private function extractFiles()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid = :gid");
+        $query = $pdo->prepare("SELECT * FROM Files WHERE gid = :gid");
         $query->bindValue(":gid", $this->_gid);
         $query->execute();
         $this->_files = $query->fetchAll();
 
     }
 
-    private function getDeletedFiles()
+    private function extractDeletedFiles()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT d.fid FROM DeletedFiles d LEFT JOIN Files f ON d.fid = f.fid WHERE f.gid=:gid");
+        $query = $pdo->prepare("SELECT * FROM DeletedFiles d LEFT JOIN Files f ON d.fid = f.fid WHERE f.gid=:gid");
         $query->execute(array(":gid" => $this->_gid));
         $this->_deletedFiles = $query->fetchAll();
     }
 
     public function getFileById($fid)
     {
-        return new Files($fid);
+        foreach($this->_files as $i => $file)
+        {
+
+            if($fid == $file['fid'])
+            {
+
+                return new Files($file);
+                break;
+            }
+        }
+
+
+    }
+
+
+    /**
+     * @param $fid file id
+     * @return DeletedFiles returns a DeletedFiles object based on fid
+     */
+    public function getDeletedFileById($fid)
+    {
+        foreach($this->_deletedFiles as $i => $fileData)
+        {
+            if($fileData['fid'] == $fid)
+            {
+                $DeletedFiles = new DeletedFiles($fileData);
+                return $DeletedFiles;
+            }
+        }
+    }
+
+
+    public function getFiles()
+    {
+        $files = array();
+        foreach($this->_files as $i => $file)
+        {
+            $files[] = new Files($file);
+        }
+        return $files;
     }
 
     public function getFileIds()
@@ -69,15 +108,47 @@ class GroupFiles
         return $fids;
     }
 
+    public function getDeletedFiles()
+    {
+        $files = array();
+        foreach($this->_deletedFiles as $i => $file)
+        {
+            $files[] = new DeletedFiles($file);
+        }
+        return $files;
+    }
+
     public function isDeleted($fid)
     {
-        foreach($this->_deletedFiles as $fileData)
+        foreach($this->_deletedFiles as $i => $fileData)
         {
             if($fileData['fid'] == $fid)
                 return true;
         }
         return false;
     }
+
+    public function getTotalDeletedFiles()
+    {
+        return count($this->getDeletedFileIds());
+    }
+
+    public function isPermanentDeleted($fid)
+    {
+
+        foreach($this->_deletedFiles as $i => $fileData)
+        {
+            if($fileData['fid'] == $fid)
+            {
+                $DeletedFiles = new DeletedFiles($fileData);
+                return $DeletedFiles->isExpired();
+            }
+        }
+        return false;
+    }
+
+
+    
 
     public function getNumberOfFiles()
     {
@@ -93,5 +164,25 @@ class GroupFiles
         $data = $query->fetch();
 
         return $data["TOTAL"];
+    }
+
+    public function getUsedBandwidth()
+    {
+        $b = 0;
+        $files = $this->getFiles();
+        /**
+         * @var $Files Files
+         */
+        foreach($files as $Files)
+        {
+            if(!$this->isPermanentDeleted($Files->getId()))
+            {
+                $b += $Files->getGlobalSize();
+            }
+
+
+        }
+
+        return $b;
     }
 }

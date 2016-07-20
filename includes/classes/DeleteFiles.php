@@ -39,7 +39,7 @@ class DeleteFiles
 
             foreach($this->_fids as $fid)
             {
-                $query = $pdo->prepare("INSERT INTO DeleteFiles (:fid, :uid, NOW(), NOW() + INTERVAL 1 DAY)");
+                $query = $pdo->prepare("INSERT INTO DeletedFiles VALUES (:fid, :uid, NOW(), NOW() + INTERVAL 1 DAY)");
                 $query->execute(array(
                     ":fid" => $fid,
                     ":uid" => $this->_uid
@@ -51,7 +51,7 @@ class DeleteFiles
         }
         catch(Exception $e)
         {
-            $this->_errors[] = $e->getCode();
+            $this->_errors[] = $e->getMessage();
             $pdo->rollBack();
         }
         return false;

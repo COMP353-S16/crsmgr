@@ -59,6 +59,10 @@ $query->execute();
             position: fixed;
             z-index:10000
         }
+        .selectable {
+
+            cursor:pointer;
+        }
 
     </style>
 </head>
@@ -85,7 +89,6 @@ $query->execute();
                     <?php
                     $gid = $_GET['gid'];
                     $Group = new Group($gid);
-                    $Group_Files = new GroupFiles($gid);
                     ?>
                     <h1 class="page-header"><?php echo 'Group ' .$Group->getGName()?></h1>
                 </div>
@@ -93,7 +96,7 @@ $query->execute();
             </div>
 
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#members" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a></li>
                         <li><a href="#deliverables" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
@@ -150,6 +153,7 @@ $query->execute();
 
                             <table width="100%" border="0" class="table table-bordered table-hover" id="groupfiles">
                                 <thead>
+
                                 <tr>
 
                                     <th>File ID</th>
@@ -161,6 +165,12 @@ $query->execute();
                                     <th></th>
                                 </tr>
                                 </thead>
+                                <tfoot>
+                                <tr>
+                                    <th colspan="5" style="text-align:right">Approximate total:</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                                </tfoot>
                                 <tbody>
                                 </tbody>
                             </table>
@@ -168,6 +178,24 @@ $query->execute();
                         <div class="tab-pane fade" id="deletedfiles">
                             <h4>Deleted Files</h4>
                             Below is a list of deleted files. Files may only be recovered within 24 hours of their deletion.
+
+                            <table width="100%" border="0" class="table table-bordered table-hover" id="deletedFilesTable">
+                                <thead>
+                                <tr>
+
+                                    <th>File ID</th>
+                                    <th>Deliverable Name</th>
+                                    <th>File Name</th>
+                                    <th>Revisions</th>
+                                    <th>Size</th>
+                                    <th>Expires</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+
                         </div>
 
                         <div class="tab-pane fade" id="filesubmission">
@@ -237,7 +265,7 @@ $query->execute();
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="panel panel-info">
                         <div class="panel-heading">
                             Group Info
@@ -249,7 +277,24 @@ $query->execute();
                                 <li><?php $group_leader = new User($Group->getLeaderId());
                                     echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
                                 <li><?php echo 'Number of uploaded files: ' .$Group_Files->getNbOfUploadedFiles()?></li>
-
+                                
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Group Files
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li>Bandwidth: <span id="bandwidth">-</span> </li>
+                                <li>Total Files: <span id="totalFiles">-</span> </li>
+                                <li>Deleted Files: <span id="totalDeletedFiles">-</span> </li>
+                                <li>Used Bandwidth: <span id="usedBandwidth">-</span> </li>
+                                <li>Number of Downloads: <span id="downloads">-</span> </li>
+                                <li>Number of Revisions: <span id="revisions">-</span> </li>
                             </ul>
                         </div>
                     </div>
@@ -283,12 +328,13 @@ $query->execute();
         </div>
     </div>
 
-    <div id="deleteEntriesContainer" style="display: none;"><div id="deleteEntryContent"></div>
-
-        <button id="confirmDelete" type="button" class="btn btn-danger btn-lg btn-block">Delete</button>
+    <div id="deleteEntriesContainer" style="display: none;">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><div id="deleteEntryContent"></div></p>
     </div>
 
     <div id="deleteProgress"></div>
+    
+    <div id="recoverFilesContainer" style="display: none;"></div>
 
 </div>
 <!-- /#wrapper -->
@@ -334,7 +380,7 @@ $query->execute();
                 "url" : "ajax/membersInfo.php",
                 "type" : "POST",
                 "data" : {
-                    "gid" : <?php echo $Group->getGid(); ?>,
+                    "gid" : '<?php echo $Group->getGid(); ?>',
 
                 }
             },
@@ -345,9 +391,6 @@ $query->execute();
             ]
         });
 
-    });
-
-    $(function (){
 
         deliverables = $('#deliverablestable').dataTable({
             "processing": true,
@@ -357,7 +400,7 @@ $query->execute();
                 "url" : "ajax/deliverablesInfo.php",
                 "type" : "POST",
                 "data" : {
-                    "gid" : <?php echo $Group->getGid(); ?>,
+                    "gid" : '<?php echo $Group->getGid(); ?>',
                 }
             },
             "columns": [
@@ -368,13 +411,12 @@ $query->execute();
         });
 
 
-    });
 
-    $(function () {
+
         $("#fileUpload").liteUploader({
             script: "fileuploads/",
             params: {
-                gid: 1,  // group id
+                gid: "<?php echo $Group->getGid();?>",  // group id
             },
             singleFileUploads: true,
 
@@ -452,11 +494,14 @@ $query->execute();
 
 
 
+
+
+
         /* Group Files table */
         groupFiles = $('#groupfiles').DataTable({
             "processing": true,
             "serverSide": false,
-            "displayLength": 25,
+            "displayLength": 10,
             dom: 'Bfrtip',
             select: {
                 style : "os",
@@ -525,10 +570,124 @@ $query->execute();
             'order': [[2, "asc"]],
             "rowCallback": function (nRow, aData)
             {
+                $(nRow).addClass('selectable');
+            },
+            "footerCallback": function ( row, data, start, end, display ) {
+                var api = this.api(), data;
+                // Remove the formatting to get integer data for summation
+                var intVal = function ( i ) {
+                    return typeof i === 'string' ?
+                    i.replace(/[\{\sKB},]/g, '')*1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+                // Total over all pages
+                total = api.column(5).data().reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    },0);
+
+                console.log(total);
+                // Total over this page
+                pageTotal = api.column( 5, { page: 'current'} ).data().reduce( function (a, b) {
+                        return intVal(a) + intVal(b);
+                    },0);
+
+                // Update footer
+
+                // convert to megabytes after 1024 KB
+                if(pageTotal>1024)
+                    pageTotal /= 1024;
+                if(total > 1024)
+                    total /= 1024;
+
+                // display
+                $(api.column(5).footer()).html(pageTotal.toFixed(2) +' of  '+ total.toFixed(2) +' MB');
+            },
+            "drawCallback" : function(settings)
+            {
 
             }
         });
 
+        // get files summary
+        loadFileSummary();
+
+
+        /* deleted files table */
+        deletedFilesTable = $('#deletedFilesTable').DataTable({
+            "processing": true,
+            "serverSide": false,
+            "displayLength": 25,
+            dom: 'Bfrtip',
+            select: {
+                style : "os",
+                selector: ':checkbox'
+            },
+            buttons:[
+                {
+                    "extend": "selectAll",
+                    "action": function ()
+                    {
+                        var rows = deletedFilesTable.rows();
+                        for(var i = 0; i < rows.length; i++)
+                        {
+                            $(rows[i]).find(':checkbox').prop("checked", true);
+                        }
+
+                        deletedFilesTable.rows().select();
+                    }
+                },
+                {
+                    "extend": "selectNone",
+                    "action": function ()
+                    {
+                        var rows = deletedFilesTable.rows();
+                        for(var i = 0; i < rows.length; i++)
+                        {
+                            $(rows[i]).find(':checkbox').prop("checked", false);
+                        }
+                        deletedFilesTable.rows().deselect();
+                    }
+                },
+                {
+                    "text" : "Recover",
+                    "action": recoverFiles
+                }
+
+            ],
+            "ajax": {
+                "url" : "ajax/deletedFilesList.php",
+                "type" : "POST",
+                "data" : {
+                    "gid" : "<?php echo $Group->getGid(); ?>"
+                }
+            },
+            "columns": [
+
+                {"data": "fid"},
+                {"data" : "deliverable"},
+                {"data": "filename"},
+                {"data": "revisions"},
+                {"data" : "size"},
+                {"data" : "expires"},
+
+                {
+                    'render': function ( data, type, row )
+                    {
+                        return '<input type="checkbox" data-fid="'+row.fid+'" name="fid[]">';
+
+                    }
+                }
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets:   6
+            }],
+            'order': [[2, "asc"]],
+            "rowCallback": function (nRow, aData)
+            {
+            }
+        });
 
         // delete files
         function deleteFiles( e, dt, node, config )
@@ -557,12 +716,9 @@ $query->execute();
 
             $('#deleteEntryContent').html(msg);
             $('#deleteEntriesContainer').dialog({
-                open: function () {
-                    $('.ui-widget-overlay').hide().fadeIn();
-                },
-                close: function ()
+                open: function ()
                 {
-                    $(this).dialog("destroy");
+                    $('.ui-widget-overlay').hide().fadeIn();
                 },
                 show: 'fade',
                 hide: 'fade',
@@ -579,32 +735,37 @@ $query->execute();
                     });
                     // deselect rows
                     groupFiles.rows().deselect();
+
+                    $(this).dialog("destroy");
                 },
-                buttons: {
-                    "Cancel": function ()
+                buttons:
+                {
+                    "Delete Files" : function()
+                    {
+                        deleteGroupFiles(ids);
+                    },
+                    "Cancel": function()
                     {
                         $(this).dialog('destroy')
-
-
-                    },
-
-
+                    }
                 }
             });
 
         }
 
-
-        function deleteSelectedFiles(ids)
+        function deleteGroupFiles(ids)
         {
+
+
             $('#deleteEntriesContainer').dialog("close");
             $('#deleteEntryContent').html("");
 
-            $('#deleteProgress').html("Deleting...please wait").dialog({
+            $('#deleteProgress').html("Deleting files...please wait").dialog({
                 modal: true,
                 width: 300,
-                height: 200,
-                title: "Deleting...."
+                resizable: false,
+                height: 230,
+                title: "File Deletion"
             });
 
 
@@ -612,18 +773,63 @@ $query->execute();
                 url: 'ajax/deleteFiles.php',
                 data: {fids: ids},
                 type: 'POST',
-                error: function()
-                {
-
-                },
                 dataType: 'html',
                 success: function(data)
                 {
                     $('#deleteProgress').html(data);
+                },
+                error: function()
+                {
+                    $('#deleteProgress').html("There was an error.");
+                }
+
+            });
+        };
+
+
+        function recoverFiles()
+        {
+            // collect all fids
+            var ids = [];
+            var files = $.map(deletedFilesTable.rows('.selected').data(), function (item) {
+
+                return item;
+            });
+            if(files.length == 0)
+            {
+                return false;
+            }
+
+            for (var i in files)
+            {
+                ids.push(files[i].fid);
+            }
+
+            $('#recoverFilesContainer').html("Recovering files, please wait...").dialog({
+                modal: true,
+                width: 300,
+                resizable: false,
+                height: 230,
+                title: "File Recovery"
+            });
+
+            $.ajax({
+                url: 'ajax/recoverFiles.php',
+                data: {fids: ids},
+                type: 'POST',
+                dataType: 'html',
+                success: function(data)
+                {
+                    $('#recoverFilesContainer').html(data);
+                },
+                error: function()
+                {
+                    $('#recoverFilesContainer').html("There was an error");
                 }
 
             });
         }
+
 
 
         /**
@@ -632,64 +838,33 @@ $query->execute();
 
         $(document).on('click', '#groupfiles  tbody tr td:not(:last-child)', function () {
             var fileData = groupFiles.row(this).data();
-
             console.log(fileData);
-
             window.open("view.php?fid=" + fileData.fid)
-
-            // This is probably a window that the group leader would have open in order to change the file version... the rollback option
-            /*
-
-            t = $('#versionsTable').DataTable({
-
-                "processing": true,
-                "destroy" : true,
-                "serverSide": false,
-                "displayLength": 25,
-                "ajax": {
-                    "url" : "ajax/fileVersions.php",
-                    "type" : "POST",
-                    "data" : {
-                        "fid" : fileData.fid
-                    }
-                },
-                "columns": [
-
-                    {"data": "vid"},
-                    {"data": "user"},
-                    {"data": "date"},
-                    {"data": "size"},
-
-                ],
-                'order': [[0, "dsc"]]
-            });
-
-            $("#fileInfoModal").dialog({
-                modal: true,
-                width: 600,
-                height: 600,
-                title: "File: " + fileData.filename,
-                show: "fade",
-                close: function (ev, ui) {
-
-                    t.destroy();
-                }
-            });
-
-
-            $(document).on('click', '#versionsTable  tbody tr', function () {
-                var versionData = t.row(this).data();
-                console.log(versionData);
-
-            });
-
-            */
-
+            
         });
-
-
-
+        
     });
+
+    // must be put here to be used globally
+    function loadFileSummary() {
+
+        $.ajax({
+            data: {
+                gid : "<?php echo $Group->getGid(); ?>"
+            },
+            url: "ajax/filesSummary.php",
+            dataType: "json",
+            success: function (data)
+            {
+                $('#downloads').text(data.downloads);
+                $('#totalFiles').text(data.totalFiles);
+                $('#revisions').text(data.revisions);
+                $('#bandwidth').text(data.bandwidth);
+                $('#usedBandwidth').text(data.usedBandwidth);
+                $('#totalDeletedFiles').text(data.totalDeletedFiles);
+            }
+        });
+    }
 </script>
 
 </body>
