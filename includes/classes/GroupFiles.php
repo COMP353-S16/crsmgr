@@ -156,14 +156,16 @@ class GroupFiles
     }
     
     public function getNbOfUploadedFiles() {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT COUNT(*) AS TOTAL FROM Versions v, Groups g, Students s
-                                WHERE g.gid=:gid AND s.gid = g.gid AND v.uploaderId = s.uid");
-        $query->bindValue(":gid", $this->_gid);
-        $query->execute();
-        $data = $query->fetch();
+        $total = 0;
+        $files = $this->getFiles();
+        /**
+         * @var $Files Files
+         */
+        foreach ($files as $Files) {
+            $total += $Files->getNbOfVersions();
+        }
 
-        return $data["TOTAL"];
+        return $total;
     }
 
     public function getUsedBandwidth()

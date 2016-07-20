@@ -276,7 +276,6 @@ $query->execute();
                                 <li><?php echo 'Group name: ' .$Group->getGName()?></li>
                                 <li><?php $group_leader = new User($Group->getLeaderId());
                                     echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
-                                <li><?php echo 'Number of uploaded files: ' .$Group_Files->getNbOfUploadedFiles()?></li>
                                 
                             </ul>
                         </div>
@@ -295,6 +294,7 @@ $query->execute();
                                 <li>Used Bandwidth: <span id="usedBandwidth">-</span> </li>
                                 <li>Number of Downloads: <span id="downloads">-</span> </li>
                                 <li>Number of Revisions: <span id="revisions">-</span> </li>
+                                <li>Number of Uploaded Files: <span id="uploadedFiles">-</span> </li>
                             </ul>
                         </div>
                     </div>
@@ -862,6 +862,7 @@ $query->execute();
                 $('#bandwidth').text(data.bandwidth);
                 $('#usedBandwidth').text(data.usedBandwidth);
                 $('#totalDeletedFiles').text(data.totalDeletedFiles);
+                $('#uploadedFiles').text(data.uploads);
             }
         });
     }

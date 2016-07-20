@@ -90,6 +90,10 @@ class Files
         return $a;
     }
 
+    public function getNbOfVersions() {
+        return count($this->_versions);
+    }
+
     /**
      * @param $id
      * @return Version returns a Version object based on the version id given
