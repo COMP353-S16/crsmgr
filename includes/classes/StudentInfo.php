@@ -6,23 +6,19 @@
  * Date: 7/18/2016
  * Time: 7:11 PM
  */
-class UserInfo
+class StudentInfo extends Student
 {
-    /**
-     * @var User
-     **/
-    protected $_User;
     protected $_nb_files_uploaded;
 
-    public function __construct($user)
+    public function __construct($uid)
     {
-        $this->_User = $user;
+        parent::__construct($uid);
     }
 
     public function getNbOfFilesUploaded() {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT COUNT(*) AS TOTAL FROM Versions WHERE uploaderId=:uid");
-        $query->bindValue(":uid", $this->_User->getUid());
+        $query->bindValue(":uid", $this->_uid);
         $query->execute();
         $data = $query->fetch();
 
@@ -32,7 +28,7 @@ class UserInfo
     public function getNbOfFilesDownloaded() {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT COUNT(*) AS TOTAL FROM Downloads WHERE uid=:uid");
-        $query->bindValue(":uid", $this->_User->getUid());
+        $query->bindValue(":uid", $this->_uid);
         $query->execute();
         $data = $query->fetch();
 
@@ -43,7 +39,7 @@ class UserInfo
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT f.*, v.uploadDate FROM Versions v LEFT JOIN Files f ON f.fid = v.fid 
                                 WHERE uploaderId=:uid ORDER BY v.fid DESC LIMIT 1");
-        $query->bindValue(":uid", $this->_User->getUid());
+        $query->bindValue(":uid", $this->_uid);
         $query->execute();
         $data = $query->fetch();
 

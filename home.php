@@ -54,10 +54,11 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
         <!-- Page Content -->
         <div id="page-wrapper">
             <?php 
-            $User = new User($_SESSION['uid']);
+            $User = new Student($_SESSION['uid']);
             $gid = $User->getGroupId();
             $group = new Group($gid);
-            $User_info = new UserInfo($User);
+            $User_info = new StudentInfo($_SESSION['uid']);
+
             ?>
             <div class="container-fluid">
                 <div class="row">
@@ -68,7 +69,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-5">
+                    <div class="col-lg-7">
                         <div class="well well-sm">
                             <h3><?php echo 'Hello '.$User->getFirstName();?></h3>
                             <blockquote>
@@ -79,7 +80,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                                 <p>Number of files downloaded: <?php echo $User_info->getNbOfFilesDownloaded()?></p>
                                 <p>Last uploaded file: <?php echo $User_info->getLastUploadedFile()?></p>
                             </blockquote>
-                            <div class="col-lg-10"></div>
+                            <div class="col-md-10"></div>
                             <button type="button" id="view" class="btn btn-primary">View Group</button>
                         </div>
                     </div>
