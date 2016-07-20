@@ -1,30 +1,24 @@
 <?php
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
-/**
- * Created by PhpStorm.
- * User: Dimitri
- * Date: 7/14/2016
- * Time: 7:49 PM
- */
 
-$gid = 1;/// should be sent via ajax
+$gid = $_REQUEST['gid'];/// should be sent via ajax
 
 $GroupFiles = new GroupFiles($gid);
-$files = $GroupFiles->getFileIds();
+$files = $GroupFiles->getFiles();
 
 $info =array("data" => array());
+/**
+ * @var $Files Files
+ */
+foreach($files as $i => $Files)
+{
 
-
-foreach($files as $i => $fid) {
-
-
-    $Files = new Files($fid);
 
     $Deliverable = new Deliverable($Files->getDeliverableId());
 
 
-    if(!$GroupFiles->isDeleted($fid))
+    if(!$GroupFiles->isDeleted($Files->getId()))
     {
         $info['data'][] = array(
             "fid" => $Files->getId(),
@@ -33,7 +27,7 @@ foreach($files as $i => $fid) {
             "deliverable" => $Deliverable->getDName(),
             "revisions" => $Files->getNumberOfRevisions(),
             "size" => round($Files->getSize(),2) . " KB",
-            "isDeleted" => $GroupFiles->isDeleted($fid),
+            "isDeleted" => $GroupFiles->isDeleted($Files->getId()),
             "url" => $Files->getUrl()
 
         );

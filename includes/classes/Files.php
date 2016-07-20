@@ -2,43 +2,47 @@
 
 /**
  * Created by PhpStorm.
- * User: Server
- * Date: 7/15/2016
- * Time: 1:14 PM
+ * User: Dimitri
+ * Date: 7/19/2016
+ * Time: 7:29 PM
  */
 class Files
 {
-
     private $_fid;
 
     private $_file;
 
     private $_versions;
 
+
     /**
-     * DFile constructor.
-     * @param $fid File ID
+     * FFiles constructor.
+     * @param $file
      */
-    public function __construct($fid)
+    public function __construct($file)
     {
-
-        $this->_fid = $fid;
-        $this->extract();
-    }
-
-    private function extract()
-    {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Files WHERE fid = :fid LIMIT 1");
-        $query->execute(array(":fid" => $this->_fid));
-        $this->_file = $query->fetch();
+        $this->_file = $file;
+        $this->_fid = $this->_file['fid'];
 
         $this->getFileVersions();
     }
 
+
+    /**
+     * extracts all related versions to file
+     */
+    private function getFileVersions()
+    {
+        $pdo = Registry::getConnection();
+        $query = $pdo->prepare("SELECT * FROM Versions WHERE fid = :fid");
+        $query->execute(array(":fid" => $this->_fid));
+        $this->_versions = $query->fetchAll();
+
+    }
+
     public function getId()
     {
-        return $this->_fid;
+        return $this->_file['fid'];
     }
     /**
      * @return string returns tbe original file name
@@ -98,7 +102,7 @@ class Files
     /**
      * @return int returns the earliest version id (first) ever uploaded
      */
-    public function getEarliestVersionsId()
+    public function getEarliestVersionId()
     {
         $vids = array();
         foreach($this->_versions as $i => $d)
@@ -128,7 +132,7 @@ class Files
         $versions = $this->getVersions();
         /**
          * @var $Version Version
-        */
+         */
         foreach($versions as $Version)
         {
             $size += $Version->getSize();
@@ -142,13 +146,13 @@ class Files
      */
     public function getEarliestVersion()
     {
-        return new Version($this->_versions, $this->getEarliestVersionsId());
+        return new Version($this->_versions, $this->getEarliestVersionId());
     }
 
 
     public function getLatestVersionId()
     {
-        
+
         $vids = array();
         foreach($this->_versions as $i => $d)
         {
@@ -166,17 +170,6 @@ class Files
         return new Version($this->_versions, $this->getLatestVersionId());
     }
 
-    /**
-     * extracts all related versions to file
-     */
-    private function getFileVersions()
-    {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Versions WHERE fid = :fid");
-        $query->execute(array(":fid" => $this->_fid));
-        $this->_versions = $query->fetchAll();
-
-    }
 
     /**
      * @return int returns the number of existing revisions
@@ -188,7 +181,7 @@ class Files
 
     public function getBaseUrl()
     {
-       return $_SERVER['DOCUMENT_ROOT']. '/fileuploads/' .CoreConfig::settings()['uploads']['upload_dir'] . $this->getGroupId() .'/'. $this->getLatestVersion()->getSavedName();
+        return $_SERVER['DOCUMENT_ROOT']. '/fileuploads/' .CoreConfig::settings()['uploads']['upload_dir'] . $this->getGroupId() .'/'. $this->getLatestVersion()->getSavedName();
     }
 
     public function getUrl()

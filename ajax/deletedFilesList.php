@@ -4,28 +4,36 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 $gid = $_REQUEST['gid'];
 
-$pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT del.fid FROM DeletedFiles del, Files f, Groups gr WHERE del.fid = f.fid AND gr.gid = :gid AND del.expiresOn >= NOW()");
-$query->bindValue(":gid", $gid);
-$query->execute();
+$GroupFiles = new GroupFiles($gid);
+$files = $GroupFiles->getFiles();
 
 $info =array("data" => array());
-while($data = $query->fetch()) {
+/**
+ * @var $Files Files
+ */
+foreach($files as $i => $Files)
+{
 
-    $Files = new Files($data['fid']);
-    $Deliverable = new Deliverable($Files->getDeliverableId());
+    $fid = $Files->getId();
+    /**
+     * @var $DeletedFiles DeletedFiles
+     */
+    $DeletedFiles = $GroupFiles->getDeletedFileById($fid);
+    if($GroupFiles->isDeleted($fid) && !$DeletedFiles->isExpired())
+    {
+        $Deliverable = new Deliverable($Files->getDeliverableId());
 
-    $DeletedFiles = new DeletedFiles($data['fid']);
 
-    $info['data'][] = array(
-        "fid" => $Files->getId(),
-        "filename" => $Files->getFileName() . '.' . $Files->getFileExtension(),
-        "deliverable" => $Deliverable->getDName(),
-        "revisions" => $Files->getNumberOfRevisions(),
-        "size" => round($Files->getSize(),2) . " KB",
-        "expires" => date_format(date_create($DeletedFiles->getExpiryDate()), 'M d, Y at H:i:s')
+        $info['data'][] = array(
+            "fid" => $Files->getId(),
+            "filename" => $Files->getFileName() . '.' . $Files->getFileExtension(),
+            "deliverable" => $Deliverable->getDName(),
+            "revisions" => $Files->getNumberOfRevisions(),
+            "size" => round($Files->getSize(), 2) . " KB",
+            "expires" => date_format(date_create($DeletedFiles->getExpiryDate()), 'M d, Y at H:i:s')
 
-    );
+        );
+    }
     
 }
 

@@ -8,24 +8,13 @@
  */
 class DeletedFiles
 {
-
-    private $_fid;
-
+    
     private $_data;
 
-    public function __construct($fid)
+    public function __construct($data)
     {
-        $this->_fid = $fid;
-        $this->extract();
-    }
+        $this->_data = $data;
 
-    private function extract()
-    {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM DeletedFiles WHERE fid=:fid LIMIT 1");
-        $query->bindValue(":fid", $this->_fid);
-        $query->execute();
-        $this->_data = $query->fetch();
     }
 
     public function getDateDeleted()
