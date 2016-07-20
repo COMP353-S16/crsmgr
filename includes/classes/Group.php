@@ -13,6 +13,7 @@ class Group
     protected $_sid;
     protected $_creatorId;
     protected $_gName;
+    protected $_maxSize;
     
     public function __construct($gid)
     {
@@ -31,6 +32,7 @@ class Group
         $this->_leaderId = $group['leaderId'];
         $this->_creatorId = $group['creatorId'];
         $this->_gName = $group['gName'];
+        $this->_maxSize = $group['maxUploadsSize'];
     }
 
     /**
@@ -71,5 +73,13 @@ class Group
     public function getLeaderId()
     {
         return $this->_leaderId;
+    }
+
+    /**
+     * @return float returns maximum size of all files for group
+     */
+    public function getMaxUploadSize()
+    {
+        return $this->_maxSize;
     }
 }

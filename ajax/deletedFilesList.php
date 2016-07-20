@@ -2,7 +2,7 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
-$gid = $_REQUEST['gid'];/// should be sent via ajax
+$gid = $_REQUEST['gid'];
 
 $GroupFiles = new GroupFiles($gid);
 $files = $GroupFiles->getFiles();
@@ -14,26 +14,27 @@ $info =array("data" => array());
 foreach($files as $i => $Files)
 {
 
-
-    $Deliverable = new Deliverable($Files->getDeliverableId());
-
-
-    if(!$GroupFiles->isDeleted($Files->getId()))
+    $fid = $Files->getId();
+    /**
+     * @var $DeletedFiles DeletedFiles
+     */
+    $DeletedFiles = $GroupFiles->getDeletedFileById($fid);
+    if($GroupFiles->isDeleted($fid) && !$DeletedFiles->isExpired())
     {
+        $Deliverable = new Deliverable($Files->getDeliverableId());
+
+
         $info['data'][] = array(
             "fid" => $Files->getId(),
             "filename" => $Files->getFileName() . '.' . $Files->getFileExtension(),
-            "ldate" => $Files->getLatestVersion()->getUploadDate(),
             "deliverable" => $Deliverable->getDName(),
             "revisions" => $Files->getNumberOfRevisions(),
-            "size" => round($Files->getSize(),2) . " KB",
-            "isDeleted" => $GroupFiles->isDeleted($Files->getId()),
-            "url" => $Files->getUrl()
+            "size" => round($Files->getSize(), 2) . " KB",
+            "expires" => date_format(date_create($DeletedFiles->getExpiryDate()), 'M d, Y at H:i:s')
 
         );
     }
-
-
+    
 }
 
 echo json_encode($info);
