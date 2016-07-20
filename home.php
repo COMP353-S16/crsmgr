@@ -11,6 +11,7 @@ else
 {
     $Student_Info = $Student->getStudentInfo();
     $group = new Group($Student->getGroupId());
+    $section = new Section($group->getSid());
 }
 ?>
 
@@ -64,15 +65,6 @@ else
 
         <!-- Page Content -->
         <div id="page-wrapper">
-            <?php 
-            /**$User = new Student($_SESSION['uid']);
-            $gid = $User->getGroupId();
-            $group = new Group($gid);
-            $User_info = new StudentInfo($_SESSION['uid']);
-            **/
-
-
-            ?>
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
@@ -88,6 +80,8 @@ else
                             <h3><?php echo 'Hello '.$Student->getFirstName();?></h3>
                             <blockquote>
                                 <p>Email: <?php echo $Student->getEmail()?></p>
+                                <p>Section: <?php echo $section->getSectionName()?></p>
+                                <p>Course ends on: <?php echo $section->getEndDate()?></p>
                                 <p>Group ID: <?php echo $group->getGid()?></p>
                                 <p>Group name: <?php echo $group->getGName()?></p>
                                 <p>Number of files uploaded: <?php echo $Student_Info->getNbOfFilesUploaded()?></p>

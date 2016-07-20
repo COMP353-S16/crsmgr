@@ -85,6 +85,14 @@ class Group
         return $this->_maxSize;
     }
 
+    /**
+     * @return array
+     */
+    public function getGroupStudents()
+    {
+        return $this->_groupStudents;
+    }
+
     private function populateGroupMembers()
     {
         $pdo = Registry::getConnection();
@@ -102,7 +110,7 @@ class Group
                 return true;
             }
         }
-        
+
         return false;
     }
 }
