@@ -41,14 +41,17 @@ class UserInfo
     
     public function getLastUploadedFile() {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT fid,uploadDate FROM Versions WHERE uploaderId=:uid ORDER BY fid DESC LIMIT 1");
+        $query = $pdo->prepare("SELECT f.*, v.uploadDate FROM Versions v LEFT JOIN Files f ON f.fid = v.fid 
+                                WHERE uploaderId=:uid ORDER BY v.fid DESC LIMIT 1");
         $query->bindValue(":uid", $this->_User->getUid());
         $query->execute();
         $data = $query->fetch();
-        $fid = $data['fid'];
-        $uploadDate = $data['uploadDate'];
 
-        $File = new Files($fid);
-        return $File->getFileName().'.'.$File->getFileExtension().' ('.$uploadDate.')';
+        $File = new Files($data);
+        $uploadDate = $File->getLatestVersion()->getUploadDate();
+        $fileName = $File->getFileName();
+        $fileExtension = $File->getFileExtension();
+
+        return $fileName.'.'.$fileExtension.' ('.$uploadDate.')';
     }
 }

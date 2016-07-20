@@ -154,6 +154,19 @@ class GroupFiles
     {
         return count($this->_files);
     }
+    
+    public function getNbOfUploadedFiles() {
+        $total = 0;
+        $files = $this->getFiles();
+        /**
+         * @var $Files Files
+         */
+        foreach ($files as $Files) {
+            $total += $Files->getNbOfVersions();
+        }
+
+        return $total;
+    }
 
     public function getUsedBandwidth()
     {
