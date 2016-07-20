@@ -135,10 +135,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
         <!-- MODAL WINDOWS -->
+
         <div id="deleteGroupModal" style="display:none">
-            <button id="deleteConfirmButton" type="button" class="btn btn-danger">Delete</button>
-            <button id="deleteCancelButton" type="button" class="btn btn-default">Cancel</button>
+            <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>The group will be deleted. Are you sure?</p>
         </div>
+
 
     </div>
     <!-- /#wrapper -->
@@ -146,8 +147,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
     <!-- jQuery -->
     <script src="bower_components/jquery/dist/jquery.min.js"></script>
-    <!-- jQuery UI -->
-    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+
 
 
     <!-- Bootstrap Core JavaScript -->
@@ -167,12 +167,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <script src="bower_components/datatables/extensions/Buttons/js/buttons.bootstrap.min.js"></script>
     <script src="bower_components/datatables/extensions/Select/js/dataTables.select.min.js"></script>
     <script src="bower_components/datatables/extensions/Buttons/js/buttons.flash.js"></script>
-
+    <!-- jQuery UI -->
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
     <script>
 
         $(function () {
 
-            groups = $('#groupstable').dataTable({
+            groups = $('#groupstable').DataTable({
                 "processing": true,
                 "serverSide": false,
                 "displayLength": 25,
@@ -218,12 +219,36 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                 $("#deleteGroupModal").dialog({
                     modal: true,
-
-                    title: "Delete " + gName,
+                    title: "Delete " + gName + "?",
                     show: "fade",
+                    "buttons" : {
+                        "Delete Group": function() {
+
+                            $.ajax({
+                                url: 'ajax/groupDelete.php',
+                                data: "gid=" + gid,
+                                type: 'POST',
+                                error: function()
+                                {
+                                    console.log('An error occured');
+                                },
+                                dataType: 'html',
+                                success: function(data)
+                                {
+                                    //console.log(data);
+                                    $('#deleteGroupModal').html(data);
+                                }
+
+                            });
+
+                        },
+                      "Cancel" : function(){
+                          $(this).dialog("close");
+                      }
+                    },
                     close: function (ev, ui) {
 
-                    },
+                    }
 
                 });
             });
