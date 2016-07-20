@@ -83,4 +83,15 @@ class GroupFiles
     {
         return count($this->_files);
     }
+    
+    public function getNbOfUploadedFiles() {
+        $pdo = Registry::getConnection();
+        $query = $pdo->prepare("SELECT COUNT(*) AS TOTAL FROM Versions v, Groups g, Students s
+                                WHERE g.gid=:gid AND s.gid = g.gid AND v.uploaderId = s.uid");
+        $query->bindValue(":gid", $this->_gid);
+        $query->execute();
+        $data = $query->fetch();
+
+        return $data["TOTAL"];
+    }
 }

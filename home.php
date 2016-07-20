@@ -57,6 +57,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
             $User = new User($_SESSION['uid']);
             $gid = $User->getGroupId();
             $group = new Group($gid);
+            $User_info = new UserInfo($User);
             ?>
             <div class="container-fluid">
                 <div class="row">
@@ -74,9 +75,12 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                                 <p>Email: <?php echo $User->getEmail()?></p>
                                 <p>Group ID: <?php echo $gid?></p>
                                 <p>Group name: <?php echo $group->getGName()?></p>
+                                <p>Number of files uploaded: <?php echo $User_info->getNbOfFilesUploaded()?></p>
+                                <p>Number of files downloaded: <?php echo $User_info->getNbOfFilesDownloaded()?></p>
+                                <p>Last uploaded file: <?php echo $User_info->getLastUploadedFile()?></p>
                             </blockquote>
                             <div class="col-lg-10"></div>
-                            <button type="button" id="view" class="btn btn-primary">View Details</button>
+                            <button type="button" id="view" class="btn btn-primary">View Group</button>
                         </div>
                     </div>
                 </div>

@@ -85,6 +85,7 @@ $query->execute();
                     <?php
                     $gid = $_GET['gid'];
                     $Group = new Group($gid);
+                    $Group_Files = new GroupFiles($gid);
                     ?>
                     <h1 class="page-header"><?php echo 'Group ' .$Group->getGName()?></h1>
                 </div>
@@ -247,6 +248,8 @@ $query->execute();
                                 <li><?php echo 'Group name: ' .$Group->getGName()?></li>
                                 <li><?php $group_leader = new User($Group->getLeaderId());
                                     echo 'Group leader: ' .$group_leader->getFirstName() .' ' .$group_leader->getLastName()?></li>
+                                <li><?php echo 'Number of uploaded files: ' .$Group_Files->getNbOfUploadedFiles()?></li>
+
                             </ul>
                         </div>
                     </div>
