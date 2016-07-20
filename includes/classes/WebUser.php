@@ -24,7 +24,7 @@ class WebUser
         self::$_User = $user;
     }
 
-    public function isLoggedIn() {
+    public static function isLoggedIn() {
         return (isset($_SESSION['username']) && isset($_SESSION['uid']) || !empty($_SESSION));
     }
 

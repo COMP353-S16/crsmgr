@@ -31,7 +31,10 @@ class Student extends User
         return $this->_gid;
     }
 
-    public function isInGroup($gid) {
-        return $this->getGroupId() == $gid;
+    /**
+     * @return StudentInfo
+     */
+    public function getStudentInfo() {
+        return new StudentInfo($this->_uid);
     }
 }

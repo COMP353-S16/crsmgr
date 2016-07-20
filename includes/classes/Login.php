@@ -66,14 +66,6 @@ class Login
             $_SESSION['username'] = $this->_credentials['username'];
             $_SESSION['uid'] = $this->_user->getUid();
 
-            if($this->_user->isStudent())
-            {
-                WebUser::setUser(new Student($this->_user->getUid()));
-            }
-            else
-            {
-                WebUser::setUser($this->_user);
-            }
 
             return true;
 

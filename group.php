@@ -4,6 +4,13 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 $pdo = Registry::getConnection();
 $query = $pdo->prepare("SELECT did FROM Deliverables");
 $query->execute();
+
+$Student = WebUser::getUser();
+if($Student instanceof Student) 
+{
+    $Group = new Group($Student->getGroupId());
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -86,10 +93,6 @@ $query->execute();
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <?php
-                    $gid = $_GET['gid'];
-                    $Group = new Group($gid);
-                    ?>
                     <h1 class="page-header"><?php echo 'Group ' .$Group->getGName()?></h1>
                 </div>
                 <!-- /.col-lg-12 -->
