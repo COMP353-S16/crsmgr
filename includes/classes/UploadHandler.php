@@ -247,11 +247,12 @@ class UploadHandler
     {
         $pdo = Registry::getConnection();
         // does this file name already exist?
-        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name LIMIT 1");
+        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType:ftype LIMIT 1");
         $params = array(
             ":did" => $this->_did,
             ":gid" => $this->_gid,
-            ":name" => $this->_File->getBaseName()
+            ":name" => $this->_File->getBaseName(),
+            ":fType" => $this->_File->getFileExtension()
         );
 
         $query->execute($params);

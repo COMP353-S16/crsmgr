@@ -29,6 +29,6 @@ class DeletedFiles
 
     public function isExpired()
     {
-        return (strtotime(time()) >= strtotime($this->getExpiryDate()));
+        return (strtotime(date("Y-m-d H:i:s")) >= strtotime($this->getExpiryDate()));
     }
 }
