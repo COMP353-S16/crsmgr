@@ -272,11 +272,11 @@ $query->execute();
                         </div>
                         <div class="panel-body">
                             <ul>
+<<<<<<< Temporary merge branch 1
                                 <li>Group ID: <?php echo $Group->getGid(); ?></li>
                                 <li>Group name: <?php echo $Group->getGName(); ?></li>
                                 <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
                                     echo $group_leader->getFirstName() .' ' .$group_leader->getLastName();?></li>
-                                <li><?php echo 'Number of uploaded files: ' .$Group_Files->getNbOfUploadedFiles()?></li>
                             </ul>
                         </div>
                     </div>
