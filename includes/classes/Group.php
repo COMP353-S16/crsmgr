@@ -14,16 +14,20 @@ class Group
     protected $_creatorId;
     protected $_gName;
     protected $_maxSize;
+    protected $_groupStudents = array();
 
     /**
      * Group constructor.
      *
      * @param $gid group id
      */
+
+
     public function __construct($gid)
     {
         $this->_gid = $gid;
         $this->fetchGroupInfo();
+        $this->populateGroupMembers();
     }
     
     private function fetchGroupInfo() {
@@ -86,5 +90,34 @@ class Group
     public function getMaxUploadSize()
     {
         return $this->_maxSize;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGroupStudents()
+    {
+        return $this->_groupStudents;
+    }
+
+    private function populateGroupMembers()
+    {
+        $pdo = Registry::getConnection();
+        $query = $pdo->prepare("SELECT s.uid FROM Students s, Groups g WHERE g.gid=:gid AND s.gid=g.gid");
+        $query->bindValue(":gid", $this->_gid);
+        $query->execute();
+        $this->_groupStudents = $query->fetchAll();
+    }
+
+    public function isInGroup($uid)
+    {
+        foreach ($this->_groupStudents as $student)
+        {
+            if($student['uid'] == $uid) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

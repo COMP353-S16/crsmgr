@@ -59,14 +59,7 @@ class User {
         return $this->_privilege;
     }
 
-    public function getGroupId() {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT g.gid FROM Groups g, Users u, Students s 
-                                WHERE u.uid=:uid AND u.uid = s.uid AND s.gid = g.gid");
-        $query->bindValue(":uid", $this->_uid);
-        $query->execute();
-        $data = $query->fetch();
-
-        return $data['gid'];
+    public function isStudent() {
+        return $this->_privilege == 0;
     }
 }

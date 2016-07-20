@@ -66,6 +66,7 @@ class Login
             $_SESSION['username'] = $this->_credentials['username'];
             $_SESSION['uid'] = $this->_user->getUid();
 
+
             return true;
 
         }

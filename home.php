@@ -1,6 +1,18 @@
 <?php
 session_start();
 require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
+
+$Student = WebUser::getUser();
+if(!$Student instanceof Student)
+{
+    exit("You are not a student.");
+}
+else
+{
+    $Student_Info = $Student->getStudentInfo();
+    $group = new Group($Student->getGroupId());
+    $section = new Section($group->getSid());
+}
 ?>
 
 <!DOCTYPE html>
@@ -53,12 +65,6 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
         <!-- Page Content -->
         <div id="page-wrapper">
-            <?php 
-            $User = new User($_SESSION['uid']);
-            $gid = $User->getGroupId();
-            $group = new Group($gid);
-            $User_info = new UserInfo($User);
-            ?>
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
@@ -68,19 +74,25 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
                 </div>
 
                 <div class="row">
-                    <div class="col-lg-5">
+                    <div class="col-lg-7">
                         <div class="well well-sm">
-                            <h3><?php echo 'Hello '.$User->getFirstName();?></h3>
+                            <?php if($group->isInGroup($Student->getUid())) { ?>
+                            <h3><?php echo 'Hello '.$Student->getFirstName();?></h3>
                             <blockquote>
-                                <p>Email: <?php echo $User->getEmail()?></p>
-                                <p>Group ID: <?php echo $gid?></p>
+                                <p>Email: <?php echo $Student->getEmail()?></p>
+                                <p>Section: <?php echo $section->getSectionName()?></p>
+                                <p>Course ends on: <?php echo $section->getEndDate()?></p>
+                                <p>Group ID: <?php echo $group->getGid()?></p>
                                 <p>Group name: <?php echo $group->getGName()?></p>
-                                <p>Number of files uploaded: <?php echo $User_info->getNbOfFilesUploaded()?></p>
-                                <p>Number of files downloaded: <?php echo $User_info->getNbOfFilesDownloaded()?></p>
-                                <p>Last uploaded file: <?php echo $User_info->getLastUploadedFile()?></p>
+                                <p>Number of files uploaded: <?php echo $Student_Info->getNbOfFilesUploaded()?></p>
+                                <p>Number of files downloaded: <?php echo $Student_Info->getNbOfFilesDownloaded()?></p>
+                                <p>Last uploaded file: <?php echo $Student_Info->getLastUploadedFile()?></p>
                             </blockquote>
-                            <div class="col-lg-10"></div>
+                            <div class="col-md-10"></div>
                             <button type="button" id="view" class="btn btn-primary">View Group</button>
+                            <?php
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -110,7 +122,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
         $(function(){
 
             $('#view').click(function(){
-                window.location.replace("group.php?gid=" + <?php echo $gid ?>);
+                window.location.replace("group.php");
             });
         });
     </script>
