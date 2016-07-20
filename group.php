@@ -4,9 +4,6 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 $pdo = Registry::getConnection();
 $query = $pdo->prepare("SELECT did FROM Deliverables");
 $query->execute();
-
-
-$GroupFiles
 ?>
 
 <!DOCTYPE html>
@@ -279,6 +276,7 @@ $GroupFiles
                                 <li>Group name: <?php echo $Group->getGName(); ?></li>
                                 <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
                                     echo $group_leader->getFirstName() .' ' .$group_leader->getLastName();?></li>
+                                <li><?php echo 'Number of uploaded files: ' .$Group_Files->getNbOfUploadedFiles()?></li>
                             </ul>
                         </div>
                     </div>
