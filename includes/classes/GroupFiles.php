@@ -128,11 +128,19 @@ class GroupFiles
         return false;
     }
 
+    /**
+     * @return int returns the total number of deleted files
+     */
     public function getTotalDeletedFiles()
     {
         return count($this->getDeletedFileIds());
     }
 
+    /**
+     * @param $fid filed id
+     *
+     * @return bool returns true if the file is permanently deleted: passed expiry date.
+     */
     public function isPermanentDeleted($fid)
     {
 
@@ -148,13 +156,17 @@ class GroupFiles
     }
 
 
-    
-
+    /**
+     * @return int returns the number of distinct files. This does not account for versions.
+     */
     public function getNumberOfFiles()
     {
         return count($this->_files);
     }
-    
+
+    /**
+     * @return int returns the number of uploaded files, including versions.
+     */
     public function getNbOfUploadedFiles() {
         $total = 0;
         $files = $this->getFiles();
@@ -168,9 +180,13 @@ class GroupFiles
         return $total;
     }
 
+
+    /**
+     * @return float|int returns the total number of megabytes the group has used for file storage
+     */
     public function getUsedBandwidth()
     {
-        $b = 0;
+        $b = 0.0;
         $files = $this->getFiles();
         /**
          * @var $Files Files

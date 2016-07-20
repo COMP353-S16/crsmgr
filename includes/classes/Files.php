@@ -10,8 +10,14 @@ class Files
 {
     private $_fid;
 
+    /**
+     * @type array contains the file's data information
+     */
     private $_file;
 
+    /**
+     * @type array contains the version information
+     */
     private $_versions;
 
 
@@ -40,6 +46,9 @@ class Files
 
     }
 
+    /**
+     * @return int returns the file id
+     */
     public function getId()
     {
         return $this->_file['fid'];
@@ -90,6 +99,9 @@ class Files
         return $a;
     }
 
+    /**
+     * @return int returns the total numbre of revisions for the file
+     */
     public function getNbOfVersions() {
         return count($this->_versions);
     }
@@ -155,6 +167,9 @@ class Files
     }
 
 
+    /**
+     * @return int returns the last upload version's id
+     */
     public function getLatestVersionId()
     {
 
@@ -184,11 +199,17 @@ class Files
         return count($this->_versions);
     }
 
+    /**
+     * @return string returns the location of the file
+     */
     public function getBaseUrl()
     {
         return $_SERVER['DOCUMENT_ROOT']. '/fileuploads/' .CoreConfig::settings()['uploads']['upload_dir'] . $this->getGroupId() .'/'. $this->getLatestVersion()->getSavedName();
     }
 
+    /**
+     * @return string returns the location of the file relative to the webroot
+     */
     public function getUrl()
     {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";

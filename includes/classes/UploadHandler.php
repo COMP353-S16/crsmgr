@@ -22,6 +22,10 @@ class UploadHandler
 
     protected $_allowed = array ( );
 
+    private $_GroupFiles;
+
+    private $_Group;
+
     private $_file = array (
         "save_as" => ""
     );
@@ -51,6 +55,9 @@ class UploadHandler
         $this->setFile($file);
 
         $this->_allowed = CoreConfig::settings()['uploads']['allowed_files'] + $this->_allowed ;
+
+        $this->_Group = new Group($this->_gid);
+        $this->_GroupFiles = new GroupFiles($this->_gid);
     }
 
     public function setUploadDirectory($dir)
@@ -73,9 +80,31 @@ class UploadHandler
      */
     protected function validate()
     {
+        $usedBandwidth = $this->_GroupFiles->getUsedBandwidth();
+
+
+        $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // conver to MB
+
+        $postUploadSize = $usedBandwidth + $fileSize;
+
+
         if(!in_array($this->_File->getFileExtension(), $this->_allowed))
         {
             $this->_errors[] = "File type not allowed. Allow";
+        }
+
+
+        if($postUploadSize > $this->_Group->getMaxUploadSize())
+        {
+            $er = "Maximum bandwidth allotted exceeded.";
+            $er .= "<ul>";
+            $er .= "<li>Maximum bandwidth: " . $this->_Group->getMaxUploadSize() . "MB</li>";
+            $er .= "<li>Current upload: " . number_format($fileSize ,2) . "MB</li>";
+            $er .= "<li>Post upload size: " . number_format($postUploadSize ,2) . "MB</li>";
+            $er .= "</ul>";
+
+            $this->_errors[] =  $er;
+
         }
     }
 
@@ -218,11 +247,12 @@ class UploadHandler
     {
         $pdo = Registry::getConnection();
         // does this file name already exist?
-        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name LIMIT 1");
+        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType:ftype LIMIT 1");
         $params = array(
             ":did" => $this->_did,
             ":gid" => $this->_gid,
-            ":name" => $this->_File->getBaseName()
+            ":name" => $this->_File->getBaseName(),
+            ":fType" => $this->_File->getFileExtension()
         );
 
         $query->execute($params);

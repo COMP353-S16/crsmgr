@@ -14,7 +14,12 @@ class Group
     protected $_creatorId;
     protected $_gName;
     protected $_maxSize;
-    
+
+    /**
+     * Group constructor.
+     *
+     * @param $gid group id
+     */
     public function __construct($gid)
     {
         $this->_gid = $gid;
@@ -44,7 +49,7 @@ class Group
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getSid()
     {
@@ -52,7 +57,7 @@ class Group
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getCreatorId()
     {
@@ -60,7 +65,7 @@ class Group
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getGName()
     {
@@ -68,7 +73,7 @@ class Group
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getLeaderId()
     {

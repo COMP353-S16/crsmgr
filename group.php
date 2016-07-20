@@ -292,7 +292,6 @@ $query->execute();
                                 <li>Deleted Files: <span id="totalDeletedFiles">-</span> </li>
                                 <li>Used Bandwidth: <span id="usedBandwidth">-</span> </li>
                                 <li>Number of Downloads: <span id="downloads">-</span> </li>
-                                <li>Number of Revisions: <span id="revisions">-</span> </li>
                                 <li>Number of Uploaded Files: <span id="uploadedFiles">-</span> </li>
                             </ul>
                         </div>
@@ -857,7 +856,6 @@ $query->execute();
             {
                 $('#downloads').text(data.downloads);
                 $('#totalFiles').text(data.totalFiles);
-                $('#revisions').text(data.revisions);
                 $('#bandwidth').text(data.bandwidth);
                 $('#usedBandwidth').text(data.usedBandwidth);
                 $('#totalDeletedFiles').text(data.totalDeletedFiles);

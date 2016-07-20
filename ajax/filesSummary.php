@@ -10,7 +10,7 @@ $data = array(
   "bandwidth" => 0,
   "usedBandwidth" => 0,
   "downloads" => 0,
-  "revisions" => 0,
+
   "uploads" => 0
 );
 
@@ -19,9 +19,10 @@ $GroupFiles = new GroupFiles($gid);
 $Group = new Group($gid);
 
 $data["totalFiles"] = $GroupFiles->getNumberOfFiles();
-$data["bandwidth"] = $Group->getMaxUploadSize();
-$data["usedBandwidth"] = number_format($GroupFiles->getUsedBandwidth(),2) . "MB";
+$data["bandwidth"] = $Group->getMaxUploadSize() . "MB";
+$data["usedBandwidth"] = number_format($GroupFiles->getUsedBandwidth() / 1024,2) . "MB";
 $data["totalDeletedFiles"] = $GroupFiles->getTotalDeletedFiles();
 $data["uploads"] = $GroupFiles->getNbOfUploadedFiles();
+
 
 echo json_encode($data);

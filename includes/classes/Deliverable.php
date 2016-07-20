@@ -17,10 +17,13 @@ class Deliverable
     public function __construct($did)
     {
         $this->_did = $did;
-        $this->fetchDeliverableInfo();
+        $this->extractDeliverableInfo();
     }
-    
-    private function fetchDeliverableInfo() {
+
+    /**
+     * Extracts deliverable information
+     */
+    private function extractDeliverableInfo() {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT * FROM Deliverables WHERE did=:did LIMIT 1");
         $query->bindValue("did", $this->_did);
@@ -34,10 +37,11 @@ class Deliverable
     }
 
     /**
-     * @return mixed
+     * @return int returns the deliverable id
      */
     public function getDid()
     {
+    
         return $this->_did;
     }
 
@@ -50,7 +54,7 @@ class Deliverable
     }
 
     /**
-     * @return mixed
+     * @return string returns deliverable name
      */
     public function getDName()
     {
@@ -58,7 +62,7 @@ class Deliverable
     }
 
     /**
-     * @return mixed
+     * @return mixed returns the start date deliverable
      */
     public function getStartDate()
     {
@@ -66,7 +70,7 @@ class Deliverable
     }
 
     /**
-     * @return mixed
+     * @return mixed returns the end date of the deliverable
      */
     public function getEndDate()
     {
