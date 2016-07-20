@@ -20,7 +20,7 @@ $Group = new Group($gid);
 
 $data["totalFiles"] = $GroupFiles->getNumberOfFiles();
 $data["bandwidth"] = $Group->getMaxUploadSize() . "MB";
-$data["usedBandwidth"] = number_format($GroupFiles->getUsedBandwidth(),2) . "MB";
+$data["usedBandwidth"] = number_format($GroupFiles->getUsedBandwidth() / 1024,2) . "MB";
 $data["totalDeletedFiles"] = $GroupFiles->getTotalDeletedFiles();
 $data["uploads"] = $GroupFiles->getNbOfUploadedFiles();
 
