@@ -135,6 +135,7 @@ class Files
          */
         foreach($versions as $Version)
         {
+
             $size += $Version->getSize();
         }
 

@@ -38,7 +38,7 @@ if($RecoverFiles->recover())
 
             },false);
 
-
+            loadFileSummary();
         });
     </script>
     <?php

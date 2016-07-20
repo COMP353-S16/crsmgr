@@ -34,6 +34,8 @@ if($DeleteFiles->delete())
                         }
                     }
                 });
+
+                loadFileSummary();
             },false);
 
 

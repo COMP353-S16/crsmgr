@@ -128,6 +128,10 @@ class GroupFiles
         return false;
     }
 
+    public function getTotalDeletedFiles()
+    {
+        return count($this->getDeletedFileIds());
+    }
 
     public function isPermanentDeleted($fid)
     {
@@ -149,5 +153,25 @@ class GroupFiles
     public function getNumberOfFiles()
     {
         return count($this->_files);
+    }
+
+    public function getUsedBandwidth()
+    {
+        $b = 0;
+        $files = $this->getFiles();
+        /**
+         * @var $Files Files
+         */
+        foreach($files as $Files)
+        {
+            if(!$this->isPermanentDeleted($Files->getId()))
+            {
+                $b += $Files->getGlobalSize();
+            }
+
+
+        }
+
+        return $b;
     }
 }

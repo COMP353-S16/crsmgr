@@ -290,7 +290,12 @@ $GroupFiles
                         </div>
                         <div class="panel-body">
                             <ul>
-                                <li>Bandwidth: <?php echo $Group->getMaxUploadSize(); ?>MB</li>
+                                <li>Bandwidth: <span id="bandwidth">-</span> </li>
+                                <li>Total Files: <span id="totalFiles">-</span> </li>
+                                <li>Deleted Files: <span id="totalDeletedFiles">-</span> </li>
+                                <li>Used Bandwidth: <span id="usedBandwidth">-</span> </li>
+                                <li>Number of Downloads: <span id="downloads">-</span> </li>
+                                <li>Number of Revisions: <span id="revisions">-</span> </li>
                             </ul>
                         </div>
                     </div>
@@ -490,6 +495,9 @@ $GroupFiles
 
 
 
+
+
+
         /* Group Files table */
         groupFiles = $('#groupfiles').DataTable({
             "processing": true,
@@ -595,8 +603,15 @@ $GroupFiles
 
                 // display
                 $(api.column(5).footer()).html(pageTotal.toFixed(2) +' of  '+ total.toFixed(2) +' MB');
+            },
+            "drawCallback" : function(settings)
+            {
+
             }
         });
+
+        // get files summary
+        loadFileSummary();
 
 
         /* deleted files table */
@@ -830,6 +845,27 @@ $GroupFiles
         });
         
     });
+
+    // must be put here to be used globally
+    function loadFileSummary() {
+
+        $.ajax({
+            data: {
+                gid : "<?php echo $Group->getGid(); ?>"
+            },
+            url: "ajax/filesSummary.php",
+            dataType: "json",
+            success: function (data)
+            {
+                $('#downloads').text(data.downloads);
+                $('#totalFiles').text(data.totalFiles);
+                $('#revisions').text(data.revisions);
+                $('#bandwidth').text(data.bandwidth);
+                $('#usedBandwidth').text(data.usedBandwidth);
+                $('#totalDeletedFiles').text(data.totalDeletedFiles);
+            }
+        });
+    }
 </script>
 
 </body>
