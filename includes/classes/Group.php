@@ -33,7 +33,7 @@ class Group
     private function fetchGroupInfo() {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT * FROM Groups WHERE gid=:gid");
-        $query->bindValue("gid", $this->_gid);
+        $query->bindValue(":gid", $this->_gid);
         $query->execute();
         $group = $query->fetch();
         

@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: josep
- * Date: 7/20/2016
- * Time: 9:49 PM
- */
-
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
@@ -21,14 +14,22 @@ $students = $query->fetchAll();
 
 $selected_students = (!empty($_REQUEST['selectedStudents']) ? $_REQUEST['selectedStudents'] : array());
 
-
+// Section ID to look in
+$sectionID = $_REQUEST['section'];
 
 foreach ($students as $student_data) {
     $student = new Student($student_data['uid']);
 
     if(!in_array($student_data['uid'], $selected_students))
     {
-        $student_array[] = array("name" => $student->getFirstName() . " " . $student->getLastName(), "uid" => $student->getUid());
+
+        $Section = new Section($student->getSid());
+
+        if($student->getSid() == $sectionID || $sectionID == "all")
+        {
+            $student_array[] = array("name" => $student->getFirstName() . " " . $student->getLastName(), "uid" => $student->getUid(), "sName" => $Section->getSectionName());
+        }
+
     }
 }
 

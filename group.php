@@ -312,7 +312,7 @@ if($Student instanceof Student)
     <!-- /#page-wrapper -->
     <!-- MODAL WINDOWS -->
     <div id="versionsModal" style="display:none;">
-        <div id="versionsContainer">
+ 
 
             <table width="100%" border="0" class="table table-bordered" id="versionsTable">
                 <thead>
@@ -327,7 +327,7 @@ if($Student instanceof Student)
                 <tbody>
                 </tbody>
             </table>
-        </div>
+
     </div>
 
     <div id="deleteEntriesContainer" style="display: none;">

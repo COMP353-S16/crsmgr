@@ -104,19 +104,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-                                    <td>&nbsp;</td>
-                                </tr>
                                 </tbody>
                             </table>
-                            <ul>
-
-                            </ul>
-
                             <button type="button" id="createGroupButton" class="btn btn-success">Add new group</button>
                         </div>
                         <div class="tab-pane fade" id="dostuff">
@@ -143,35 +132,59 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         <div id="createGroupModal" style="display: none">
             <form role="form">
                 <div class="form-group">
-                    <input class="form-control" placeholder="Enter group name">
-                    <label for="sectionSelect">Select Section</label>
-                    <select class="form-control" id="sectionSelect">
-                        <?php
-                        $pdo = Registry::getConnection();
-                        $query = $pdo->prepare("SELECT sid FROM Sections");
-                        $query->execute();
-                        while($sec = $query->fetch())
-                        {
-                            $section = new Section($sec['sid']);
-
-                            $sName = $section->getSectionName();
-                        ?>
-                                <option value="<?php echo $sec['sid']; ?>"><?php echo $sName; ?></option>
-                        <?php
-                        }
-                        ?>
-                        <option value="all">All sections</option>
-                    </select>
-                    <br>
-                    <input id="studentName" name="studentName" class="form-control" placeholder="Enter student name">
 
 
+                    <table class="table table-bordered">
+                        <tr>
+                            <td>Group Name: </td>
+                            <td> <input class="form-control" placeholder="Enter group name"></td>
+                        </tr>
+                        <tr>
+                            <td>Select Section:</td>
+                            <td>
+                                <select class="form-control" id="sectionSelect">
+                                    <option value="all">All sections</option>
+                                    <?php
+                                    $pdo = Registry::getConnection();
+                                    $query = $pdo->prepare("SELECT sid FROM Sections");
+                                    $query->execute();
+                                    while($sec = $query->fetch())
+                                    {
+                                        $section = new Section($sec['sid']);
 
-                    <br>
-                    <table width="100%" border="0" class="table table-bordered table-hover" id="selectedStudentsTable">
+                                        $sName = $section->getSectionName();
+                                        ?>
+                                        <option value="<?php echo $sec['sid']; ?>"><?php echo $sName; ?></option>
+                                        <?php
+                                    }
+                                    ?>
 
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Student Name: </td>
+                            <td><input id="studentName" name="studentName" class="form-control" placeholder="Enter student name"></td>
+                        </tr>
                     </table>
 
+                    <table class="table table-bordered" width="100%">
+                        <tr>
+                            <th>Members</th>
+                        </tr>
+                        <tr>
+                            <td><table width="100%"  class="table table-bordered" id="selectedStudentsTable">
+
+
+                                    <thead>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </td>
+                        </tr>
+
+
+                    </table>
 
                 </div>
             </form>
@@ -242,13 +255,31 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
             });
 
+            /* To create a group */
             $(document).on('click', '#createGroupButton', function () {
                 $("#createGroupModal").dialog( {
                     modal: true,
                     title: "Create Group",
                     show: "fade",
-                    width: 1000,
-                    height: 1000
+                    width: 800,
+                    height: 700,
+                    resizable : false,
+                    buttons :
+                    {
+                        "Create" : function()
+                        {
+
+                        },
+                        "Cancel" : function()
+                        {
+                            $(this).dialog("close");
+
+                        }
+                    },
+                    close : function()
+                    {
+                        $(this).dialog("destroy");
+                    }
                 })
             });
 
@@ -302,7 +333,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
             selected = [];
             s = [];
-            $( "#studentName" ).autocomplete({
+            $( "input#studentName" ).autocomplete({
                 appendTo: "#createGroupModal",
                 source: function (request, response) {
                     $.ajax({
@@ -310,15 +341,20 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         dataType: "json",
                         data: {
                             studentName: request.term,
-                            selectedStudents: selected
+                            selectedStudents: selected,
+                            section : $('#sectionSelect').val()
                         },
                         success: function (data) {
-                            
+                            console.log(data);
                             response($.map(data, function (item) {
+
                                 return {
                                     label: item.name,
-                                    uid: item.uid
+                                    uid: item.uid,
+                                    sName: item.sName
                                 };
+
+
                             }));
                         }
                     });
@@ -347,12 +383,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                      "Selected: " + ui.item.value + " aka " + ui.item.id :
                      "Nothing selected, input was " + this.value );**/
                 }
-            }).data("ui-autocomplete")._renderItem = function (ul, item) {
-
-                console.log(item);
+            }).data("ui-autocomplete")._renderItem = function (ul, item)
+            {
 
                 if (!jQuery.isEmptyObject(item))
-                    return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong></a>").appendTo(ul);
+                    return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong> in section <i>"+ item.sName +"</i></a>").appendTo(ul);
                 else
                     return $("<li></li>").data("item.autocomplete", item).append("<a><strong>No Results</strong></a>").appendTo(ul);
             };

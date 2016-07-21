@@ -22,7 +22,7 @@ class Student extends User
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT s.* FROM Students s, Users u, Groups g, Sections sc
                                 WHERE u.uid=:uid AND s.uid = u.uid AND s.gid = g.gid AND s.sid = sc.sid");
-        $query->bindValue("uid", $this->_uid);
+        $query->bindValue(":uid", $this->_uid);
         $query->execute();
         $data = $query->fetch();
 
