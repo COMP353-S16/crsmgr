@@ -43,6 +43,7 @@ class StudentInfo extends Student
         $query->execute();
         $data = $query->fetch();
 
+        
         $File = new Files($data);
         $uploadDate = $File->getLatestVersion()->getUploadDate();
         $fileName = $File->getFileName();

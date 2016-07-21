@@ -76,20 +76,25 @@ else
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="well well-sm">
+                            <h3><?php echo 'Hello '.$Student->getFirstName().',';?></h3>
+                            <br>
                             <?php if($group->isInGroup($Student->getUid())) { ?>
-                            <h3><?php echo 'Hello '.$Student->getFirstName();?></h3>
-                            <blockquote>
-                                <p>Email: <?php echo $Student->getEmail()?></p>
-                                <p>Section: <?php echo $section->getSectionName()?></p>
-                                <p>Course ends on: <?php echo $section->getEndDate()?></p>
-                                <p>Group ID: <?php echo $group->getGid()?></p>
-                                <p>Group name: <?php echo $group->getGName()?></p>
-                                <p>Number of files uploaded: <?php echo $Student_Info->getNbOfFilesUploaded()?></p>
-                                <p>Number of files downloaded: <?php echo $Student_Info->getNbOfFilesDownloaded()?></p>
-                                <p>Last uploaded file: <?php echo $Student_Info->getLastUploadedFile()?></p>
-                            </blockquote>
-                            <div class="col-md-10"></div>
-                            <button type="button" id="view" class="btn btn-primary">View Group</button>
+                                <blockquote>
+                                    <p>Email: <?php echo $Student->getEmail()?></p>
+                                    <p>Section: <?php echo $section->getSectionName()?></p>
+                                    <p>Course ends on: <?php echo $section->getEndDate()?></p>
+                                    <p>Group ID: <?php echo $group->getGid()?></p>
+                                    <p>Group name: <?php echo $group->getGName()?></p>
+                                    <p>Number of files uploaded: <?php echo $Student_Info->getNbOfFilesUploaded()?></p>
+                                    <p>Number of files downloaded: <?php echo $Student_Info->getNbOfFilesDownloaded()?></p>
+                                    <p>Last uploaded file: <?php echo $Student_Info->getLastUploadedFile()?></p>
+                                </blockquote>
+                                <div class="col-md-10"></div>
+                                <button type="button" id="view" class="btn btn-primary">View Group</button>
+                            <?php
+                            }
+                            else { ?>
+                                <h4>You are not yet in a group.</h4>
                             <?php
                             }
                             ?>

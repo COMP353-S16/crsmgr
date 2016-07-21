@@ -53,7 +53,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             position: fixed;
             z-index:10000
         }
-
     </style>
 
 </head>
@@ -118,7 +117,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                             </ul>
 
-                            <button type="button" class="btn btn-success">Add new group</button>
+                            <button type="button" id="createGroupButton" class="btn btn-success">Add new group</button>
                         </div>
                         <div class="tab-pane fade" id="dostuff">
                             <h4>Do stuff</h4>
@@ -138,6 +137,36 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
         <div id="deleteGroupModal" style="display:none">
             <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>The group will be deleted. Are you sure?</p>
+        </div>
+
+        <!-- CREATE GROUP MODAL WINDOW -->
+        <div id="createGroupModal" style="display: none">
+            <form role="form">
+                <div class="form-group">
+                    <input class="form-control" placeholder="Enter group name">
+                    <label for="sectionSelect">Select Section</label>
+                    <select class="form-control" id="sectionSelect">
+                        <?php
+                        $pdo = Registry::getConnection();
+                        $query = $pdo->prepare("SELECT sid FROM Sections");
+                        $query->execute();
+                        while($sec = $query->fetch())
+                        {
+                            $section = new Section($sec['sid']);
+
+                            $sName = $section->getSectionName();
+                        ?>
+                                <option value="<?php echo $sec['sid']; ?>"><?php echo $sName; ?></option>
+                        <?php
+                        }
+                        ?>
+                        <option value="all">All sections</option>
+                    </select>
+                    <br>
+                    <input id="studentName" name="studentName" class="form-control" placeholder="Enter student name">
+                    
+                </div>
+            </form>
         </div>
 
 
@@ -205,6 +234,16 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
             });
 
+            $(document).on('click', '#createGroupButton', function () {
+                $("#createGroupModal").dialog( {
+                    modal: true,
+                    title: "Create Group",
+                    show: "fade",
+                    width: 1000,
+                    height: 1000
+                })
+            });
+
             $(document).on('click', '#deleteCancelButton', function () {
 
                 $("#deleteGroupModal").dialog("destroy");
@@ -253,6 +292,46 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 });
             });
 
+            selected = [];
+            $( "#studentName" ).autocomplete({
+                appendTo: "#createGroupModal",
+                source: function (request, response) {
+                    $.ajax({
+                        url: "ajax/studentSearch.php",
+                        dataType: "json",
+                        data: {
+                            studentName: request.term,
+                            selectedStudents: selected
+                        },
+                        success: function (data) {
+                            
+                            response($.map(data, function (item) {
+                                return {
+                                    label: item.name,
+                                    uid: item.uid
+                                };
+                            }));
+                        }
+                    });
+                },
+                minLength: 1,
+                select: function (event, ui) {
+
+                    selected.push(ui.item.uid);
+                    console.log(selected);
+                    /**log( ui.item ?
+                     "Selected: " + ui.item.value + " aka " + ui.item.id :
+                     "Nothing selected, input was " + this.value );**/
+                }
+            }).data("ui-autocomplete")._renderItem = function (ul, item) {
+
+                console.log(item);
+
+                if (!jQuery.isEmptyObject(item))
+                    return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong></a>").appendTo(ul);
+                else
+                    return $("<li></li>").data("item.autocomplete", item).append("<a><strong>No Results</strong></a>").appendTo(ul);
+            };
 
         });
 

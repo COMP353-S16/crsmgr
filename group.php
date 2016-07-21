@@ -545,8 +545,7 @@ if($Student instanceof Student)
                 "url" : "ajax/groupFiles.php",
                 "type" : "POST",
                 "data" : {
-                    "gid" : 1,
-                    "did" : 1
+                    "gid" : '<?php echo $Group->getGid(); ?>',
                 }
             },
             "columns": [
