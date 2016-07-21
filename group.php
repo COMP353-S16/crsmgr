@@ -466,7 +466,7 @@ if($Student instanceof Student)
             e.wrap('<form>').closest('form').get(0).reset();
             e.unwrap();
 
-            groupFiles.ajax.reload();
+            //groupFiles.ajax.reload();
 
         }).on("lu:progress", function (e, percentage) {
 
@@ -599,7 +599,7 @@ if($Student instanceof Student)
                         return intVal(a) + intVal(b);
                     },0);
 
-                console.log(total);
+
                 // Total over this page
                 pageTotal = api.column( 5, { page: 'current'} ).data().reduce( function (a, b) {
                         return intVal(a) + intVal(b);
@@ -628,7 +628,6 @@ if($Student instanceof Student)
 
         $(document).on('click', '#rollbackButton', function () {
             var fileData = groupFiles.row($(this).closest('tr')).data();
-            console.log(fileData);
 
             // This is probably a window that the group leader would have open in order to change the file version... the rollback option
 
@@ -687,7 +686,7 @@ if($Student instanceof Student)
                              dataType: "html",
                              success: function (data)
                              {
-                                 console.log(data);
+
                                  $('#rollbackResponse').html(data);
                              }
                          });
@@ -942,7 +941,7 @@ if($Student instanceof Student)
         $(document).on('click', '#groupfiles  tbody tr td:not(:last-child)', function () {
             var fileData = groupFiles.row(this).data();
             //console.log(fileData);
-            //window.open("view.php?fid=" + fileData.fid)
+            window.open("view.php?fid=" + fileData.fid)
             
         });
         
@@ -951,7 +950,8 @@ if($Student instanceof Student)
 
 
     // must be put here to be used globally
-    function loadFileSummary() {
+    function loadFileSummary()
+    {
 
         $.ajax({
             data: {

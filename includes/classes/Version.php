@@ -78,5 +78,11 @@ class Version
         return $this->_version['vid'];
     }
 
+    public function getData()
+    {
+
+        return $this->_version['data'];
+    }
+
 
 }

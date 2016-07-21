@@ -85,7 +85,10 @@ class UploadHandler
 
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // conver to MB
 
+
+
         $postUploadSize = $usedBandwidth + $fileSize;
+
 
 
         if(!in_array($this->_File->getFileExtension(), $this->_allowed))
@@ -107,6 +110,8 @@ class UploadHandler
 
         }
     }
+
+
 
     /**
      * @return File
@@ -195,24 +200,32 @@ class UploadHandler
     private function insert()
     {
 
+        $this->validate();
+
+        if(!empty($this->getErrors()))
+            return false;
         // if it's a revision, skip the rest
         if($this->isRevision())
             return $this->insertRevision();
 
 
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType) VALUES (:gid, :did, :fName, :fType)");
+        $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType, mime) VALUES (:gid, :did, :fName, :fType, :mime)");
+
+
+
 
         $params = array (
             ":gid" => $this->_gid,
             ":did" => $this->_did,
             ":fName" => $this->_File->getBaseName(),
-            ":fType" => $this->_File->getFileExtension()
+            ":fType" => $this->_File->getFileExtension(),
+            ":mime" => ""
         );
 
         if($query->execute($params)) {
             $fid = $pdo->lastInsertId();
-            $fileSize = filesize($this->getBuildDirectory() . $this->getSavedAsName()) / 1024; // in KB
+            $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // in MB
             $userID = $this->_uid;
 
             $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid) VALUES (:uploaderId, :name, :size, NOW(), :fid)");
@@ -247,12 +260,12 @@ class UploadHandler
     {
         $pdo = Registry::getConnection();
         // does this file name already exist?
-        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType:ftype LIMIT 1");
+        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType=:ftype LIMIT 1");
         $params = array(
             ":did" => $this->_did,
             ":gid" => $this->_gid,
             ":name" => $this->_File->getBaseName(),
-            ":fType" => $this->_File->getFileExtension()
+            ":ftype" => $this->_File->getFileExtension()
         );
 
         $query->execute($params);
@@ -266,19 +279,19 @@ class UploadHandler
 
         $pdo = Registry::getConnection();
 
-        $fileSize = filesize($this->getBuildDirectory() . $this->getSavedAsName()) / 1024; // in KB
+        $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // in KB
 
-        $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip)");
+        $blob = fopen($this->getBuildDirectory() . $this->getSavedAsName(), 'rb'); // get blob data
 
-        $params = array(
-            ":uploaderId" => $this->_uid,
-            ":size" => $fileSize,
-            ":name" => $this->getSavedAsName(),
-            ":fid" => $this->getFileId(),
-            ":ip" => $this->get_client_ip()
-        );
+        $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip, data) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip, :data)");
 
-        return $query->execute($params);
+        $query->bindValue(":uploaderId", $this->_uid);
+        $query->bindValue(":size", $fileSize);
+        $query->bindValue(":name", $this->getSavedAsName());
+        $query->bindValue(":fid", $this->getFileId());
+        $query->bindValue(":ip", $this->get_client_ip());
+        $query->bindValue(":data", $blob, PDO::PARAM_LOB);
+        return $query->execute();
 
     }
 
