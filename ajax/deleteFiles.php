@@ -9,11 +9,12 @@ $DeleteFiles = new DeleteFiles($_SESSION['uid'], $fids);
 
 
 if($DeleteFiles->delete())
-{?>
+{
+    ?>
 
 
 
-    <div class="alert alert-success alert-dismissable">
+    <div id="responseMessage" class="alert alert-success alert-dismissable">
         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         You have successfully deleted <strong><?php echo count($fids); ?></strong> files!
     </div>
@@ -23,6 +24,9 @@ if($DeleteFiles->delete())
         $(function(){
 
             // refresh both tables
+
+
+
             groupFiles.ajax.reload();
             deletedFilesTable.ajax.reload(function(json){
                 // add the close button
@@ -36,6 +40,8 @@ if($DeleteFiles->delete())
                 });
 
                 loadFileSummary();
+
+                $('#responseMessage').show();
             },false);
 
 

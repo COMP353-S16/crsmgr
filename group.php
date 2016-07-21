@@ -166,12 +166,13 @@ if($Student instanceof Student)
                                     <th>Revisions</th>
                                     <th>Size</th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tfoot>
                                 <tr>
                                     <th colspan="5" style="text-align:right">Approximate total:</th>
-                                    <th colspan="2"></th>
+                                    <th colspan="3"></th>
                                 </tr>
                                 </tfoot>
                                 <tbody>
@@ -373,7 +374,7 @@ if($Student instanceof Student)
     $(function (){
 
 
-        members = $('#memberstable').dataTable({
+        members = $('#memberstable').DataTable({
             "processing": true,
             "serverSide": false,
             "displayLength": 25,
@@ -393,7 +394,7 @@ if($Student instanceof Student)
         });
 
 
-        deliverables = $('#deliverablestable').dataTable({
+        deliverables = $('#deliverablestable').DataTable({
             "processing": true,
             "serverSide": false,
             "displayLength": 25,
@@ -559,6 +560,13 @@ if($Student instanceof Student)
                 {
                     'render': function ( data, type, row )
                     {
+                        return '<button id="editFile" name="editFile" type="button" class="btn btn-lg btn-info">Edit</button>';
+
+                    }
+                },
+                {
+                    'render': function ( data, type, row )
+                    {
                         return '<input type="checkbox" data-fid="'+row.fid+'" name="fid[]">';
 
                     }
@@ -566,14 +574,15 @@ if($Student instanceof Student)
             ],
             columnDefs: [{
                 orderable: false,
-                targets:   6
+                targets:   [6,7]
             }],
             'order': [[2, "asc"]],
             "rowCallback": function (nRow, aData)
             {
                 $(nRow).addClass('selectable');
             },
-            "footerCallback": function ( row, data, start, end, display ) {
+            "footerCallback": function ( row, data, start, end, display )
+            {
                 var api = this.api(), data;
                 // Remove the formatting to get integer data for summation
                 var intVal = function ( i ) {
@@ -845,6 +854,8 @@ if($Student instanceof Student)
         });
         
     });
+
+
 
     // must be put here to be used globally
     function loadFileSummary() {
