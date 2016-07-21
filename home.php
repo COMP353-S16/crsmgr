@@ -10,7 +10,7 @@ if(!$Student instanceof Student)
 else
 {
     $Student_Info = $Student->getStudentInfo();
-    $group = new Group($Student->getGroupId());
+    $group = new Group($Student->getGid());
     $section = new Section($group->getSid());
 }
 ?>

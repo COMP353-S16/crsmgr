@@ -27,7 +27,7 @@ class Rollback
     public function rollback()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("DELETE FROM Versions WHERE fid =: fid AND vid > :vid");
+        $query = $pdo->prepare("DELETE FROM Versions WHERE fid =:fid AND vid > :vid");
         $query->bindValue(":fid", $this->_fid);
         $query->bindValue(":vid", $this->_vid);
         return $query->execute();

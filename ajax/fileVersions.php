@@ -7,7 +7,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
  * Date: 7/14/2016
  * Time: 7:49 PM
  */
-$Files = new Files($_REQUEST['fid']);
+$fid = $_REQUEST['fid'];
+
+$pdo = Registry::getConnection();
+$query = $pdo->prepare("SELECT * FROM Files WHERE fid=:fid");
+$query->execute(array(":fid" => $fid));
+$data = $query->fetch();
+
+$Files = new Files($data);
 
 $info =array("data" => array());
 
