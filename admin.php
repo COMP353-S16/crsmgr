@@ -164,7 +164,15 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     </select>
                     <br>
                     <input id="studentName" name="studentName" class="form-control" placeholder="Enter student name">
-                    
+
+
+
+                    <br>
+                    <table width="100%" border="0" class="table table-bordered table-hover" id="selectedStudentsTable">
+
+                    </table>
+
+
                 </div>
             </form>
         </div>
@@ -293,6 +301,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             });
 
             selected = [];
+            s = [];
             $( "#studentName" ).autocomplete({
                 appendTo: "#createGroupModal",
                 source: function (request, response) {
@@ -318,6 +327,21 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 select: function (event, ui) {
 
                     selected.push(ui.item.uid);
+
+                    var student = [];
+
+                    // push student
+                    student.push(ui.item.uid);
+                    student.push(ui.item.label);
+                    s.push(student);
+
+                    // redraw table
+                    selectedStudentsTable.clear().draw();
+                    selectedStudentsTable.rows.add(s); // Add new data
+                    selectedStudentsTable.columns.adjust().draw(); // Redraw the DataTable
+
+                    console.log(s);
+
                     console.log(selected);
                     /**log( ui.item ?
                      "Selected: " + ui.item.value + " aka " + ui.item.id :
@@ -332,6 +356,46 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 else
                     return $("<li></li>").data("item.autocomplete", item).append("<a><strong>No Results</strong></a>").appendTo(ul);
             };
+
+
+            /* SELECTED FILES TABLE */
+            selectedStudentsTable = $('#selectedStudentsTable').DataTable({
+                "displayLength": 25,
+                data: s,
+                dom: 'Bfrtip',
+                select: {
+                    style : "os"
+                },
+                buttons:[
+                    {
+                        "extend": "selectAll",
+                        "action": function ()
+                        {
+                            selectedStudentsTable.rows().select();
+                        }
+                    },
+                    {
+                        "extend": "selectNone",
+                        "action": function ()
+                        {
+                            selectedStudentsTable.rows().deselect();
+                        }
+                    },
+                    {
+                        "text" : "Remove",
+                        "action": function()
+                        {
+
+                        }
+                    }
+
+                ],
+                columns: [
+                    { title: "Student ID" },
+                    { title: "Student Name" }
+                ]
+            });
+
 
         });
 
