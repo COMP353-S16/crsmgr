@@ -84,6 +84,10 @@ class Group
         return $this->_leaderId;
     }
 
+    public function isLeader($uid) {
+        return $this->_leaderId == $uid;
+    }
+
     /**
      * @return float returns maximum size of all files for group
      */
