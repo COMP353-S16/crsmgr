@@ -8,7 +8,7 @@ $query->execute();
 $Student = WebUser::getUser();
 if($Student instanceof Student) 
 {
-    $Group = new Group($Student->getGroupId());
+    $Group = new Group($Student->getGid());
 }
 
 ?>
@@ -311,7 +311,7 @@ if($Student instanceof Student)
     </div>
     <!-- /#page-wrapper -->
     <!-- MODAL WINDOWS -->
-    <div id="fileInfoModal" style="display:none;">
+    <div id="versionsModal" style="display:none;">
         <div id="versionsContainer">
 
             <table width="100%" border="0" class="table table-bordered" id="versionsTable">
@@ -337,6 +337,10 @@ if($Student instanceof Student)
     <div id="deleteProgress"></div>
     
     <div id="recoverFilesContainer" style="display: none;"></div>
+
+
+    <div id="rollbackResponse" style="display: none;"></div>
+
 
 </div>
 <!-- /#wrapper -->
@@ -559,7 +563,7 @@ if($Student instanceof Student)
                 {
                     'render': function ( data, type, row )
                     {
-                        return '<button id="editFile" name="editFile" type="button" class="btn btn-lg btn-info">Edit</button>';
+                        return '<button id="rollbackButton" name="rollbackButton" type="button" class="btn btn-outline btn-primary btn-sm">Rollback</button>';
 
                     }
                 },
@@ -616,6 +620,96 @@ if($Student instanceof Student)
             {
 
             }
+        });
+
+        /**
+         * when clicking on edit button
+         **/
+
+        $(document).on('click', '#rollbackButton', function () {
+            var fileData = groupFiles.row($(this).closest('tr')).data();
+            console.log(fileData);
+
+            // This is probably a window that the group leader would have open in order to change the file version... the rollback option
+
+             versionsTable = $('#versionsTable').DataTable({
+                 "processing": true,
+                 "destroy" : true,
+                 "serverSide": false,
+                 "displayLength": 25,
+                 select:
+                 {
+                     style : "os"
+                 },
+                 "ajax":
+                 {
+                     "url" : "ajax/fileVersions.php",
+                     "type" : "POST",
+                     "data" :
+                     {
+                         "fid" : fileData.fid
+                     }
+                 },
+                 "columns":
+                     [
+                     {"data": "vid"},
+                     {"data": "user"},
+                     {"data": "date"},
+                     {"data": "size"},
+                 ],
+                 'order': [[0, "asc"]]
+             });
+
+
+            /* open rollback modal window */
+             $("#versionsModal").dialog({
+                 modal: true,
+                 width: 600,
+                 height: 600,
+                 title: "File: " + fileData.filename,
+                 show: "fade",
+                 buttons :
+                 {
+                     "Rollback" : function()
+                     {
+                         var versionData = versionsTable.row('.selected').data();
+
+                         if(typeof versionData === "undefined")
+                             return false;
+                         /* rollback functionality */
+
+                         $.ajax({
+                             data: {
+                                 fid : fileData.fid,
+                                 vid : versionData.vid
+                             },
+                             url: "ajax/rollback.php",
+                             dataType: "html",
+                             success: function (data)
+                             {
+                                 console.log(data);
+                                 $('#rollbackResponse').html(data);
+                             }
+                         });
+                     },
+                     "Cancel" : function()
+                     {
+                         $(this).dialog("close")
+                     }
+                 },
+                 close: function (ev, ui) {
+                     versionsTable.destroy();
+                 }
+             });
+
+
+             $(document).on('click', '#versionsTable  tbody tr', function () {
+                 var versionData = versionsTable.row(this).data();
+                 //console.log(versionData);
+
+
+             });
+
         });
 
         // get files summary
@@ -847,8 +941,8 @@ if($Student instanceof Student)
 
         $(document).on('click', '#groupfiles  tbody tr td:not(:last-child)', function () {
             var fileData = groupFiles.row(this).data();
-            console.log(fileData);
-            window.open("view.php?fid=" + fileData.fid)
+            //console.log(fileData);
+            //window.open("view.php?fid=" + fileData.fid)
             
         });
         
