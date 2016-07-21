@@ -27,14 +27,15 @@ foreach ($students as $student_data) {
 
         if($student->getSid() == $sectionID || $sectionID == "all")
         {
-            $student_array[] = array("name" => $student->getFirstName() . " " . $student->getLastName(), "uid" => $student->getUid(), "sName" => $Section->getSectionName());
+
+            $student_array['data'][] = array("name" => $student->getFirstName() . " " . $student->getLastName(), "uid" => $student->getUid(), "sName" => $Section->getSectionName());
         }
 
     }
 }
 
 if(empty($student_array)) {
-    $student_array = array("name" => "");
+    $student_array['data'][] = array();
 }
 
 

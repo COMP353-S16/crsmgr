@@ -274,11 +274,18 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         {
                             $(this).dialog("close");
 
+
                         }
                     },
                     close : function()
                     {
                         $(this).dialog("destroy");
+                        $("input#studentName").val("");
+
+                        // reset datatable
+                        selectedStudentsTable.clear().draw();
+                        students = [];
+                        selected = [];
                     }
                 })
             });
@@ -331,8 +338,10 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 });
             });
 
+            // selected student ids
             selected = [];
-            s = [];
+            // selected students data. to be used in datatables
+            students = [];
             $( "input#studentName" ).autocomplete({
                 appendTo: "#createGroupModal",
                 source: function (request, response) {
@@ -345,8 +354,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                             section : $('#sectionSelect').val()
                         },
                         success: function (data) {
-                            console.log(data);
-                            response($.map(data, function (item) {
+                            response($.map(data.data, function (item) {
 
                                 return {
                                     label: item.name,
@@ -360,28 +368,21 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     });
                 },
                 minLength: 1,
-                select: function (event, ui) {
+                select: function (event, ui)
+                {
+                    // push id into selected ids array
+
+                    if(jQuery.isEmptyObject(ui.item))
+                        return false;
 
                     selected.push(ui.item.uid);
-
-                    var student = [];
-
-                    // push student
-                    student.push(ui.item.uid);
-                    student.push(ui.item.label);
-                    s.push(student);
-
-                    // redraw table
+                    students.push(ui.item);
                     selectedStudentsTable.clear().draw();
-                    selectedStudentsTable.rows.add(s); // Add new data
+                    selectedStudentsTable.rows.add(students); // Add new data
                     selectedStudentsTable.columns.adjust().draw(); // Redraw the DataTable
-
-                    console.log(s);
-
-                    console.log(selected);
-                    /**log( ui.item ?
-                     "Selected: " + ui.item.value + " aka " + ui.item.id :
-                     "Nothing selected, input was " + this.value );**/
+                    // clear student name input field
+                    $("input#studentName").val("");
+                    return false;
                 }
             }).data("ui-autocomplete")._renderItem = function (ul, item)
             {
@@ -389,45 +390,66 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 if (!jQuery.isEmptyObject(item))
                     return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong> in section <i>"+ item.sName +"</i></a>").appendTo(ul);
                 else
-                    return $("<li></li>").data("item.autocomplete", item).append("<a><strong>No Results</strong></a>").appendTo(ul);
+                    return $("<li></li>").data("item.autocomplete", item).append("<strong> No Results</strong>").appendTo(ul);
             };
 
 
             /* SELECTED FILES TABLE */
             selectedStudentsTable = $('#selectedStudentsTable').DataTable({
                 "displayLength": 25,
-                data: s,
+                data: students,
                 dom: 'Bfrtip',
                 select: {
                     style : "os"
                 },
                 buttons:[
                     {
-                        "extend": "selectAll",
-                        "action": function ()
-                        {
-                            selectedStudentsTable.rows().select();
-                        }
+                        "extend": "selectAll"
                     },
                     {
-                        "extend": "selectNone",
-                        "action": function ()
-                        {
-                            selectedStudentsTable.rows().deselect();
-                        }
+                        "extend": "selectNone"
                     },
                     {
                         "text" : "Remove",
                         "action": function()
                         {
 
+                            // get rows
+                            var rows  = selectedStudentsTable.rows('.selected');
+                            // loop through every row
+                            rows.every( function ( rowIdx, tableLoop, rowLoop ) {
+                                var data = this.data();
+                                // delete this id from the "selected" students array.
+                                var index = selected.indexOf(data.uid);
+                                if(index > -1)
+                                    selected.splice(index,1);
+
+                                // remove from students data. this rebuilds array without the user id that we're deleting
+                                students = students.filter(function(re){
+                                    return re.uid !== data.uid;
+                                })
+
+                            });
+                            //redraw table
+                            rows.remove().draw();
+
                         }
                     }
 
                 ],
                 columns: [
-                    { title: "Student ID" },
-                    { title: "Student Name" }
+                    {
+                        title: "Student ID",
+                        "data" : "uid"
+                    },
+                    {
+                        title : "Student Name",
+                        "data" : "label"  // this is called label because that's what the autocomplete calls it. see above
+                    },
+                    {
+                        title : "Section",
+                        "data" : "sName"
+                    }
                 ]
             });
 
