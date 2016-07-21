@@ -11,7 +11,7 @@ else
 {
     $Student_Info = $Student->getStudentInfo();
     $group = new Group($Student->getGid());
-    $section = new Section($group->getSid());
+   // $section = new Section($group->getSid());
 }
 ?>
 
@@ -81,8 +81,8 @@ else
                             <?php if($group->isInGroup($Student->getUid())) { ?>
                                 <blockquote>
                                     <p>Email: <?php echo $Student->getEmail()?></p>
-                                    <p>Section: <?php echo $section->getSectionName()?></p>
-                                    <p>Course ends on: <?php echo $section->getEndDate()?></p>
+                                    <p>Section: <?php //echo $section->getSectionName()?></p>
+                                    <p>Course ends on: <?php //echo $section->getEndDate()?></p>
                                     <p>Group ID: <?php echo $group->getGid()?></p>
                                     <p>Group name: <?php echo $group->getGName()?></p>
                                     <p>Number of files uploaded: <?php echo $Student_Info->getNbOfFilesUploaded()?></p>

@@ -10,7 +10,7 @@ class Group
 {
     protected $_gid;
     protected $_leaderId;
-    protected $_sid;
+
     protected $_creatorId;
     protected $_gName;
     protected $_maxSize;
@@ -37,7 +37,7 @@ class Group
         $query->execute();
         $group = $query->fetch();
         
-        $this->_sid = $group['sid'];
+
         $this->_leaderId = $group['leaderId'];
         $this->_creatorId = $group['creatorId'];
         $this->_gName = $group['gName'];
@@ -52,13 +52,7 @@ class Group
         return $this->_gid;
     }
 
-    /**
-     * @return int
-     */
-    public function getSid()
-    {
-        return $this->_sid;
-    }
+
 
     /**
      * @return int
@@ -107,7 +101,7 @@ class Group
     private function populateGroupMembers()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT s.uid FROM Students s, Groups g WHERE g.gid=:gid AND s.gid=g.gid");
+        $query = $pdo->prepare("SELECT g.uid FROM  GroupMembers g WHERE g.gid=:gid");
         $query->bindValue(":gid", $this->_gid);
         $query->execute();
         $this->_groupStudents = $query->fetchAll();

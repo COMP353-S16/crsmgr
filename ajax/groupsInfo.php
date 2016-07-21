@@ -21,7 +21,6 @@ while($groups = $query->fetch()) {
 
     $info['data'][] = array(
         "gid" => $groups["gid"],
-        "sid" => $Group->GetSid(),
         "creatorId" => $creator->getFirstName() . " "  . $creator->getLastName(),
         "leaderId" => $leader->getFirstName() . " "  . $leader->getLastName(),
         "gName" => $Group->getGName()

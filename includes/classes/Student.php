@@ -20,8 +20,8 @@ class Student extends User
     private function fetchGroupId()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT s.* FROM Students s, Users u, Groups g, Sections sc
-                                WHERE u.uid=:uid AND s.uid = u.uid AND s.gid = g.gid AND s.sid = sc.sid");
+        $query = $pdo->prepare("SELECT s.* FROM Students s, Users u, GroupMembers gm 
+                                WHERE u.uid=:uid AND s.uid = u.uid AND gm.uid = s.uid");
         $query->bindValue(":uid", $this->_uid);
         $query->execute();
         $data = $query->fetch();

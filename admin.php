@@ -53,6 +53,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             position: fixed;
             z-index:10000
         }
+        .ui-autocomplete-loading { background:url('images/ajax.gif') no-repeat right center }
     </style>
 
 </head>
@@ -97,7 +98,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 <tr>
                                     <th>GroupId</th>
                                     <th>GroupName</th>
-                                    <th>SectionId</th>
                                     <th>LeaderName</th>
                                     <th>CreatorName</th>
                                     <th>Actions</th>
@@ -124,20 +124,28 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
         <!-- MODAL WINDOWS -->
 
+
+
         <div id="deleteGroupModal" style="display:none">
             <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>The group will be deleted. Are you sure?</p>
         </div>
 
         <!-- CREATE GROUP MODAL WINDOW -->
         <div id="createGroupModal" style="display: none">
-            <form role="form">
+            <form role="form" id="createGroupForm">
                 <div class="form-group">
 
 
                     <table class="table table-bordered">
                         <tr>
                             <td>Group Name: </td>
-                            <td> <input class="form-control" placeholder="Enter group name"></td>
+                            <td> <input id="newGroupName" name="newGroupName" class="form-control" placeholder="Enter group name"></td>
+                        </tr>
+                        <tr>
+                            <td>Maximum Bandwidth: </td>
+                            <td>
+                                <input id="groupBandwidth" name="groupBandwidth" class="form-control" placeholder="Enter group file bandwidth (MB)">
+                            </td>
                         </tr>
                         <tr>
                             <td>Select Section:</td>
@@ -164,7 +172,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         </tr>
                         <tr>
                             <td>Student Name: </td>
-                            <td><input id="studentName" name="studentName" class="form-control" placeholder="Enter student name"></td>
+                            <td><input id="studentName" class="form-control" placeholder="Enter student name"></td>
                         </tr>
                     </table>
 
@@ -187,8 +195,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     </table>
 
                 </div>
+                <input type="submit" hidden id="hiddenSubmit">
             </form>
         </div>
+
+
+        <!-- RESPONSES -->
+        <div id="createGroupAjax"></div>
 
 
     </div>
@@ -219,6 +232,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <script src="bower_components/datatables/extensions/Buttons/js/buttons.flash.js"></script>
     <!-- jQuery UI -->
     <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+
+    <!-- Validator -->
+    <script src="bower_components/validator/dist/jquery.validate.min.js"></script>
     <script>
 
         $(function () {
@@ -235,7 +251,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 "columns": [
                     {"data": "gid"},
                     {"data": "gName"},
-                    {"data": "sid"},
                     {"data": "leaderId"},
                     {"data": "creatorId"},
                     {
@@ -255,7 +270,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
             });
 
+
+
+
+
+
             /* To create a group */
+
             $(document).on('click', '#createGroupButton', function () {
                 $("#createGroupModal").dialog( {
                     modal: true,
@@ -268,6 +289,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     {
                         "Create" : function()
                         {
+
+                            $('#hiddenSubmit').trigger('click');
 
                         },
                         "Cancel" : function()
@@ -299,14 +322,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 var gid = $(this).data('gid');
                 var gName = $(this).data('gname');
 
-
-                console.log(gName);
-
                 $("#deleteGroupModal").dialog({
                     modal: true,
                     title: "Delete " + gName + "?",
                     show: "fade",
-                    "buttons" : {
+                    "buttons" :
+                    {
                         "Delete Group": function() {
 
                             $.ajax({
@@ -327,12 +348,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                             });
 
                         },
-                      "Cancel" : function(){
+                      "Cancel" : function()
+                      {
                           $(this).dialog("close");
                       }
                     },
-                    close: function (ev, ui) {
-
+                    close: function (ev, ui)
+                    {
+                        $(this).dialog("destroy");
                     }
 
                 });
@@ -367,6 +390,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         }
                     });
                 },
+                search  : function(){$(this).addClass('ui-autocomplete-loading');},
+                open    : function(){$(this).removeClass('ui-autocomplete-loading');},
                 minLength: 1,
                 select: function (event, ui)
                 {
@@ -394,13 +419,63 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             };
 
 
+
+            /* new group validator */
+
+            $('form#createGroupForm').validate({
+                rules: {
+                    newGroupName:
+                    {
+                        required: true
+                    },
+                    groupBandwidth :
+                    {
+                        required : true,
+                        number: true,
+                        min: 1
+                    }
+                },
+                submitHandler: function (form)
+                {
+                    var serialized = $('#createGroupForm :input').serialize();
+                    console.log(serialized);
+                    // send data to server to check for credentials
+                    $('#createGroupAjax').html("Please wait while group is being created").dialog({
+                        title : 'Create Group',
+                        modal: true,
+                        width: 300,
+                        height: 180
+                    });
+
+                    $.ajax({
+                        url: 'ajax/createGroup.php',
+                        data: {
+                            form : serialized,
+                            uids : selected
+                        },
+                        type: 'POST',
+                        error: function()
+                        {
+                        },
+                        dataType: 'html',
+                        success: function(data)
+                        {
+                            $('#createGroupAjax').html(data);
+                        }
+                    });
+                }
+            });
+
+
             /* SELECTED FILES TABLE */
             selectedStudentsTable = $('#selectedStudentsTable').DataTable({
                 "displayLength": 25,
                 data: students,
                 dom: 'Bfrtip',
+                deferRender: true,
                 select: {
-                    style : "os"
+                    style : "os",
+                    selector : "td:not(:last-child)"
                 },
                 buttons:[
                     {
@@ -449,8 +524,24 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     {
                         title : "Section",
                         "data" : "sName"
-                    }
-                ]
+                    },
+                    {
+                        title : "Leader",
+                        'render': function ( data, type, row )
+                        {
+                            var check = false;
+                            if(selectedStudentsTable.rows().count() <= 0)
+                                check = true;
+
+                            return '<input type="radio" id="groupLeader" name="groupLeader" value="' + row.uid +'" checked="' +check+'">';
+
+                        }
+                    },
+                ],
+                columnDefs: [{
+                    orderable: false,
+                    targets:   [3]
+                }],
             });
 
 
