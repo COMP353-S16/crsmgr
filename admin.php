@@ -125,10 +125,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         <!-- MODAL WINDOWS -->
 
 
-
+        <!-- delete confirmation -->
         <div id="deleteGroupModal" style="display:none">
             <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>The group will be deleted. Are you sure?</p>
         </div>
+
+        <!-- Message during group creation -->
+        <div id="createGroupAjax" style="display: none;"></div>
 
         <!-- CREATE GROUP MODAL WINDOW -->
         <div id="createGroupModal" style="display: none">
@@ -200,8 +203,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         </div>
 
 
-        <!-- RESPONSES -->
-        <div id="createGroupAjax"></div>
+    
 
 
     </div>
@@ -276,7 +278,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
             /* To create a group */
-
             $(document).on('click', '#createGroupButton', function () {
                 $("#createGroupModal").dialog( {
                     modal: true,
@@ -289,15 +290,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     {
                         "Create" : function()
                         {
-
+                            // since the modal button is not a submit button and not attached to form, added a hidden submit button and triggered a click
                             $('#hiddenSubmit').trigger('click');
 
                         },
                         "Cancel" : function()
                         {
                             $(this).dialog("close");
-
-
                         }
                     },
                     close : function()
@@ -313,8 +312,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 })
             });
 
+            /* Cancel Delete Button */
             $(document).on('click', '#deleteCancelButton', function () {
-
                 $("#deleteGroupModal").dialog("destroy");
             });
 <!-- TODO: change this to grab entire row instead of individual vars -->
@@ -328,8 +327,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     show: "fade",
                     "buttons" :
                     {
-                        "Delete Group": function() {
-
+                        "Delete Group": function()
+                        {
+                            $('#deleteGroupModal').html("Deleting group, lease wait...")
                             $.ajax({
                                 url: 'ajax/groupDelete.php',
                                 data: "gid=" + gid,
@@ -341,12 +341,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 dataType: 'html',
                                 success: function(data)
                                 {
-                                    //console.log(data);
                                     $('#deleteGroupModal').html(data);
                                 }
-
                             });
-
                         },
                       "Cancel" : function()
                       {
@@ -411,7 +408,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 }
             }).data("ui-autocomplete")._renderItem = function (ul, item)
             {
-
                 if (!jQuery.isEmptyObject(item))
                     return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong> in section <i>"+ item.sName +"</i></a>").appendTo(ul);
                 else
@@ -421,7 +417,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
             /* new group validator */
-
             $('form#createGroupForm').validate({
                 rules: {
                     newGroupName:
@@ -432,7 +427,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     {
                         required : true,
                         number: true,
-                        min: 1
+                        min: 1,
+                        max : 2048
                     }
                 },
                 submitHandler: function (form)
@@ -444,7 +440,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         title : 'Create Group',
                         modal: true,
                         width: 300,
-                        height: 180
+                        height: 200,
+                        draggable : false,
+                        resizable : false
                     });
 
                     $.ajax({
@@ -547,9 +545,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
         });
 
-
     </script>
-
 </body>
-
 </html>

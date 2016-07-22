@@ -1,4 +1,7 @@
 <?php
+if(!isset($_REQUEST))
+    exit;
+
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
@@ -11,7 +14,6 @@ $name = $formData['newGroupName'];
 $uids = $_REQUEST['uids']; // array
 
 
-
 $CreateGroup = new CreateGroup();
 $CreateGroup->setGroupName($name);
 $CreateGroup->setUids($uids);
@@ -20,7 +22,7 @@ $CreateGroup->setCreatorId($_SESSION['uid']);
 
 if($CreateGroup->create())
 { ?>
-    <div id="responseMessage" class="alert alert-success alert-dismissable">
+    <div id="responseMessageCreate" class="alert alert-success alert-dismissable">
 
         You have successfully created group <strong><?php echo $CreateGroup->getGroupName(); ?></strong>!
     </div>
@@ -29,7 +31,14 @@ if($CreateGroup->create())
             groups.ajax.reload(function(json){
                 // callback
 
-                $('#createGroupModal').dialog('close');
+                $('#createGroupAjax').dialog({
+                    buttons : {
+                        "Close" : function()
+                        {
+                            $(this).dialog("destroy");
+                        }
+                    }
+                });
             });
         });
     </script>
@@ -38,6 +47,18 @@ if($CreateGroup->create())
 else
 {
     $errors = $CreateGroup->getErrors();
-
-    print_r($errors);
+    ?>
+    <div class="alert alert-danger alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <?php
+        $msg .= "<ul>";
+        foreach ($errors as $error)
+        {
+            $msg .= '<li>' . $error . '</li>';
+        }
+        $msg .= "</ul>";
+        echo $msg;
+        ?>
+    </div>
+    <?php
 }

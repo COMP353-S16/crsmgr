@@ -25,7 +25,8 @@ class StudentInfo extends Student
         return $data["TOTAL"];
     }
 
-    public function getNbOfFilesDownloaded() {
+    public function getNbOfFilesDownloaded()
+    {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT COUNT(*) AS TOTAL FROM Downloads WHERE uid=:uid");
         $query->bindValue(":uid", $this->_uid);
@@ -35,12 +36,17 @@ class StudentInfo extends Student
         return $data["TOTAL"];
     }
     
-    public function getLastUploadedFile() {
+    public function getLastUploadedFile()
+    {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT f.*, v.uploadDate FROM Versions v LEFT JOIN Files f ON f.fid = v.fid 
                                 WHERE uploaderId=:uid ORDER BY v.fid DESC LIMIT 1");
         $query->bindValue(":uid", $this->_uid);
         $query->execute();
+
+        if($query->rowCount()<=0)
+            return "";
+
         $data = $query->fetch();
 
         

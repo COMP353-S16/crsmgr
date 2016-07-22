@@ -1,14 +1,17 @@
 <?php
 session_start();
 require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
-$pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT did FROM Deliverables");
-$query->execute();
+
 
 $Student = WebUser::getUser();
 if($Student instanceof Student) 
 {
     $Group = new Group($Student->getGid());
+
+    $pdo = Registry::getConnection();
+    $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
+                        WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did");
+    $query->bindValue(":gid", $Student->getGid());
 }
 
 ?>
@@ -93,7 +96,7 @@ if($Student instanceof Student)
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header"><?php echo 'Group ' .$Group->getGName()?></h1>
+                    <h1 class="page-header">Group <strong><?php echo $Group->getGName()?></strong></h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -216,6 +219,7 @@ if($Student instanceof Student)
                                     <label for="sel1">Select Deliverable</label>
                                     <select class="form-control" id="deliverableSelect">
                                         <?php
+
                                         while($del = $query->fetch())
                                         {
                                             $Deliverable = new Deliverable($del['did']);
