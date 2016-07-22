@@ -102,7 +102,7 @@ if($Student instanceof Student)
             </div>
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#members" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a></li>
                         <li><a href="#deliverables" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
@@ -111,7 +111,6 @@ if($Student instanceof Student)
                         <li><a href="#filesubmission" data-toggle="tab">File Submission <span class="glyphicon glyphicon-upload"></span></a> </li>
                         <li><a href="#deletedfiles" data-toggle="tab">Deleted Files <span class="glyphicon glyphicon-trash"></span> </a></li>
                     </ul>
-
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="members">
                             <h4>Members</h4>
@@ -273,38 +272,39 @@ if($Student instanceof Student)
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            Group Info
-                        </div>
-                        <div class="panel-body">
-                            <ul>
-                                <li>Group ID: <?php echo $Group->getGid(); ?></li>
-                                <li>Group name: <?php echo $Group->getGName(); ?></li>
-                                <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
-                                    echo $group_leader->getFirstName() .' ' .$group_leader->getLastName();?></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            Group Files
-                        </div>
-                        <div class="panel-body">
-                            <ul>
-                                <li>Bandwidth: <span id="bandwidth">-</span> </li>
-                                <li>Total Files: <span id="totalFiles">-</span> </li>
-                                <li>Deleted Files: <span id="totalDeletedFiles">-</span> </li>
-                                <li>Used Bandwidth: <span id="usedBandwidth">-</span> </li>
-                                <li>Number of Downloads: <span id="downloads">-</span> </li>
-                                <li>Number of Uploaded Files: <span id="uploadedFiles">-</span> </li>
-                            </ul>
+                <div class="col-md-3">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                Group Info
+                            </div>
+                            <div class="panel-body">
+                                <ul>
+                                    <li>Group ID: <?php echo $Group->getGid(); ?></li>
+                                    <li>Group name: <?php echo $Group->getGName(); ?></li>
+                                    <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
+                                        echo $group_leader->getFirstName() .' ' .$group_leader->getLastName();?></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
+                <div class="col-md-3">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                Group Files
+                            </div>
+                            <div class="panel-body">
+                                <ul>
+                                    <li>Bandwidth: <span id="bandwidth">-</span> </li>
+                                    <li>Total Files: <span id="totalFiles">-</span> </li>
+                                    <li>Deleted Files: <span id="totalDeletedFiles">-</span> </li>
+                                    <li>Used Bandwidth: <span id="usedBandwidth">-</span> </li>
+                                    <li>Number of Downloads: <span id="downloads">-</span> </li>
+                                    <li>Number of Uploaded Files: <span id="uploadedFiles">-</span> </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
             </div>
 
 

@@ -22,6 +22,10 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <!-- MetisMenu CSS -->
     <link href="bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
 
+
+    <!-- DataTables CSS -->
+    <link href="bower_components/datatables/media/css/dataTables.bootstrap.min.css" rel="stylesheet">
+
     <!-- DataTables Buttons Extension -->
     <link href="bower_components/datatables/extensions/Buttons/css/buttons.dataTables.min.css" rel="stylesheet">
     <link href="bower_components/datatables/extensions/Buttons/css/buttons.bootstrap.min.css" rel="stylesheet">
@@ -84,7 +88,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             </div>
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#managegroups" data-toggle="tab">Manage Groups</a></li>
                         <li><a href="#dostuff" data-toggle="tab">Do stuff</a></li>
