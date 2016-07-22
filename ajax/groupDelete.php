@@ -18,7 +18,7 @@ if($groupDelete->deleteGroup())
 
 
 
-    <div id="responseMessage" class="alert alert-success alert-dismissable" style="display: none;">
+    <div id="responseMessageDelete" class="alert alert-success alert-dismissable" style="display: none;">
         You have successfully deleted the group!
     </div>
 
@@ -26,11 +26,11 @@ if($groupDelete->deleteGroup())
     <script>
         $(function(){
 
-
+            $('#responseMessageDelete').fadeIn();
 
             // refresh table
             groups.ajax.reload(function(json){
-                $('#responseMessage').fadeIn();
+
                 // add the close button
                 $('#deleteGroupModal').dialog({
                     title: "Delete Successful",

@@ -10,8 +10,7 @@ if(!$Student instanceof Student)
 else
 {
     $Student_Info = $Student->getStudentInfo();
-    $group = new Group($Student->getGid());
-   // $section = new Section($group->getSid());
+    $section = new Section($Student->getSid());
 }
 ?>
 
@@ -78,22 +77,32 @@ else
                         <div class="well well-sm">
                             <h3><?php echo 'Hello '.$Student->getFirstName().',';?></h3>
                             <br>
-                            <?php if($group->isInGroup($Student->getUid())) { ?>
-                                <blockquote>
-                                    <p>Email: <?php echo $Student->getEmail()?></p>
-                                    <p>Section: <?php //echo $section->getSectionName()?></p>
-                                    <p>Course ends on: <?php //echo $section->getEndDate()?></p>
-                                    <p>Group ID: <?php echo $group->getGid()?></p>
-                                    <p>Group name: <?php echo $group->getGName()?></p>
-                                    <p>Number of files uploaded: <?php echo $Student_Info->getNbOfFilesUploaded()?></p>
-                                    <p>Number of files downloaded: <?php echo $Student_Info->getNbOfFilesDownloaded()?></p>
-                                    <p>Last uploaded file: <?php echo $Student_Info->getLastUploadedFile()?></p>
-                                </blockquote>
-                                <div class="col-md-10"></div>
-                                <button type="button" id="view" class="btn btn-primary">View Group</button>
                             <?php
+
+                            if($Student->isInGroup())
+                            {
+                                $group = new Group($Student->getGid());
+
+                                ?>
+                                    <blockquote>
+                                        <p>Email: <strong><?php echo $Student->getEmail() ?></strong></p>
+                                        <p>Section: <strong><?php echo $section->getSectionName()?></strong></p>
+                                        <p>Course ends on: <strong><?php echo $section->getEndDate()?></strong></p>
+                                        <p>Group ID: <strong><?php echo $group->getGid() ?></strong></p>
+                                        <p>Group name: <strong><?php echo $group->getGName() ?></strong></p>
+                                        <p>Number of files
+                                            uploaded: <strong><?php echo $Student_Info->getNbOfFilesUploaded() ?></strong></p>
+                                        <p>Number of files
+                                            downloaded: <strong><?php echo $Student_Info->getNbOfFilesDownloaded() ?></strong></p>
+                                        <p>Last uploaded file: <strong><?php echo $Student_Info->getLastUploadedFile() ?></strong></p>
+                                    </blockquote>
+                                    <div class="col-md-10"></div>
+                                    <button type="button" id="view" class="btn btn-primary">View Group</button>
+                                    <?php
+
                             }
-                            else { ?>
+                            else
+                            { ?>
                                 <h4>You are not yet in a group.</h4>
                             <?php
                             }

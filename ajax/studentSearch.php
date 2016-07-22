@@ -4,7 +4,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 $pdo = Registry::getConnection();
 $query = $pdo->prepare("SELECT s.uid FROM Students s, Users u 
-                        WHERE u.uid = s.uid AND (u.firstName LIKE :firstName OR u.lastName LIKE :lastName)");
+                        WHERE u.uid = s.uid AND (u.firstName LIKE :firstName OR u.lastName LIKE :lastName) AND s.uid NOT IN(SELECT gm.uid FROM GroupMembers gm) ");
 $query->bindValue(":firstName", $_REQUEST['studentName']."%");
 $query->bindValue(":lastName", $_REQUEST['studentName']."%");
 $query->execute();
@@ -28,7 +28,10 @@ foreach ($students as $student_data) {
         if($student->getSid() == $sectionID || $sectionID == "all")
         {
 
-            $student_array['data'][] = array("name" => $student->getFirstName() . " " . $student->getLastName(), "uid" => $student->getUid(), "sName" => $Section->getSectionName());
+            $student_array['data'][] = array(
+                "name" => $student->getFirstName() . " " . $student->getLastName(),
+                "uid" => $student->getUid(),
+                "sName" => $Section->getSectionName());
         }
 
     }

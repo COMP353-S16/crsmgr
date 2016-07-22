@@ -14,20 +14,18 @@ class Student extends User
     public function __construct($uid)
     {
         parent::__construct($uid);
-        $this->fetchGroupId();
+        $this->extract();
     }
 
-    private function fetchGroupId()
+    private function extract()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT s.* FROM Students s, Users u, GroupMembers gm 
-                                WHERE u.uid=:uid AND s.uid = u.uid AND gm.uid = s.uid");
+        $query = $pdo->prepare("SELECT * FROM Students s LEFT JOIN GroupMembers gm ON gm.uid = s.uid WHERE s.uid=:uid ");
         $query->bindValue(":uid", $this->_uid);
         $query->execute();
         $data = $query->fetch();
-
-        $this->_gid = $data['gid'];
         $this->_sid = $data['sid'];
+        $this->_gid = $data['gid'];
     }
 
     /**
@@ -37,6 +35,12 @@ class Student extends User
     {
         return new StudentInfo($this->_uid);
     }
+
+    public function isInGroup()
+    {
+        return $this->_gid != NULL || $this->_gid != "" || is_numeric($this->_gid);
+    }
+
 
     /**
      * @return mixed
