@@ -41,7 +41,8 @@ class DeleteGroup
         return false;
     }
 
-    public function getErrors(){
+    public function getErrors()
+    {
         return $this->_errors;
     }
 }
