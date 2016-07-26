@@ -39,10 +39,24 @@ if($CreateGroup->create())
                         "Close" : function()
                         {
                             $(this).dialog("destroy");
+
                         }
                     }
                 });
             });
+
+            // reset form
+            $('form#createGroupForm')[0].reset();
+            // close form dialog
+            $("#createGroupModal").dialog("destroy");
+
+            //
+            selectedStudentsTable.clear().draw();
+
+            selected = [];
+
+            students = [];
+
         });
     </script>
 <?php
@@ -52,7 +66,6 @@ else
     $errors = $CreateGroup->getErrors();
     ?>
     <div class="alert alert-danger alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         <?php
         $msg .= "<ul>";
         foreach ($errors as $error)

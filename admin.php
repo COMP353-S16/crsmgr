@@ -91,12 +91,13 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 <div class="col-md-12">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#managegroups" data-toggle="tab">Manage Groups</a></li>
-                        <li><a href="#dostuff" data-toggle="tab">Do stuff</a></li>
+                        <li><a href="#deliverablesManager" data-toggle="tab">Deliverables</a></li>
                     </ul>
 
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="managegroups">
                             <h4>Groups</h4>
+
                             <table width="100%" border="0" class="table" id="groupstable">
                                 <thead>
                                 <tr>
@@ -104,18 +105,54 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                     <th>GroupName</th>
                                     <th>LeaderName</th>
                                     <th>CreatorName</th>
+                                    <th>Semester</th>
+                                    <th>Members</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 </tbody>
                             </table>
-                            <button type="button" id="createGroupButton" class="btn btn-success">Add new group</button>
-                        </div>
-                        <div class="tab-pane fade" id="dostuff">
-                            <h4>Do stuff</h4>
+
+                            <?php
+                            if(WebUser::getUser()->isProf() || WebUser::getUser()->isSysAdmin()) {
+                                ?>
+
+                                <button type="button" id="createGroupButton" class="btn btn-success">Add new group</button>
+                                <?php
+                            }?>
 
                         </div>
+                        <div class="tab-pane fade" id="deliverablesManager">
+                            <h4>Deliverables</h4>
+
+
+                            <table id="deliverablesTable" class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                <th>Name</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                            
+                            <?php
+                            if(WebUser::getUser()->isProf() || WebUser::getUser()->isSysAdmin())
+                            {
+                                ?>
+                                <button type="button" id="createNewDeliverable" class="btn btn-primary">New Deliverable</button>
+                                <?php
+                            }
+                            ?>
+
+                            
+                            
+                        </div>
+
+
                     </div>
 
                 </div>
@@ -134,8 +171,80 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>The group will be deleted. Are you sure?</p>
         </div>
 
+        <!-- Message during deliverable creation -->
+        <div id="createDeliverableAjax" style="display: none;"></div>
+
         <!-- Message during group creation -->
         <div id="createGroupAjax" style="display: none;"></div>
+
+        <!-- CREATE DELIVERABLE WINDOW -->
+        <div id="newDeliverableModal" style="display: none;">
+            <form role="form" id="newDeliverableForm">
+                <div class="form-group">
+
+
+
+                    <table class="table-bordered table">
+                        <tr>
+                            <td>Deliverable name: </td>
+                            <td>
+
+                                <input placeholder="Deliverable name" name="newDeliverableName" id="newDeliverableName" class="form-control">
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>Start date: </td>
+                            <td>
+
+                                <input placeholder="Start date" id="newDeliverableStartDate" name="newDeliverableStartDate" class="form-control">
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>End date: </td>
+                            <td><input placeholder="End date" id="newDeliverableEndDate" name="newDeliverableEndDate" class="form-control"></td>
+                        </tr>
+                        <tr>
+                            <td>Semester: </td>
+                            <td>
+
+                                <select class="form-control" id="selectSemesterNewDeliverable" name="selectSemesterNewDeliverable">
+                                    <option value="">--Select--</option>
+                                    <?php
+                                    $pdo = Registry::getConnection();
+                                    $query = $pdo->prepare("SELECT * FROM Semester");
+                                    $query->execute();
+                                    while($sec = $query->fetch())
+                                    {
+                                        ?>
+                                        <option value="<?php echo $sec['sid']; ?>">Semester <?php echo $sec['sid']. ' ('.$sec['startDate'].') - ('.$sec['endDate'].')'; ?></option>
+                                        <?php
+                                    }
+                                    ?>
+
+                                </select>
+
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Assign to: </td>
+                            <td><select class="form-control" id="selectGroupsNewDeliverable" multiple>
+
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <input type="submit" hidden id="createDeliverable">
+
+            </form>
+
+        </div>
 
         <!-- CREATE GROUP MODAL WINDOW -->
         <div id="createGroupModal" style="display: none">
@@ -208,6 +317,32 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         </div>
 
 
+        <!-- EDIT GROUP WINDOW -->
+
+        <div id="editGroupModal" style="display: none;">
+
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#editGroupMembers" data-toggle="tab">Members</a></li>
+                <li><a href="#editGroupDeliverables" data-toggle="tab">Deliverables</a></li>
+                <li><a href="#editGroupFiles" data-toggle="tab">Files</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="editGroupMembers">
+                    <h4>Members</h4>
+                </div>
+                <div class="tab-pane fade" id="editGroupDeliverables">
+                    <h4>Deliverables</h4>
+                </div>
+
+                <div class="tab-pane fade" id="editGroupFiles">
+                    <h4>Files</h4>
+                </div>
+
+            </div>
+
+        </div>
+
     
 
 
@@ -253,24 +388,33 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 "ajax": {
                     "url": "ajax/groupsInfo.php",
                     "type": "POST",
-                    "data": {}
+                    "data": 
+                    {
+
+                    }
                 },
                 "columns": [
                     {"data": "gid"},
                     {"data": "gName"},
                     {"data": "leaderId"},
                     {"data": "creatorId"},
+                    {"data" : "sid"},
+                    {"data":"totalMembers"},
                     {
                         'render': function (data, type, row) {
                             console.log(row);
-                            var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-circle"><i class="fa fa-list"></i></button>&nbsp';
-                            var deleteB = '<button  data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-circle"><i class="fa fa-times"></i> </button>';
+                            var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-square btn-sm"><i class="fa fa-pencil-square"></i></button>&nbsp';
+                            var deleteB = '<button  data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i> </button>';
 
 
                             return edit + deleteB;
                         }
                     }
-                ]
+                ],
+                columnDefs: [{
+                    orderable: false,
+                    targets:   [6]
+                }],
             });
 
             $(document).on('click', '#deleteConfirmButton', function () {
@@ -334,7 +478,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     {
                         "Delete Group": function()
                         {
-                            $('#deleteGroupModal').html("Deleting group, lease wait...")
+
+
+
+                            $('#deleteGroupModal').dialog({ buttons:{}}).html("Deleting group, lease wait...");
+
                             $.ajax({
                                 url: 'ajax/groupDelete.php',
                                 data: "gid=" + gid,
@@ -549,6 +697,178 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 }],
             });
 
+
+            deliverablesTable = $('#deliverablesTable').DataTable({
+                "processing": true,
+                "serverSide": false,
+                "displayLength": 25,
+                "ajax": {
+                    "url": "ajax/adminDeliverableList.php",
+                    "type": "POST",
+                    "data":
+                    {
+
+                    }
+                },
+                "columns": [
+                    {"data": "did"},
+                    {"data": "name"},
+                    {"data": "startDate"},
+                    {"data": "endDate"}
+                ]
+            });
+
+
+            /** new deliverable stuff */
+            $(document).on('change', '#selectSemesterNewDeliverable', function(){
+
+                var sid = $(this).val();
+                if(sid=="" || typeof sid === "undefined")
+                    return false;
+
+                $.ajax({
+                    url: "ajax/groupsSemester.php",
+                    type: "POST",
+                    dataType : "json",
+                    data : {
+                        sid : $(this).val()
+                    },
+                    success : function(data)
+                    {
+                        console.log(data);
+                        $('#selectGroupsNewDeliverable').find('option')
+                            .remove()
+                            .end();
+
+                        $.each(data, function (index, value) {
+                            $('#selectGroupsNewDeliverable')
+                                .append($('<option/>', {
+                                value: value.gid,
+                                text : value.name
+                            }).prop('selected', true));
+                        });
+                       // $('#selectGroupsNewDeliverable').prop('selected', true);
+                    }
+                });
+            });
+
+
+            $('#newDeliverableStartDate, #newDeliverableEndDate').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat : "yy-mm-dd"
+            });
+
+            /* new deliverable validator */
+            $('form#newDeliverableForm').validate({
+                rules: {
+                    newDeliverableName:
+                    {
+                        required: true
+                    },
+                    newDeliverableStartDate :
+                    {
+                        required : true,
+                        date : true
+                    },
+                    newDeliverableEndDate :
+                    {
+                        required : true,
+                        date : true
+                    },
+                    selectSemesterNewDeliverable :
+                    {
+                        required : true
+                    }
+                },
+                messages  :
+                {
+                    newDeliverableName :
+                    {
+                        required : "A deliverable name is required"
+                    },
+                    selectSemesterNewDeliverable :
+                    {
+                        required : "Please select a valid semester"
+                    }
+                },
+                submitHandler: function (form)
+                {
+                    var ser = $('form#newDeliverableForm').serialize();
+                    var gids = $('#selectGroupsNewDeliverable').val();
+
+                    $('#createDeliverableAjax').html("Please wait while deliverable is being created").dialog({
+                        title : 'New Deliverable',
+                        modal: true,
+                        width: 300,
+                        height: 200,
+                        draggable : false,
+                        resizable : false
+                    });
+
+                    $.ajax({
+                        url: "ajax/createDeliverable.php",
+                        type: "POST",
+                        dataType : "html",
+                        data : {
+                            form : ser,
+                            gids : gids
+
+                        },
+                        success : function(data)
+                        {
+                            $('#createDeliverableAjax').html(data);
+                        }
+                    });
+                }
+              });
+
+
+            $('#createNewDeliverable').click(function(){
+                $('#newDeliverableModal').dialog({
+                    width: 650,
+                    height: 550,
+                    modal: true,
+                    resizable: false,
+                    title : 'New Deliverable',
+                    buttons :
+                    {
+                        "Create" : function()
+                        {
+                            $('#createDeliverable').trigger('click');
+                        },
+                        "Cancel" : function()
+                        {
+                            $(this).dialog('close');
+                        }
+
+
+                    },
+                    close : function()
+                    {
+                        $(this).dialog("destroy");
+                        $('form#newDeliverableForm')[0].reset();
+                    }
+                });
+            });
+
+
+
+            // when edit button is pressed
+
+            $(document).on('click', '#groupEdit', function(){
+
+                var data =  groups.row( $(this).closest('tr') ).data();
+                var gid = data.gid;
+                console.log(data);
+                $('#editGroupModal').dialog({
+                   width: 900,
+                    height: 800,
+                    modal: true,
+                    title: data.gName
+                });
+            });
 
         });
 

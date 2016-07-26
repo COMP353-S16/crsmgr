@@ -12,7 +12,8 @@ return array (
             'xls',
             'jpg',
             'png')
-    )
+    ),
+    'timezone' => 'America/Montreal'
 
 
 );

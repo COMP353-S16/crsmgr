@@ -19,6 +19,11 @@ class Group
     private $_sid;
 
     /**
+     * @var Semester
+     */
+    private $_Semester;
+
+    /**
      * Group constructor.
      *
      * @param $gid group id
@@ -45,6 +50,8 @@ class Group
         $this->_gName = $group['gName'];
         $this->_sid = $group['sid'];
         $this->_maxSize = $group['maxUploadsSize'];
+
+        $this->extractSemester();
     }
 
     /**
@@ -110,6 +117,11 @@ class Group
         $this->_groupStudents = $query->fetchAll();
     }
 
+    public function getTotalMembers()
+    {
+        return count($this->_groupStudents);
+    }
+
     public function isInGroup($uid)
     {
         foreach ($this->_groupStudents as $student)
@@ -130,5 +142,25 @@ class Group
     public function getSid()
     {
         return $this->_sid;
+    }
+
+
+    private function extractSemester()
+    {
+        $this->_Semester = new Semester($this->getSid());
+    }
+
+    /**
+     * @return Semester
+     */
+    public function getSemester()
+    {
+        return $this->_Semester;
+    }
+
+    public function isGroupClosed()
+    {
+        return (strtotime(date("Y-m-d")) > strtotime($this->getSemester()->getSemseterEndDate()));
+
     }
 }

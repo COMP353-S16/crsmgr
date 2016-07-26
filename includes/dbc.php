@@ -25,4 +25,6 @@ if(WebUser::isLoggedIn())
     }
 }
 
+date_default_timezone_set(CoreConfig::settings()['timezone']); // register timezone
+
 ?>
