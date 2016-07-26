@@ -17,12 +17,14 @@ if(WebUser::isLoggedIn())
 {
     if($User->isStudent())
     {
-        WebUser::setUser(new Student($User->getUid()));
+        WebUser::setUser(new Student($User->getUid(), 1));
     }
     else
     {
         WebUser::setUser($User);
     }
 }
+
+date_default_timezone_set(CoreConfig::settings()['timezone']); // register timezone
 
 ?>

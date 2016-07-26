@@ -9,23 +9,38 @@
 class Student extends User
 {
     protected $_gid;
+
+    // semester id
     protected $_sid;
 
-    public function __construct($uid)
+    private $_sectionName;
+
+    public function __construct($uid, $sid)
     {
         parent::__construct($uid);
+        $this->_sid = $sid;
         $this->extract();
     }
 
     private function extract()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Students s LEFT JOIN GroupMembers gm ON gm.uid = s.uid WHERE s.uid=:uid ");
+        $query = $pdo->prepare("SELECT * FROM
+  Students s
+  LEFT JOIN StudentSemester sm ON s.uid = sm.uid
+  LEFT JOIN GroupMembers gm ON (gm.uid = sm.uid AND gm.sid = sm.sid) AND s.uid=:uid AND sm.sid = :sid");
         $query->bindValue(":uid", $this->_uid);
+        $query->bindValue(":sid", $this->_sid);
         $query->execute();
         $data = $query->fetch();
         $this->_sid = $data['sid'];
+        $this->_sectionName = $data['sectionName'];
         $this->_gid = $data['gid'];
+    }
+
+    public function setSemester($sid)
+    {
+        $this->_sid = $sid;
     }
 
     /**
@@ -33,7 +48,7 @@ class Student extends User
      */
     public function getStudentInfo()
     {
-        return new StudentInfo($this->_uid);
+        return new StudentInfo($this->_uid, $this->_sid);
     }
 
     public function isInGroup()
@@ -48,6 +63,11 @@ class Student extends User
     public function getSid()
     {
         return $this->_sid;
+    }
+
+    public function getSectionName()
+    {
+        return $this->_sectionName;
     }
 
     /**

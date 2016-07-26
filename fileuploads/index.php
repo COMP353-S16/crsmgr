@@ -12,7 +12,8 @@ else
     require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
 
-    $UploadHandler = new UploadHandler(1, $_REQUEST['did'], 1, $_FILES['fileUpload']);
+
+    $UploadHandler = new UploadHandler($_REQUEST['gid'], $_REQUEST['did'], $_SESSION['uid'], $_FILES['fileUpload']);
 
     
     $UploadHandler->setUploadDirectory(CoreConfig::settings()['uploads']['upload_dir']);
@@ -53,6 +54,14 @@ else
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
             Successfully uploaded file <?php echo $UploadHandler->getFile()->getBaseName().'.'.$UploadHandler->getFile()->getFileExtension();?>!
         </div>
+
+        <script>
+            $(function(){
+                groupFiles.ajax.reload();
+                loadFileSummary();
+
+            });
+        </script>
         <?php
 
 

@@ -10,9 +10,9 @@ class StudentInfo extends Student
 {
     protected $_nb_files_uploaded;
 
-    public function __construct($uid)
+    public function __construct($uid, $sid)
     {
-        parent::__construct($uid);
+        parent::__construct($uid, $sid);
     }
 
     public function getNbOfFilesUploaded() {

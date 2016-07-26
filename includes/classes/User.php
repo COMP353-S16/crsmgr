@@ -62,4 +62,14 @@ class User {
     public function isStudent() {
         return $this->_privilege == 0;
     }
+
+    public function isProf()
+    {
+        return $this->_privilege == 2;
+    }
+
+    public function isSysAdmin()
+    {
+        return $this->_privilege == 4;
+    }
 }

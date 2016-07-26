@@ -19,6 +19,8 @@ abstract class NewGroup
 
     private $_maxBandwidth;
 
+    private $_sid;
+
     public function __construct()
     {
     }
@@ -85,6 +87,15 @@ abstract class NewGroup
         return $this->_maxBandwidth;
     }
 
+    public function setSemesterId($sid)
+    {
+        $this->_sid = $sid;
+    }
+
+    public function getSemesterId()
+    {
+        return $this->_sid;
+    }
 
     abstract public function validate();
 }

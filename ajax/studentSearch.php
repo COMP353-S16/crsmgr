@@ -3,35 +3,50 @@ session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 $pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT s.uid FROM Students s, Users u 
-                        WHERE u.uid = s.uid AND (u.firstName LIKE :firstName OR u.lastName LIKE :lastName) AND s.uid NOT IN(SELECT gm.uid FROM GroupMembers gm) ");
+$SQL = "SELECT * FROM Students s, Users u, StudentSemester st
+WHERE u.uid = s.uid
+AND s.uid = st.uid
+  AND st.sid = :sid
+AND (u.firstName LIKE :firstName OR u.lastName LIKE :lastName)
+      AND (st.uid, st.sid) NOT IN
+          (SELECT gm.uid, gm.sid FROM GroupMembers gm)";
+
+$query = $pdo->prepare($SQL);
+
+
+$SEMESTER = 1;
+
+
 $query->bindValue(":firstName", $_REQUEST['studentName']."%");
 $query->bindValue(":lastName", $_REQUEST['studentName']."%");
+$query->bindValue(":sid", $SEMESTER);  //SEMESTER SHOULD GO HERE
 $query->execute();
 
 $students = $query->fetchAll();
 
+//print_r($students);
 
 $selected_students = (!empty($_REQUEST['selectedStudents']) ? $_REQUEST['selectedStudents'] : array());
 
 // Section ID to look in
-$sectionID = $_REQUEST['section'];
+$sectionName = $_REQUEST['section'];
 
 foreach ($students as $student_data) {
-    $student = new Student($student_data['uid']);
+    $student = new Student($student_data['uid'], $SEMESTER);
 
     if(!in_array($student_data['uid'], $selected_students))
     {
 
-        $Section = new Section($student->getSid());
 
-        if($student->getSid() == $sectionID || $sectionID == "all")
+        if($student->getSectionName() == $sectionName || $sectionName == "all")
         {
 
             $student_array['data'][] = array(
                 "name" => $student->getFirstName() . " " . $student->getLastName(),
                 "uid" => $student->getUid(),
-                "sName" => $Section->getSectionName());
+                "sName" => $student->getSectionName(),
+                "sid" => $SEMESTER
+            );
         }
 
     }

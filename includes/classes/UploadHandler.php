@@ -83,9 +83,12 @@ class UploadHandler
         $usedBandwidth = $this->_GroupFiles->getUsedBandwidth();
 
 
+
+
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // conver to MB
 
 
+       // echo $this->_Group->getMaxUploadSize();
 
         $postUploadSize = $usedBandwidth + $fileSize;
 

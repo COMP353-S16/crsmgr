@@ -4,7 +4,7 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
 
 $Student = WebUser::getUser();
-if($Student instanceof Student) 
+if($Student instanceof Student)
 {
     $Group = new Group($Student->getGid());
 
@@ -12,6 +12,13 @@ if($Student instanceof Student)
     $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
                         WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did");
     $query->bindValue(":gid", $Student->getGid());
+    $query->execute();
+
+    $isGroupClosed = $Group->isGroupClosed();
+}
+else
+{
+    exit ("Not a student");
 }
 
 ?>
@@ -96,20 +103,27 @@ if($Student instanceof Student)
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Group <strong><?php echo $Group->getGName()?></strong></h1>
+                    <h1 class="page-header">Group <strong><?php echo $Group->getGName()?>  <?php echo ($isGroupClosed ? "<i>[CLOSED]</i>" : ""); ?></strong></h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
-
+            <?php
+            if($isGroupClosed)
+            {
+                ?>
+                <p class="text-center text-danger text-capitalize"> This group no longer has access to group files.</p>
+                <?php
+            }
+            ?>
             <div class="row">
                 <div class="col-md-6">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#members" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a></li>
                         <li><a href="#deliverables" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
-                        <li><a href="#files" data-toggle="tab">All Files <span class="glyphicon glyphicon-th-list"></span></a></li>
+                        <li style="<?php echo ( $isGroupClosed ? "display:none;" : ""); ?>"><a href="#files" data-toggle="tab">All Files <span class="glyphicon glyphicon-th-list"></span></a></li>
 
-                        <li><a href="#filesubmission" data-toggle="tab">File Submission <span class="glyphicon glyphicon-upload"></span></a> </li>
-                        <li><a href="#deletedfiles" data-toggle="tab">Deleted Files <span class="glyphicon glyphicon-trash"></span> </a></li>
+                        <li style="<?php echo ( $isGroupClosed ? "display:none;" : ""); ?>"><a href="#filesubmission" data-toggle="tab">File Submission <span class="glyphicon glyphicon-upload"></span></a> </li>
+                        <li style="<?php echo ( $isGroupClosed ? "display:none;" : ""); ?>"><a href="#deletedfiles" data-toggle="tab">Deleted Files <span class="glyphicon glyphicon-trash"></span> </a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="members">
@@ -283,7 +297,17 @@ if($Student instanceof Student)
                                     <li>Group name: <?php echo $Group->getGName(); ?></li>
                                     <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
                                         echo $group_leader->getFirstName() .' ' .$group_leader->getLastName();?></li>
+                                    <li>
+                                        Access:
+                                        <ul>
+                                            <li> Start: <?php echo $Group->getSemester()->getSemesterStartDate(); ?></li>
+                                            <li> End: <?php echo $Group->getSemester()->getSemseterEndDate();?></li>
+                                        </ul>
+
+                                    </li>
                                 </ul>
+                                <p class="text-center">Status</p>
+                                <?php  echo (($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>") ; ?>
                             </div>
                         </div>
                     </div>
@@ -406,6 +430,15 @@ if($Student instanceof Student)
             "processing": true,
             "serverSide": false,
             "displayLength": 25,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    text: 'Refresh',
+                    action: function ( e, dt, node, config ) {
+                        deliverables.ajax.reload();
+                    }
+                }
+            ],
             "ajax": {
                 "url" : "ajax/deliverablesInfo.php",
                 "type" : "POST",
@@ -541,6 +574,12 @@ if($Student instanceof Student)
                             $(rows[i]).find(':checkbox').prop("checked", false);
                         }
                         groupFiles.rows().deselect();
+                    }
+                },
+                {
+                    text: 'Refresh',
+                    action: function ( e, dt, node, config ) {
+                        groupFiles.ajax.reload();
                     }
                 },
                 {

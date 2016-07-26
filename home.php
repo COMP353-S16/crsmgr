@@ -82,12 +82,13 @@ else
                             if($Student->isInGroup())
                             {
                                 $group = new Group($Student->getGid());
+                                $Semester = new Semester($group->getSid());
 
                                 ?>
                                     <blockquote>
                                         <p>Email: <strong><?php echo $Student->getEmail() ?></strong></p>
-                                        <p>Section: <strong><?php echo $section->getSectionName()?></strong></p>
-                                        <p>Course ends on: <strong><?php echo $section->getEndDate()?></strong></p>
+                                        <p>Section: <strong><?php echo $Student->getSectionName()?></strong></p>
+                                        <p>Course ends on: <strong><?php echo $Semester->getSemseterEndDate(); ?></strong></p>
                                         <p>Group ID: <strong><?php echo $group->getGid() ?></strong></p>
                                         <p>Group name: <strong><?php echo $group->getGName() ?></strong></p>
                                         <p>Number of files

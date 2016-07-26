@@ -14,11 +14,14 @@ $name = $formData['newGroupName'];
 $uids = $_REQUEST['uids']; // array
 
 
+$SEMESTER = 1;
 $CreateGroup = new CreateGroup();
 $CreateGroup->setGroupName($name);
+$CreateGroup->setSemesterId($SEMESTER);
 $CreateGroup->setUids($uids);
 $CreateGroup->setLeaderId($leader);
 $CreateGroup->setCreatorId($_SESSION['uid']);
+$CreateGroup->setMaxBandwidth($_REQUEST['maxb']);
 
 if($CreateGroup->create())
 { ?>
@@ -36,10 +39,24 @@ if($CreateGroup->create())
                         "Close" : function()
                         {
                             $(this).dialog("destroy");
+
                         }
                     }
                 });
             });
+
+            // reset form
+            $('form#createGroupForm')[0].reset();
+            // close form dialog
+            $("#createGroupModal").dialog("destroy");
+
+            //
+            selectedStudentsTable.clear().draw();
+
+            selected = [];
+
+            students = [];
+
         });
     </script>
 <?php
@@ -49,7 +66,6 @@ else
     $errors = $CreateGroup->getErrors();
     ?>
     <div class="alert alert-danger alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
         <?php
         $msg .= "<ul>";
         foreach ($errors as $error)

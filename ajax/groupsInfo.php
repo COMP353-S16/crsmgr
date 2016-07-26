@@ -3,7 +3,7 @@ session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 $pdo = Registry::getConnection();
-$query = $pdo->prepare("SELECT gid FROM Groups");
+$query = $pdo->prepare("SELECT gid FROM Groups ");
 
 $query->execute();
 
@@ -23,7 +23,9 @@ while($groups = $query->fetch()) {
         "gid" => $groups["gid"],
         "creatorId" => $creator->getFirstName() . " "  . $creator->getLastName(),
         "leaderId" => $leader->getFirstName() . " "  . $leader->getLastName(),
-        "gName" => $Group->getGName()
+        "gName" => $Group->getGName(),
+        "sid" => $Group->getSid(),
+        "totalMembers" => $Group->getTotalMembers()
     );
 }
 
