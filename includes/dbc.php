@@ -17,7 +17,7 @@ if(WebUser::isLoggedIn())
 {
     if($User->isStudent())
     {
-        WebUser::setUser(new Student($User->getUid()));
+        WebUser::setUser(new Student($User->getUid(), 1));
     }
     else
     {

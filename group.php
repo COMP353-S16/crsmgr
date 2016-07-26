@@ -12,7 +12,9 @@ if($Student instanceof Student)
     $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
                         WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did");
     $query->bindValue(":gid", $Student->getGid());
+    $query->execute();
 }
+
 
 ?>
 

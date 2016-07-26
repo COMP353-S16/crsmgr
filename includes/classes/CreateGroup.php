@@ -29,7 +29,7 @@ class CreateGroup extends NewGroup
         {
             $this->setError( "Must provide a leader" );
         }
-        if(!is_numeric($this->getMaxBandwidth()))
+        if(!is_numeric($this->getMaxBandwidth()) || $this->getMaxBandwidth() == null)
         {
             $this->setError("Please enter a valid bandwidth number");
         }
@@ -44,6 +44,8 @@ class CreateGroup extends NewGroup
         $this->_creatorId = $id;
     }
 
+
+
     public function create()
     {
         $pdo = Registry::getConnection();
@@ -51,10 +53,11 @@ class CreateGroup extends NewGroup
         {
             $pdo->beginTransaction();
 
-            $query = $pdo->prepare("INSERT INTO Groups (leaderId, gName, creatorId, maxUploadsSize) VALUES (:leaderId, :gname, :creatorId, :max)");
+            $query = $pdo->prepare("INSERT INTO Groups (leaderId, gName, creatorId, maxUploadsSize, sid) VALUES (:leaderId, :gname, :creatorId, :max, :sid)");
             $query->bindValue(":leaderId", $this->getLeaderId());
             $query->bindValue(":gname", $this->getGroupName());
             $query->bindValue(":creatorId", $this->_creatorId);
+            $query->bindValue(":sid", $this->getSemesterId());
             $query->bindValue(":max", $this->getMaxBandwidth());
             $query->execute();
 
@@ -63,9 +66,10 @@ class CreateGroup extends NewGroup
             $students = $this->getUids();
             foreach($students as $uid)
             {
-                $query2 = $pdo->prepare("INSERT INTO GroupMembers (uid, gid) VALUES (:uid, :gid)");
+                $query2 = $pdo->prepare("INSERT INTO GroupMembers (uid, gid, sid) VALUES (:uid, :gid, :sid)");
                 $query2->bindValue(":uid", $uid);
                 $query2->bindValue(":gid", $lastInsert);
+                $query2->bindValue(":sid", $this->getSemesterId());
                 $query2->execute();
             }
 

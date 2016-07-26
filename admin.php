@@ -161,15 +161,16 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                     <option value="all">All sections</option>
                                     <?php
                                     $pdo = Registry::getConnection();
-                                    $query = $pdo->prepare("SELECT sid FROM Sections");
+                                    $query = $pdo->prepare("SELECT DISTINCT sectionName FROM StudentSemester WHERE sid=:sid");
+                                    $query->bindValue(":sid", 1); // SEMESTER SHOULD GO HERE
                                     $query->execute();
                                     while($sec = $query->fetch())
                                     {
-                                        $section = new Section($sec['sid']);
 
-                                        $sName = $section->getSectionName();
+
+                                        $sName = $sec['sectionName'];
                                         ?>
-                                        <option value="<?php echo $sec['sid']; ?>"><?php echo $sName; ?></option>
+                                        <option value="<?php echo $sName; ?>"><?php echo $sName; ?></option>
                                         <?php
                                     }
                                     ?>
@@ -383,7 +384,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 return {
                                     label: item.name,
                                     uid: item.uid,
-                                    sName: item.sName
+                                    sName: item.sName,
+                                    sid: item.sid
                                 };
 
 
@@ -413,7 +415,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             }).data("ui-autocomplete")._renderItem = function (ul, item)
             {
                 if (!jQuery.isEmptyObject(item))
-                    return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong> in section <i>"+ item.sName +"</i></a>").appendTo(ul);
+                    return $("<li></li>").data("item.autocomplete", item).append("<a><strong>" + item.label + "</strong> in section <i>"+ item.sName +"</i> -> Semester " + item.sid + "</a>").appendTo(ul);
                 else
                     return $("<li></li>").data("item.autocomplete", item).append("<strong> No Results</strong>").appendTo(ul);
             };
@@ -453,7 +455,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         url: 'ajax/createGroup.php',
                         data: {
                             form : serialized,
-                            uids : selected
+                            uids : selected,
+                            maxb : $('#groupBandwidth').val()
                         },
                         type: 'POST',
                         error: function()

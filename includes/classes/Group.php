@@ -16,6 +16,8 @@ class Group
     protected $_maxSize;
     protected $_groupStudents = array();
 
+    private $_sid;
+
     /**
      * Group constructor.
      *
@@ -41,6 +43,7 @@ class Group
         $this->_leaderId = $group['leaderId'];
         $this->_creatorId = $group['creatorId'];
         $this->_gName = $group['gName'];
+        $this->_sid = $group['sid'];
         $this->_maxSize = $group['maxUploadsSize'];
     }
 
@@ -117,5 +120,15 @@ class Group
         }
 
         return false;
+    }
+
+
+    /**
+     * @return int returns semester id
+     */
+
+    public function getSid()
+    {
+        return $this->_sid;
     }
 }

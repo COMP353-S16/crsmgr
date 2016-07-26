@@ -14,11 +14,14 @@ $name = $formData['newGroupName'];
 $uids = $_REQUEST['uids']; // array
 
 
+$SEMESTER = 1;
 $CreateGroup = new CreateGroup();
 $CreateGroup->setGroupName($name);
+$CreateGroup->setSemesterId($SEMESTER);
 $CreateGroup->setUids($uids);
 $CreateGroup->setLeaderId($leader);
 $CreateGroup->setCreatorId($_SESSION['uid']);
+$CreateGroup->setMaxBandwidth($_REQUEST['maxb']);
 
 if($CreateGroup->create())
 { ?>
