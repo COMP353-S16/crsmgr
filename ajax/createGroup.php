@@ -46,7 +46,7 @@ if($CreateGroup->create())
             });
 
             // reset form
-            $('form#createGroupForm')[0].reset();
+
             // close form dialog
             $("#createGroupModal").dialog("destroy");
 

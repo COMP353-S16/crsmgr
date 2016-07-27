@@ -19,14 +19,49 @@ while($groups = $query->fetch()) {
     $leader = new User($leaderId);
     $creator = new User($creatorId);
 
+    // students in group
+    $Students = $Group->getGroupStudents();
+    // files in group
+
+    $GroupFiles = new GroupFiles($groups['gid']);
+
+
+    $members = array();
+    $files = array();
+
+    foreach($Students as $student)
+    {
+        $Student = new Student($student['uid'], $Group->getSid());
+        $members[] = array (
+            "uid" => $Student->getUid(),
+            "label" => $Student->getFirstName() . ' ' . $Student->getLastName(),
+            "email" => $Student->getEmail(),
+            "username" => $Student->getUsername(),
+            "sName" => $Student->getSectionName(),
+            "isLeader" => $Group->isLeader($Student->getUid())
+        );
+    }
+
+
     $info['data'][] = array(
         "gid" => $groups["gid"],
-        "creatorId" => $creator->getFirstName() . " "  . $creator->getLastName(),
-        "leaderId" => $leader->getFirstName() . " "  . $leader->getLastName(),
-        "gName" => $Group->getGName(),
         "sid" => $Group->getSid(),
-        "totalMembers" => $Group->getTotalMembers()
+        "creatorId" => $creator->getFirstName() . " "  . $creator->getLastName(),
+        "leaderId" => $leader->getUid(),
+        "leaderName" => $leader->getFirstName() . " "  . $leader->getLastName(),
+        "gName" => $Group->getGName(),
+        "totalMembers" => $Group->getTotalMembers(),
+        "bandwidth" => $Group->getMaxUploadSize(),
+        "members" => $members
     );
+
+}
+
+foreach($info['data'] as $i => $groupData)
+{
+    $gid = $groupData['gid'];
+
+
 }
 
 echo json_encode($info);
