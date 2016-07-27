@@ -468,7 +468,34 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 </div>
 
                 <div class="tab-pane fade" id="editGroupDeliverables">
-                    <h4>Deliverables</h4>
+                    <h4>Assigned Deliverables</h4>
+
+                    <table width="100%" border="0" class="table table-bordered table-hover" id="groupDeliverables">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Date Posted</th>
+                            <th>Due Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <hr>
+                    <h4>Unassigned Deliverables</h4>
+                    <table width="100%" border="0" class="table table-bordered table-hover" id="unassignedGroupDeliverables">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Date Posted</th>
+                            <th>Due Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+
                 </div>
 
                 <div class="tab-pane fade" id="editGroupFiles">
@@ -1149,6 +1176,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     }
                 });
 
+                // INITIALIZE GROUP MEMBERS
                 groupMembers = $('#groupMembers').DataTable({
                     "processing" : true,
                     destroy : true,
@@ -1211,6 +1239,62 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         orderable : false,
                         targets : [3]
                     }],
+                });
+
+                // INITIALIZE GROUP DELIVERABLES
+
+                groupDeliverables = $('#groupDeliverables').DataTable({
+                    "processing": true,
+                    destroy : true,
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            text: 'Refresh',
+                            action: function ( e, dt, node, config ) {
+                                groupDeliverables.ajax.reload();
+                            }
+                        }
+                    ],
+                    "ajax": {
+                        "url" : "ajax/deliverablesInfo.php",
+                        "type" : "POST",
+                        "data" : {
+                            "gid" : gid
+                        }
+                    },
+                    "columns": [
+                        {"data": "name"},
+                        {"data": "datePosted"},
+                        {"data": "dueDate"}
+                    ]
+                });
+
+
+                // INITIALIZA UNASSIGNED GROUP DELIVERABLES
+                unassignedGroupDeliverables = $('#unassignedGroupDeliverables').DataTable({
+                    "processing": true,
+                    destroy : true,
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            text: 'Refresh',
+                            action: function ( e, dt, node, config ) {
+                                groupDeliverables.ajax.reload();
+                            }
+                        }
+                    ],
+                    "ajax": {
+                        "url" : "ajax/unassignedGroupDeliverables.php",
+                        "type" : "POST",
+                        "data" : {
+                            "gid" : gid
+                        }
+                    },
+                    "columns": [
+                        {"data": "name"},
+                        {"data": "datePosted"},
+                        {"data": "dueDate"}
+                    ]
                 });
 
             });
