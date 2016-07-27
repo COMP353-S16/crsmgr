@@ -17,11 +17,11 @@ if($PromoteMember->promote())
                 console.log(data.gid);
                 if(data.gid == gid)
                 {
-                    $(this).find("td:eq(3)").html(newLeader);
-                    console.log($(this).find("td:eq(3)"));
+                    data.leaderName = newLeader;
+                    this.invalidate();
                 }
             } );
-            //groups.draw();
+            groups.draw();
         });
     </script>
 

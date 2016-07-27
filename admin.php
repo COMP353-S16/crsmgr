@@ -131,7 +131,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                             <h4>Deliverables</h4>
 
 
-                            <table id="deliverablesTable" class="table table-bordered">
+                            <table id="deliverablesTable" class="table table-bordered" width="100%">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
@@ -140,7 +140,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                     <th>End Date</th>
                                 </tr>
                                 </thead>
-                                <tbody></tbody>
+                                <tbody>
+
+                                </tbody>
                             </table>
 
                             <?php
@@ -366,65 +368,44 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 <li><a href="#editGroupFiles" data-toggle="tab">Files</a></li>
                 <li><a href="#editGroupStats" data-toggle="tab">Statistics</a></li>
             </ul>
-
             <div class="tab-content">
 
                 <div class="tab-pane fade in active" id="editGroupGeneral">
-                    <h4>General</h4>
-                    <form role="form" id="editGroupForm">
+                    <form role="form" id="editGroupGeneralForm">
                         <div class="form-group">
                             <table class="table table-bordered">
+                                <br>
+                                <tr>
+                                    <th colspan="2">General</th>
+                                </tr>
                                 <tr>
                                     <td>Group Name:</td>
                                     <td>
-                                        <input id="newGroupNameEdit" name="newGroupNameEdit" class="form-control" placeholder="Enter group name">
+                                        <div class="form-group has-feedback">
+                                        <input id="groupNameEdit" name="groupNameEdit" class="form-control" placeholder="Enter group name">
+                                            <span class="help-block"></span>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Maximum Bandwidth:</td>
                                     <td>
-                                        <input id="groupBandwidthEdit" name="groupBandwidthEdit" class="form-control" placeholder="Enter group file bandwidth (MB)">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Select Section:</td>
-                                    <td>
-                                        <select class="form-control" id="sectionSelectEdit">
-                                            <option value="all">All sections</option>
-                                            <?php
-                                            $pdo = Registry::getConnection();
-                                            $query1 = $pdo->prepare("SELECT DISTINCT sectionName FROM StudentSemester");
-                                            $query1->execute();
-                                            while ($sec = $query->fetch())
-                                            {
-                                                $sName = $sec['sectionName'];
-                                                ?>
-                                                <option value="<?php echo $sName; ?>"><?php echo $sName; ?></option>
-                                                <?php
-                                            }
-                                            ?>
-
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Student Name:</td>
-                                    <td>
-                                        <input id="studentNameEdit" class="form-control" placeholder="Enter student name">
+                                        <div class="form-group has-feedback">
+                                            <input id="groupBandwidthEdit" name="groupBandwidthEdit" class="form-control" placeholder="Enter group file bandwidth (MB)">
+                                            <span class="help-block"></span>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>
 
+                            <button type="submit" id="saveGeneralInformation" class="btn btn-outline btn-primary btn-lg btn-block">Save</button>
 
-                            <table width="100%" class="table table-bordered" id="selectedStudentsTableEditGroup" name="selectedStudentsTableEditGroup">
-                                <thead>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
+                            <!-- This is used to hold group id -->
+                            <input type="hidden" id="editGroupGid" value="">
 
+                            <div id="editGroupGeneralAjax" style="display: none;"></div>
 
                         </div>
-                        <input type="submit" hidden id="hiddenEditGroupSubmit">
                     </form>
 
                 </div>
@@ -444,6 +425,46 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         <tbody></tbody>
                     </table>
 
+                    <hr>
+                    <!-- Add new members to group -->
+                    <table class="table table-bordered">
+                        <tr>
+                            <th colspan="2">New Members</th>
+                        </tr>
+                        <tr>
+                            <td>Select Section:</td>
+                            <td>
+                                <select class="form-control" id="sectionSelectEdit">
+                                    <option value="all">All sections</option>
+                                    <?php
+                                    $pdo = Registry::getConnection();
+                                    $query1 = $pdo->prepare("SELECT DISTINCT sectionName FROM StudentSemester");
+                                    $query1->execute();
+                                    while ($sec = $query->fetch())
+                                    {
+                                        $sName = $sec['sectionName'];
+                                        ?>
+                                        <option value="<?php echo $sName; ?>"><?php echo $sName; ?></option>
+                                        <?php
+                                    }
+                                    ?>
+
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Student Name:</td>
+                            <td>
+                                <input id="studentNameEdit" class="form-control" placeholder="Enter student name">
+                            </td>
+                        </tr>
+                    </table>
+                    <table width="100%" class="table table-bordered" id="selectedStudentsTableEditGroup" name="selectedStudentsTableEditGroup">
+                        <thead>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <!-- /Add new members to group -->
                 </div>
 
                 <div class="tab-pane fade" id="editGroupDeliverables">
@@ -597,8 +618,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 $("#deleteGroupModal").dialog("destroy");
             });
             <!-- TODO: change this to grab entire row instead of individual vars -->
-            $(document).on('click', '#groupDelete', function ()
-            {
+            $(document).on('click', '#groupDelete', function (){
                 var gid = $(this).data('gid');
                 var gName = $(this).data('gname');
 
@@ -730,7 +750,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 submitHandler : function (form)
                 {
                     var serialized = $('#createGroupForm :input').serialize();
-                    console.log(serialized);
                     // send data to server to check for credentials
                     $('#createGroupAjax').html("Please wait while group is being created").dialog({
                         title : 'Create Group',
@@ -867,8 +886,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
             /** new deliverable stuff */
-            $(document).on('change', '#selectSemesterNewDeliverable', function ()
-            {
+            $(document).on('change', '#selectSemesterNewDeliverable', function () {
 
                 var sid = $(this).val();
                 if (sid == "" || typeof sid === "undefined")
@@ -1005,12 +1023,10 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
             selectedStudentsTableEditGroup = $('#selectedStudentsTableEditGroup').DataTable({
                 destroy : true,
-                "displayLength" : 25,
                 data : studentsEdit,
                 dom : 'Bfrtip',
                 select : {
-                    style : "os",
-                    selector : "td:not(:last-child)"
+                    style : "os"
                 },
                 buttons : [
                     {
@@ -1076,12 +1092,21 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 var data = groups.row($(this).closest('tr')).data();
                 var gid = data.gid;
 
+                // add values to inputs
+                $('#groupNameEdit').val(data.gName);
+                $('#groupBandwidthEdit').val(data.bandwidth);
+                $('#editGroupGid').val(data.gid);
 
                 $('#editGroupModal').dialog({
                     width : 900,
                     height : 800,
                     modal : true,
-                    title : data.gName
+                    title : data.gName,
+                    close : function()
+                    {
+                        $('#editGroupGeneralAjax').hide().html("");
+                        $('form#editGroupGeneralForm')[0].reset();
+                    }
                 });
 
                 // INITIALIZE GROUP FILES
@@ -1173,15 +1198,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 var deleteB = '';
                                 if (!row.isLeader)
                                 {
-                                    var deleteB = '<button data-gid="' + data.gid + '" id="deleteMember" title="Delete member" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i></button>&nbsp';
+                                    deleteB = '<button data-gid="' + data.gid + '" id="deleteMember" title="Delete member" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i></button>&nbsp';
 
-                                    var promote = '<button data-gid="' + data.gid + '" id="promoteMember" title="Promote member" type="button" class="btn btn-success btn-square btn-sm"><i class="fa fa-arrow-circle-up"></i></button>&nbsp';
+                                    promote = '<button data-gid="' + data.gid + '" id="promoteMember" title="Promote member" type="button" class="btn btn-success btn-square btn-sm"><i class="fa fa-arrow-circle-up"></i></button>&nbsp';
                                 }
                                 return deleteB + promote;
                             }
                         }
                     ],
-
                     'order' : [[1, "asc"]],
                     columnDefs : [{
                         orderable : false,
@@ -1299,7 +1323,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 width : 300,
                                 modal : true,
                                 height : 200
-                            }).html("Remove member...please wait...");
+                            }).html("Removing member...please wait...");
 
                             $(this).closest('td').find("button").remove().end().html("Removing...");
                             $.post("ajax/deleteMember.php", {
@@ -1321,6 +1345,46 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     }
                 });
 
+            });
+
+
+            /* save general group information */
+            $('form#editGroupGeneralForm').validate({
+                rules : {
+                    groupNameEdit : {
+                        required : true
+                    },
+                    groupBandwidthEdit : {
+                        required : true,
+                        number : true,
+                        min : 1,
+                        max : 2048
+                    }
+                },
+                submitHandler : function (form)
+                {
+                    $button = $('#saveGeneralInformation');
+                    var buttonText = $button.text();
+                    var serialized = $(form).serialize();
+                    $.ajax({
+                        url : "ajax/editGroup.php",
+                        type : "POST",
+                        dataType : "html",
+                        data :
+                        {
+                            form : serialized,
+                            gid : $('#editGroupGid').val()
+                        },
+                        success : function (data)
+                        {
+                            $button.text(buttonText);
+                            $('#editGroupGeneralAjax').fadeIn().html(data);
+                        }
+                    });
+
+
+
+                }
             });
         });
 

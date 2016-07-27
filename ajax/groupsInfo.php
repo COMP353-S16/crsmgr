@@ -50,8 +50,8 @@ while($groups = $query->fetch()) {
         "leaderId" => $leader->getUid(),
         "leaderName" => $leader->getFirstName() . " "  . $leader->getLastName(),
         "gName" => $Group->getGName(),
-        "sid" => $Group->getSid(),
         "totalMembers" => $Group->getTotalMembers(),
+        "bandwidth" => $Group->getMaxUploadSize(),
         "members" => $members
     );
 
