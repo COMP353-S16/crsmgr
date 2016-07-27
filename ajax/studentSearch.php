@@ -17,8 +17,8 @@ $query = $pdo->prepare($SQL);
 $SEMESTER = 1;
 
 
-$query->bindValue(":firstName", $_REQUEST['studentName']."%");
-$query->bindValue(":lastName", $_REQUEST['studentName']."%");
+$query->bindValue(":firstName", "%".$_REQUEST['studentName']."%");
+$query->bindValue(":lastName", "%".$_REQUEST['studentName']."%");
 $query->bindValue(":sid", $SEMESTER);  //SEMESTER SHOULD GO HERE
 $query->execute();
 
