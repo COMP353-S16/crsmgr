@@ -11,6 +11,8 @@ class File
 
     private $_file;
 
+    private $_blob;
+
     private $_fileData = array (
         "name" => "",
         "basename" => "",
@@ -45,6 +47,13 @@ class File
         $this->_fileData['error'] = $error;
         $this->_fileData['size'] = $size;
         $this->_fileData['extension'] = $parts['extension'];
+
+        $this->_blob = file_get_contents($this->_fileData['tmp_name']);
+    }
+
+    public function getBlob()
+    {
+        return $this->_blob;
     }
 
 

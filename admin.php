@@ -98,8 +98,8 @@ $semesters = $query->fetchAll();
             <div class="row">
                 <div class="col-md-12">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#managegroups" data-toggle="tab">Manage Groups</a></li>
-                        <li><a href="#deliverablesManager" data-toggle="tab">Deliverables</a></li>
+                        <li class="active"><a href="#managegroups" data-toggle="tab">Manage Groups <span class="glyphicon glyphicon-globe"></span></a></li>
+                        <li><a href="#deliverablesManager" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
                     </ul>
 
                     <div class="tab-content">

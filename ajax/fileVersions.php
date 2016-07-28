@@ -29,7 +29,7 @@ foreach($versions as $Version) {
         "vid" => $Version->getVersionId(),
         "user" => $Version->getUploaderId(),
         "date" => $Version->getUploadDate(),
-        "size" => $Version->getSize()
+        "size" => round($Version->getSize(),2) . " KB",
 
     );
 }

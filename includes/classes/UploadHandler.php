@@ -20,13 +20,13 @@ class UploadHandler
 
     protected $_directory = 'uploads/';
 
-    protected $_allowed = array ( );
+    protected $_allowed = array();
 
     private $_GroupFiles;
 
     private $_Group;
 
-    private $_file = array (
+    private $_file = array(
         "save_as" => ""
     );
 
@@ -37,13 +37,13 @@ class UploadHandler
 
     /**
      * UploadHandler constructor.
-
+     *
      * @param $gid group id
      * @param $did deliverable id
      * @param $uid user id
      * @param $file file
      */
-    public function __construct($gid, $did, $uid,  $file)
+    public function __construct($gid, $did, $uid, $file)
     {
         $this->_gid = $gid;
 
@@ -51,10 +51,9 @@ class UploadHandler
         $this->_uid = $uid;
 
 
-
         $this->setFile($file);
 
-        $this->_allowed = CoreConfig::settings()['uploads']['allowed_files'] + $this->_allowed ;
+        $this->_allowed = CoreConfig::settings()['uploads']['allowed_files'] + $this->_allowed;
 
         $this->_Group = new Group($this->_gid);
         $this->_GroupFiles = new GroupFiles($this->_gid);
@@ -62,9 +61,10 @@ class UploadHandler
 
     public function setUploadDirectory($dir)
     {
-        if($dir!="")
+        if ($dir != "")
+        {
             $this->_directory = $dir;
-
+        }
 
 
     }
@@ -83,37 +83,33 @@ class UploadHandler
         $usedBandwidth = $this->_GroupFiles->getUsedBandwidth();
 
 
-
-
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // conver to MB
 
 
-       // echo $this->_Group->getMaxUploadSize();
+        // echo $this->_Group->getMaxUploadSize();
 
         $postUploadSize = $usedBandwidth + $fileSize;
 
 
-
-        if(!in_array($this->_File->getFileExtension(), $this->_allowed))
+        if (!in_array($this->_File->getFileExtension(), $this->_allowed))
         {
             $this->_errors[] = "File type not allowed. Allow";
         }
 
 
-        if($postUploadSize > $this->_Group->getMaxUploadSize())
+        if ($postUploadSize > $this->_Group->getMaxUploadSize())
         {
             $er = "Maximum bandwidth allotted exceeded.";
             $er .= "<ul>";
             $er .= "<li>Maximum bandwidth: " . $this->_Group->getMaxUploadSize() . "MB</li>";
-            $er .= "<li>Current upload: " . number_format($fileSize ,2) . "MB</li>";
-            $er .= "<li>Post upload size: " . number_format($postUploadSize ,2) . "MB</li>";
+            $er .= "<li>Current upload: " . number_format($fileSize, 2) . "MB</li>";
+            $er .= "<li>Post upload size: " . number_format($postUploadSize, 2) . "MB</li>";
             $er .= "</ul>";
 
-            $this->_errors[] =  $er;
+            $this->_errors[] = $er;
 
         }
     }
-
 
 
     /**
@@ -126,7 +122,8 @@ class UploadHandler
 
     private function getFileErrors()
     {
-        switch ($this->_File->getFileError()) {
+        switch ($this->_File->getFileError())
+        {
             case UPLOAD_ERR_INI_SIZE:
                 $this->_errors[] = 'The uploaded file exceeds the upload_max_filesize directive in php.ini.';
                 break;
@@ -154,7 +151,15 @@ class UploadHandler
         }
     }
 
+    public static function makeSafe($file)
+    {
+        // Remove any trailing dots, as those aren't ever valid file names.
+        $file = rtrim($file, '.');
 
+        $regex = array('#(\.){2,}#', '#[^A-Za-z0-9\.\_\- ]#', '#^\.#');
+
+        return trim(preg_replace($regex, '', $file));
+    }
 
     public function getSavedAsName()
     {
@@ -162,19 +167,18 @@ class UploadHandler
     }
 
 
-
     private function makeUnique()
     {
 
-        $timeparts = explode(" ",microtime());
-        $unique = bcadd(($timeparts[0]*1000),bcmul($timeparts[1],1000));
+        $timeparts = explode(" ", microtime());
+        $unique = bcadd(($timeparts[0] * 1000), bcmul($timeparts[1], 1000));
 
-        $this->_file['save_as'] = $this->_File->getBaseName() . "_" . $unique . '.' . $this->_File->getFileExtension();
+        $this->_file['save_as'] = self::makeSafe($this->_File->getBaseName()) . "_" . $unique . '.' . $this->_File->getFileExtension();
     }
 
     public function getBuildDirectory()
     {
-        return $this->_directory . $this->_gid .  '/';  // Directory to upload file;
+        return $this->_directory . $this->_gid . '/';  // Directory to upload file;
     }
 
     /**
@@ -183,7 +187,8 @@ class UploadHandler
      */
     protected function createDirectory($dir, $permissions = 0777)
     {
-        if (!file_exists($dir)) {
+        if (!file_exists($dir))
+        {
             mkdir($dir, $permissions, true);
         }
     }
@@ -205,42 +210,65 @@ class UploadHandler
 
         $this->validate();
 
-        if(!empty($this->getErrors()))
+        if (!empty($this->getErrors()))
+        {
             return false;
+        }
         // if it's a revision, skip the rest
-        if($this->isRevision())
+        if ($this->isRevision())
+        {
             return $this->insertRevision();
+        }
 
 
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType, mime) VALUES (:gid, :did, :fName, :fType, :mime)");
 
 
-
-
-        $params = array (
-            ":gid" => $this->_gid,
-            ":did" => $this->_did,
+        $params = array(
+            ":gid"   => $this->_gid,
+            ":did"   => $this->_did,
             ":fName" => $this->_File->getBaseName(),
             ":fType" => $this->_File->getFileExtension(),
-            ":mime" => ""
+            ":mime"  => ""
         );
 
-        if($query->execute($params)) {
+        if ($query->execute($params))
+        {
             $fid = $pdo->lastInsertId();
             $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // in MB
             $userID = $this->_uid;
 
-            $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid) VALUES (:uploaderId, :name, :size, NOW(), :fid)");
 
-            $params = array(
-                ":uploaderId" => $userID,
-                ":size" => $fileSize,
-                ":name" => $this->getSavedAsName(),
-                ":fid" => $fid
-            );
+            $pdo = Registry::getConnection();
 
-            return $query->execute($params);
+
+            $blob = null;
+            if(CoreConfig::settings()['uploads']['storageDB'])
+            {
+                $blob = $this->_File->getBlob();
+            }
+
+
+            try
+            {
+                $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip, data) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip, :data)");
+
+                $query->bindValue(":uploaderId", $userID);
+                $query->bindValue(":size", $fileSize);
+                $query->bindValue(":name", $this->getSavedAsName());
+                $query->bindValue(":fid", $fid);
+                $query->bindValue(":ip", $this->get_client_ip());
+                $query->bindValue(":data", $blob, PDO::PARAM_LOB);
+
+                return $query->execute();
+            }
+            catch (PDOException $e)
+            {
+                $this->_errors[] = $e->getMessage();
+            }
+
+            return false;
         }
 
         return false;
@@ -252,7 +280,8 @@ class UploadHandler
     private function isRevision()
     {
         $id = $this->getFileId();
-        return $id   != NULL || $id != "";
+
+        return $id != NULL || $id != "";
     }
 
 
@@ -263,16 +292,22 @@ class UploadHandler
     {
         $pdo = Registry::getConnection();
         // does this file name already exist?
-        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType=:ftype LIMIT 1");
+        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType=:ftype
+                AND fid NOT IN (
+                  SELECT fid FROM DeletedFiles
+                )
+            
+              LIMIT 1");
         $params = array(
-            ":did" => $this->_did,
-            ":gid" => $this->_gid,
-            ":name" => $this->_File->getBaseName(),
+            ":did"   => $this->_did,
+            ":gid"   => $this->_gid,
+            ":name"  => $this->_File->getBaseName(),
             ":ftype" => $this->_File->getFileExtension()
         );
 
         $query->execute($params);
         $data = $query->fetch();
+
         return $data['fid'];
     }
 
@@ -284,17 +319,30 @@ class UploadHandler
 
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // in KB
 
-        $blob = fopen($this->getBuildDirectory() . $this->getSavedAsName(), 'rb'); // get blob data
+        $blob = null;
+        if(CoreConfig::settings()['uploads']['storageDB'])
+        {
+            $blob = $this->_File->getBlob();
+        }
 
-        $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip, data) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip, :data)");
+        try
+        {
+            $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip, data) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip, :data)");
 
-        $query->bindValue(":uploaderId", $this->_uid);
-        $query->bindValue(":size", $fileSize);
-        $query->bindValue(":name", $this->getSavedAsName());
-        $query->bindValue(":fid", $this->getFileId());
-        $query->bindValue(":ip", $this->get_client_ip());
-        $query->bindValue(":data", $blob, PDO::PARAM_LOB);
-        return $query->execute();
+            $query->bindValue(":uploaderId", $this->_uid);
+            $query->bindValue(":size", $fileSize);
+            $query->bindValue(":name", $this->getSavedAsName());
+            $query->bindValue(":fid", $this->getFileId());
+            $query->bindValue(":ip", $this->get_client_ip());
+            $query->bindValue(":data", $blob, PDO::PARAM_LOB);
+
+            return $query->execute();
+        }
+        catch (PDOException $e)
+        {
+            $this->_errors[] = $e->getMessage();
+        }
+
 
     }
 
@@ -305,23 +353,31 @@ class UploadHandler
     public function upload()
     {
         $this->validate();
-        if(empty($this->_errors) && UPLOAD_ERR_OK === $this->_File->getFileError())
+        if (empty($this->_errors) && UPLOAD_ERR_OK === $this->_File->getFileError())
         {
-            $uploadDirectory =  $this->getBuildDirectory();
+            $uploadDirectory = $this->getBuildDirectory();
             $this->createDirectory($uploadDirectory);
             $this->makeUnique();
 
-            $success = move_uploaded_file($this->_File->getTempName(), $uploadDirectory  . $this->getSavedAsName());
-            chmod($uploadDirectory  . $this->getSavedAsName(), 0644);
 
-            if($success)
+
+            $success = true;
+            if(!CoreConfig::settings()['uploads']['storageDB'])
             {
-                if(!$this->insert())
+                $success = move_uploaded_file($this->_File->getTempName(), $uploadDirectory . $this->getSavedAsName());
+                chmod($uploadDirectory . $this->getSavedAsName(), 0644);
+            }
+
+            if ($success)
+            {
+                if (!$this->insert())
                 {
                     $this->_errors[] = "Could not upload file into database";
                 }
                 else
+                {
                     return true;
+                }
             }
         }
         else
@@ -332,13 +388,15 @@ class UploadHandler
         return false;
     }
 
-    private function get_client_ip() {
-        $ip = getenv('HTTP_CLIENT_IP')?:
-            getenv('HTTP_X_FORWARDED_FOR')?:
-                getenv('HTTP_X_FORWARDED')?:
-                    getenv('HTTP_FORWARDED_FOR')?:
-                        getenv('HTTP_FORWARDED')?:
+    private function get_client_ip()
+    {
+        $ip = getenv('HTTP_CLIENT_IP') ?:
+            getenv('HTTP_X_FORWARDED_FOR') ?:
+                getenv('HTTP_X_FORWARDED') ?:
+                    getenv('HTTP_FORWARDED_FOR') ?:
+                        getenv('HTTP_FORWARDED') ?:
                             getenv('REMOTE_ADDR');
+
         return $ip;
     }
 
