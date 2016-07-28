@@ -20,7 +20,7 @@ $CreateDeliverable->setGroupIds($gids);
 if($CreateDeliverable->create())
 {
     ?>
-    <div id="responseMessageCreate" class="alert alert-success alert-dismissable">
+    <div id="responseMessageCreate" class="alert alert-success">
 
         You have successfully created deliverable <strong><?php echo $CreateDeliverable->getName(); ?></strong>!
     </div>
@@ -51,7 +51,7 @@ else
 {
     $errors = $CreateDeliverable->getErrors();
     ?>
-    <div class="alert alert-danger alert-dismissable">
+    <div class="alert alert-danger">
         <?php
         $msg .= "<ul>";
         foreach ($errors as $error)

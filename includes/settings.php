@@ -8,7 +8,11 @@ return array (
         'storageDB' => true,  // true for DB, false for Filesystem
         'allowed_files' => array(
             'pdf',
+            'zip',
             'txt',
+            'txt',
+            'tiff',
+            'jpeg',
             'doc',
             'docx',
             'xls',

@@ -141,6 +141,7 @@ $semesters = $query->fetchAll();
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
+                                    <th>Semester</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                 </tr>
@@ -1000,6 +1001,7 @@ $semesters = $query->fetchAll();
                 "columns" : [
                     {"data" : "did"},
                     {"data" : "name"},
+                    {"data" :"sid"},
                     {"data" : "startDate"},
                     {"data" : "endDate"}
                 ]

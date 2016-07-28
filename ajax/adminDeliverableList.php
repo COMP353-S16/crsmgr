@@ -16,7 +16,8 @@ while($data = $query->fetch())
         "did" => $data['did'],
         "name" => $Deliverable->getDName(),
         "startDate" => $Deliverable->getStartDate(),
-        "endDate" => $Deliverable->getEndDate()
+        "endDate" => $Deliverable->getEndDate(),
+        "sid" => $Deliverable->getSemesterId()
     );
 }
 

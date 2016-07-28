@@ -88,7 +88,16 @@ class CreateDeliverable
         {
             $this->_errors[] = "A valid semester is required";
         }
+        if($this->_sid ==null || $this->_sid == "")
+        {
+            $this->_errors[] = "A semester is required";
+        }
 
+    }
+
+    public function getSemesterId()
+    {
+        return $this->_sid;
     }
 
     /**
@@ -123,16 +132,17 @@ class CreateDeliverable
         $this->validate();
         if(!empty($this->getErrors()))
             return false;
-        
+
         $pdo = Registry::getConnection();
         try
         {
             $pdo->beginTransaction();
 
-            $query = $pdo->prepare("INSERT INTO Deliverables (dName, startDate, endDate) VALUES (:name, :start, :end) ");
+            $query = $pdo->prepare("INSERT INTO Deliverables (dName, startDate, endDate, sid) VALUES (:name, :start, :end, :sid) ");
             $query->bindValue(":name", $this->getName());
             $query->bindValue(":start", $this->getStartDate());
             $query->bindValue(":end", $this->getEndDate());
+            $query->bindValue(":sid", $this->getSemesterId());
             $query->execute();
 
             $lastId = $pdo->lastInsertId();

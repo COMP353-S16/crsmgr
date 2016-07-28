@@ -35,6 +35,9 @@ class UploadHandler
      */
     private $_File;
 
+
+    private $_fid; // if the file already exists, store its id
+
     /**
      * UploadHandler constructor.
      *
@@ -81,22 +84,16 @@ class UploadHandler
     protected function validate()
     {
         $usedBandwidth = $this->_GroupFiles->getUsedBandwidth();
-
-
+        
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // conver to MB
 
-
-        // echo $this->_Group->getMaxUploadSize();
-
         $postUploadSize = $usedBandwidth + $fileSize;
-
 
         if (!in_array($this->_File->getFileExtension(), $this->_allowed))
         {
             $this->_errors[] = "File type not allowed. Allow";
         }
-
-
+        
         if ($postUploadSize > $this->_Group->getMaxUploadSize())
         {
             $er = "Maximum bandwidth allotted exceeded.";
@@ -207,7 +204,6 @@ class UploadHandler
      */
     private function insert()
     {
-
         $this->validate();
 
         if (!empty($this->getErrors()))
@@ -217,58 +213,22 @@ class UploadHandler
         // if it's a revision, skip the rest
         if ($this->isRevision())
         {
-            return $this->insertRevision();
+            return $this->insertRevision($this->_fid);
         }
-
-
+        
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType, mime) VALUES (:gid, :did, :fName, :fType, :mime)");
-
-
         $params = array(
             ":gid"   => $this->_gid,
             ":did"   => $this->_did,
             ":fName" => $this->_File->getBaseName(),
             ":fType" => $this->_File->getFileExtension(),
-            ":mime"  => ""
+            ":mime"  => $this->_File->getMime()
         );
-
         if ($query->execute($params))
         {
-            $fid = $pdo->lastInsertId();
-            $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // in MB
-            $userID = $this->_uid;
-
-
-            $pdo = Registry::getConnection();
-
-
-            $blob = null;
-            if(CoreConfig::settings()['uploads']['storageDB'])
-            {
-                $blob = $this->_File->getBlob();
-            }
-
-
-            try
-            {
-                $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip, data) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip, :data)");
-
-                $query->bindValue(":uploaderId", $userID);
-                $query->bindValue(":size", $fileSize);
-                $query->bindValue(":name", $this->getSavedAsName());
-                $query->bindValue(":fid", $fid);
-                $query->bindValue(":ip", $this->get_client_ip());
-                $query->bindValue(":data", $blob, PDO::PARAM_LOB);
-
-                return $query->execute();
-            }
-            catch (PDOException $e)
-            {
-                $this->_errors[] = $e->getMessage();
-            }
-
-            return false;
+            $lastInsert = $pdo->lastInsertId();
+            return $this->insertRevision($lastInsert);
         }
 
         return false;
@@ -279,9 +239,8 @@ class UploadHandler
      */
     private function isRevision()
     {
-        $id = $this->getFileId();
-
-        return $id != NULL || $id != "";
+        $this->_fid = $this->getFileId();
+        return $this->_fid  != NULL || $this->_fid  != "";
     }
 
 
@@ -292,12 +251,8 @@ class UploadHandler
     {
         $pdo = Registry::getConnection();
         // does this file name already exist?
-        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType=:ftype
-                AND fid NOT IN (
-                  SELECT fid FROM DeletedFiles
-                )
-            
-              LIMIT 1");
+        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType=:ftype AND fid NOT IN 
+              (SELECT fid FROM DeletedFiles) LIMIT 1");
         $params = array(
             ":did"   => $this->_did,
             ":gid"   => $this->_gid,
@@ -312,19 +267,16 @@ class UploadHandler
     }
 
 
-    private function insertRevision()
+    private function insertRevision($fid)
     {
 
         $pdo = Registry::getConnection();
-
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // in KB
-
         $blob = null;
         if(CoreConfig::settings()['uploads']['storageDB'])
         {
             $blob = $this->_File->getBlob();
         }
-
         try
         {
             $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip, data) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip, :data)");
@@ -332,7 +284,7 @@ class UploadHandler
             $query->bindValue(":uploaderId", $this->_uid);
             $query->bindValue(":size", $fileSize);
             $query->bindValue(":name", $this->getSavedAsName());
-            $query->bindValue(":fid", $this->getFileId());
+            $query->bindValue(":fid", $fid);
             $query->bindValue(":ip", $this->get_client_ip());
             $query->bindValue(":data", $blob, PDO::PARAM_LOB);
 

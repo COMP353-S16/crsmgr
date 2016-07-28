@@ -215,7 +215,7 @@ else
                                     <th>Revisions</th>
                                     <th>Size</th>
                                     <th>Expires</th>
-                                    <th></th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -269,7 +269,7 @@ else
                                     Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
                                     <p>
                                     <div class="progress" style="display: none;">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="0"
                                             aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
                                     </div>
                                     <div id="uploadResult"></div>
@@ -367,7 +367,7 @@ else
         </p>
     </div>
 
-    <div id="deleteProgress"></div>
+    <div id="deleteProgress" style="display: none;"></div>
 
     <div id="recoverFilesContainer" style="display: none;"></div>
 
@@ -469,7 +469,7 @@ else
 
             rules : {
                 //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
-                maxSize : '<?php echo CoreConfig::settings()['uploads']['maxupload']; ?>'
+                maxSize : '<?php echo CoreConfig::settings()['uploads']['maxupload'] ; ?>'
             },
             beforeRequest : function (files, formData)
             {
@@ -480,25 +480,16 @@ else
         }).on("lu:start", function (e, files)
         {
             $('.progress').fadeIn();
+            $('.progress-bar').fadeIn().attr('aria-valuenow', 0)
+                .removeClass('progress-bar-danger progress-bar-success')
+                .width(0 + "%")
+                .text(0 + '%');
+            $('#uploadResult').html("");
         }).on("lu:before", function (e, files)
         {
 
-            $('.progress-bar').attr('aria-valuenow', 0)
-                              .width(0 + "%")
-                              .text(0 + '%');
-            $('#uploadResult').html("");
-
-
         }).on("lu:cancel", function (e)
         {
-
-            $('.progress-bar').attr('aria-valuenow', 0)
-                              .removeClass('progress-bar-danger').addClass('progress-bar-success')
-                              .width(0 + "%")
-                              .text(0 + '%');
-
-            $('#progress').html(percentage + "%");
-
 
         }).on("lu:success", function (e, response)
         {
@@ -514,32 +505,39 @@ else
 
         }).on("lu:progress", function (e, percentage)
         {
-
             $('.progress-bar').attr('aria-valuenow', percentage)
-                              .removeClass('progress-bar-danger').addClass('progress-bar-success')
+                              .addClass('progress-bar-warning')
                               .width(percentage + "%")
                               .text(percentage + '%');
 
             $('#progress').html(percentage + "%");
+            if(percentage == 100)
+            {
 
+                $('#uploadResult').html("Your file is being processed... please wait");
+            }
         }).on("lu:errors", function (e, errors)
         {
-            console.log(errors);
-
+            $('.progress-bar').removeClass('progress-bar-success progress-bar-warning').addClass('progress-bar-danger');
+            var output =  '<div class="alert alert-danger alert-dismissable">';
+            output += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            output += '<ul>';
             for (var i = 0; i < errors.length; i++)
             {
-                if (errors[i].type = "type")
+                if (errors[i].type = "size")
                 {
-                    console.log('Invalid file type');
+                    output += '<li>File size exceeded limit of <strong>'+'<?php echo number_format(CoreConfig::settings()['uploads']['maxupload'] / 1024 / 1024); ?>MB</strong>'+'</li>';
                 }
             }
-
+            output +='</ul>';
+            output += '</div>';
+            $('#uploadResult').html(output);
         }).change(function ()
         {
             $(this).data("liteUploader").startUpload();
         });
 
-        $("#cancelUpload").click(function ()
+        $(document).on('click', "#cancelUpload",function ()
         {
             $("#fileUpload").data("liteUploader").cancelUpload();
         });
@@ -754,39 +752,17 @@ else
 
         /* deleted files table */
         deletedFilesTable = $('#deletedFilesTable').DataTable({
-            "processing" : true,
-            "serverSide" : false,
-            "displayLength" : 25,
+            processing : true,
             dom : 'Bfrtip',
             select : {
-                style : "os",
-                selector : ':checkbox'
+                style : "os"
             },
             buttons : [
                 {
-                    "extend" : "selectAll",
-                    "action" : function ()
-                    {
-                        var rows = deletedFilesTable.rows();
-                        for (var i = 0; i < rows.length; i++)
-                        {
-                            $(rows[i]).find(':checkbox').prop("checked", true);
-                        }
-
-                        deletedFilesTable.rows().select();
-                    }
+                    "extend" : "selectAll"
                 },
                 {
-                    "extend" : "selectNone",
-                    "action" : function ()
-                    {
-                        var rows = deletedFilesTable.rows();
-                        for (var i = 0; i < rows.length; i++)
-                        {
-                            $(rows[i]).find(':checkbox').prop("checked", false);
-                        }
-                        deletedFilesTable.rows().deselect();
-                    }
+                    "extend" : "selectNone"
                 },
                 {
                     "text" : "Recover",
@@ -794,10 +770,12 @@ else
                 }
 
             ],
-            "ajax" : {
+            "ajax" :
+            {
                 "url" : "ajax/deletedFilesList.php",
                 "type" : "POST",
-                "data" : {
+                "data" :
+                {
                     "gid" : "<?php echo $Group->getGid(); ?>"
                 }
             },
@@ -808,23 +786,12 @@ else
                 {"data" : "filename"},
                 {"data" : "revisions"},
                 {"data" : "size"},
-                {"data" : "expires"},
-
-                {
-                    'render' : function (data, type, row)
-                    {
-                        return '<input type="checkbox" data-fid="' + row.fid + '" name="fid[]">';
-
-                    }
-                }
+                {"data" : "expires"}
             ],
-            columnDefs : [{
-                orderable : false,
-                targets : 6
-            }],
             'order' : [[2, "asc"]],
             "rowCallback" : function (nRow, aData)
             {
+                $(nRow).addClass('selectable');
             }
         });
 
