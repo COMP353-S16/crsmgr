@@ -14,7 +14,7 @@ AND (u.firstName LIKE :firstName OR u.lastName LIKE :lastName)
 $query = $pdo->prepare($SQL);
 
 
-$SEMESTER = 1;
+$SEMESTER = $_REQUEST['semester'];
 
 
 $query->bindValue(":firstName", "%".$_REQUEST['studentName']."%");

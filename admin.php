@@ -1,6 +1,11 @@
 <?php
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
+
+$pdo = Registry::getConnection();
+$query = $pdo->prepare("SELECT * FROM Semester");
+$query->execute();
+$semesters = $query->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -239,10 +244,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                     <select class="form-control" id="selectSemesterNewDeliverable" name="selectSemesterNewDeliverable">
                                         <option value="">--Select--</option>
                                         <?php
-                                        $pdo = Registry::getConnection();
-                                        $query = $pdo->prepare("SELECT * FROM Semester");
-                                        $query->execute();
-                                        while ($sec = $query->fetch())
+
+                                        foreach ($semesters as $sec)
                                         {
                                             ?>
                                             <option value="<?php echo $sec['sid']; ?>">Semester <?php echo $sec['sid'] . ' (' . $sec['startDate'] . ') - (' . $sec['endDate'] . ')'; ?></option>
@@ -303,8 +306,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         <tr>
                             <td>Select Section:</td>
                             <td>
-                                <div class="form-group has-feedback">
-                                    <select class="form-control" id="sectionSelect">
+
+                                    <select class="form-control" id="sectionSelect" name="sectionSelect">
                                         <option value="all">All sections</option>
                                         <?php
                                         $pdo = Registry::getConnection();
@@ -322,13 +325,37 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                         ?>
 
                                     </select>
-                                    <span class="help-block"></span>
-                                </div>
+
+
                             </td>
                         </tr>
                         <tr>
+                            <td>Select Semester:</td>
+                            <td>
+                                <div class="form-group has-feedback">
+                                <select class="form-control required" id="semesterSelect" name="semesterSelect" >
+                                    <option value="">--Select--</option>
+                                    <?php
+                                    foreach ($semesters as $sec)
+                                    {
+                                        ?>
+                                        <option value="<?php echo $sec['sid']; ?>">Semester <?php echo $sec['sid'] . ' (' . $sec['startDate'] . ') - (' . $sec['endDate'] . ')'; ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </select>
+                                    <span class="help-block"></span>
+                                    </div>
+                            </td>
+                        </tr>
+
+                        <tr>
                             <td>Student Name:</td>
-                            <td><input id="studentName" class="form-control" placeholder="Enter student name"></td>
+                            <td>
+
+                                <input id="studentName" class="form-control" placeholder="Enter student name" disabled>
+
+                            </td>
                         </tr>
                     </table>
 
@@ -402,6 +429,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                             <!-- This is used to hold group id -->
                             <input type="hidden" id="editGroupGid" value="">
+                            <input type="hidden" id="editGroupSid" value="">
+                            <!-- hidden group id: DO NOT REMOVE -->
 
                             <div id="editGroupGeneralAjax" style="display: none;"></div>
 
@@ -427,13 +456,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                     <hr>
                     <!-- Add new members to group -->
+                    <h4>New Members</h4>
                     <table class="table table-bordered">
-                        <tr>
-                            <th colspan="2">New Members</th>
-                        </tr>
                         <tr>
                             <td>Select Section:</td>
                             <td>
+
                                 <select class="form-control" id="sectionSelectEdit">
                                     <option value="all">All sections</option>
                                     <?php
@@ -450,6 +478,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                     ?>
 
                                 </select>
+
                             </td>
                         </tr>
                         <tr>
@@ -458,12 +487,20 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 <input id="studentNameEdit" class="form-control" placeholder="Enter student name">
                             </td>
                         </tr>
+                        <tr>
+                            <td colspan="2"><p class="text-warning text-right"><i>*Only students from the same semester as group will be filtered.</i></p></td>
+                        </tr>
                     </table>
                     <table width="100%" class="table table-bordered" id="selectedStudentsTableEditGroup" name="selectedStudentsTableEditGroup">
                         <thead>
                         </thead>
                         <tbody></tbody>
                     </table>
+
+                    <button type="button" id="addMembers" class="btn btn-outline btn-primary btn-lg btn-block">Add Members</button>
+
+                    <br>
+                    <div id="addMembersAjax"></div>
                     <!-- /Add new members to group -->
                 </div>
 
@@ -566,6 +603,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <script src="js/crs.js"></script>
     <script>
 
+
         $(function ()
         {
 
@@ -635,6 +673,9 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         selectedStudentsTable.clear().draw();
                         students = [];
                         selected = [];
+
+                        // disabled autocomplete for student
+                        $('#studentName').prop("disabled", true);
                     }
                 })
             });
@@ -702,7 +743,10 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         data : {
                             studentName : request.term,
                             selectedStudents : selected,
-                            section : $('#sectionSelect').val()
+                            section : $('#sectionSelect').val(),
+                            semester : $('#semesterSelect').val()
+
+
                         },
                         success : function (data)
                         {
@@ -761,24 +805,71 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             };
 
 
+            /* when semester changes, delete students chosen */
+            $(document).on('change', '#semesterSelect', function(){
+                selected = [];
+                // selected students data. to be used in datatables
+                students = [];
+
+                selectedStudentsTable.clear().draw();
+
+                if(!$('#semesterSelect').val()=="")
+                {
+                    $('#studentName').prop("disabled", false);
+                }
+                else
+                {
+                    $('#studentName').prop("disabled", true);
+                }
+
+            });
+
             /* new group validator */
             $('form#createGroupForm').validate({
-                rules : {
-                    newGroupName : {
+                rules :
+                {
+                    newGroupName :
+                    {
                         required : true
                     },
-                    groupBandwidth : {
+                    semesterSelect :
+                    {
+                      required: true
+                    },
+                    groupBandwidth :
+                    {
                         required : true,
                         number : true,
                         min : 1,
                         max : 2048
                     }
                 },
+                messages : {
+                    newGroupName :
+                    {
+                        required : "A group name is required"
+                    },
+                    semesterSelect :
+                    {
+                        required: "A semester is required"
+                    }
+                },
                 submitHandler : function (form)
                 {
-                    var serialized = $('#createGroupForm :input').serialize();
+                    var serialized = $('#createGroupForm').serialize();
+
+                    // grab all selected students
+                    var added = [];
+                    selectedStudentsTable.rows('.selected').every(function(index){
+                        var student = this.data();
+                        added.push(student.uid);
+                    });
+
+                    if(added.length == 0)
+                        return false;
+
                     // send data to server to check for credentials
-                    $('#createGroupAjax').html("Please wait while group is being created").dialog({
+                    $('#createGroupAjax').html("Please wait while group is being created...").dialog({
                         title : 'Create Group',
                         modal : true,
                         width : 300,
@@ -787,11 +878,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         resizable : false
                     });
 
+
+
+
                     $.ajax({
                         url : 'ajax/createGroup.php',
                         data : {
                             form : serialized,
-                            uids : selected,
+                            uids : added,
                             maxb : $('#groupBandwidth').val()
                         },
                         type : 'POST',
@@ -826,7 +920,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         "extend" : "selectNone"
                     },
                     {
-                        "text" : "Remove",
+                        "text" : "Remove Student",
                         "action" : function ()
                         {
 
@@ -1063,7 +1157,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         "extend" : "selectNone"
                     },
                     {
-                        "text" : "Remove",
+                        "text" : "Remove Student",
                         "action" : function ()
                         {
 
@@ -1123,6 +1217,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 $('#groupNameEdit').val(data.gName);
                 $('#groupBandwidthEdit').val(data.bandwidth);
                 $('#editGroupGid').val(data.gid);
+                $('#editGroupSid').val(data.sid);
 
                 $('#editGroupModal').dialog({
                     width : 900,
@@ -1310,7 +1405,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         data : {
                             studentName : request.term,
                             selectedStudents : selectedEdit,
-                            section : $('#sectionSelectEdit').val()
+                            section : $('#sectionSelectEdit').val(),
+                            semester : $('#editGroupSid').val()
                         },
                         success : function (data)
                         {
@@ -1445,6 +1541,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         max : 2048
                     }
                 },
+                messages : {
+                    groupNameEdit : {
+                        required : "A group name is required"
+                    }
+                },
                 submitHandler : function (form)
                 {
                     $button = $('#saveGeneralInformation');
@@ -1470,6 +1571,52 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                 }
             });
+
+
+            // ADD NEW MEMBERS
+            $(document).on('click', '#addMembers', function(){
+                $addMembersButton = $(this);
+                var text = $addMembersButton.text();
+                var added = [];
+                var gid = $('#editGroupGid').val();
+                var sid = $('#editGroupSid').val();
+
+
+
+                // if no one is selected
+                if (added.length == 0)
+                {
+                    return false;
+                }
+
+                $addMembersButton.html("Adding...").prop('disabled', true);
+
+                 $.ajax({
+                    url : 'ajax/addMembers.php',
+                    data :
+                    {
+                        uids : added,
+                        gid: gid,
+                        sid: sid
+
+                    },
+                    type : 'POST',
+                    dataType : 'html',
+                    success : function (data)
+                    {
+                        $('#addMembersAjax').html(data);
+
+                    },
+                    complete : function()
+                    {
+                        $addMembersButton.html(text).prop('disabled', false);
+                    }
+                });
+
+            });
+
+
+
         });
 
     </script>
