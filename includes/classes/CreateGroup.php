@@ -17,6 +17,10 @@ class CreateGroup extends NewGroup
 
     public function validate()
     {
+        if($this->getSemesterId()==null)
+        {
+            $this->setError("Semester must be set");
+        }
         if(empty($this->getGroupName()))
         {
             $this->setError("Group must have a name!");
@@ -49,6 +53,9 @@ class CreateGroup extends NewGroup
     public function create()
     {
         $pdo = Registry::getConnection();
+        $this->validate();
+        if(!empty($this->getErrors()))
+            return false;
         try
         {
             $pdo->beginTransaction();

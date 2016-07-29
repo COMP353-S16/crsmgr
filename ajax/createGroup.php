@@ -14,7 +14,9 @@ $name = $formData['newGroupName'];
 $uids = $_REQUEST['uids']; // array
 
 
-$SEMESTER = $_REQUEST['semesterSelect'];
+$SEMESTER = $formData['semesterSelect'];
+
+
 $CreateGroup = new CreateGroup();
 $CreateGroup->setGroupName($name);
 $CreateGroup->setSemesterId($SEMESTER);
@@ -43,12 +45,15 @@ if($CreateGroup->create())
                         }
                     }
                 });
+
+
+                // close form dialog
+                $("#createGroupModal").dialog("close");
             });
 
             // reset form
 
-            // close form dialog
-            $("#createGroupModal").dialog("destroy");
+
 
             //
             selectedStudentsTable.clear().draw();

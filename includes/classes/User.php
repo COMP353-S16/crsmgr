@@ -68,8 +68,16 @@ class User {
         return $this->_privilege == 2;
     }
 
+    public function isTa()
+    {
+        return $this->_privilege == 1;
+    }
+
     public function isSysAdmin()
     {
         return $this->_privilege == 4;
     }
+
+
+
 }

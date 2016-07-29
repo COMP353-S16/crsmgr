@@ -30,10 +30,17 @@ if($rows<=0)
     <?php
     foreach($data as $studentData)
     {
-        $Student = new Student($studentData['uid'], $_REQUEST['sid']);
-        ?>
-        <li><?php echo $Student->getFirstName() . ' ' . $Student->getLastName() . ' - ID#'. $Student->getUid() . ' - Section '. $Student->getSectionName(); ?></li>
-        <?php
+
+        $Student = new Student($studentData['uid']);
+
+        if($Student->isRegisteredForSemester($_REQUEST['sid']))
+        {
+
+
+            ?>
+            <li><?php echo $Student->getFirstName() . ' ' . $Student->getLastName() . ' - ID#' . $Student->getUid() . ' - Section ' . $Student->getSemesters()->getSemesterName($_REQUEST['sid']); ?></li>
+            <?php
+        }
     }
     ?>
 

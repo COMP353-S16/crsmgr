@@ -14,12 +14,12 @@ $info =array("data" => array());
 $Group = new Group($gid);
 while($member = $query->fetch()) {
 
-    $Student = new Student($member['uid'], $_REQUEST['sid']);
+    $Student = new Student($member['uid']);
 
     $info['data'][] = array(
         "uid" => $Student->getUid(),
         "name" => $Student->getFirstName() .' ' .$Student->getLastName(),
-        "section" => $Student->getSectionName(),
+        "section" => $Student->getSemesters()->getSemesterName($_REQUEST['sid']),
         "email" => $Student->getEmail(),
         "isLeader" => $Group->isLeader($Student->getUid())
 
