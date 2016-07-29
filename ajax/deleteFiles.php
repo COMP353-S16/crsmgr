@@ -14,7 +14,7 @@ if($DeleteFiles->delete())
 
 
 
-    <div id="responseMessage" class="alert alert-success alert-dismissable">
+    <div id="responseMessage" class="alert alert-success">
         You have successfully deleted <strong><?php echo count($fids); ?></strong> files!
     </div>
 
@@ -63,7 +63,7 @@ else
         });
     </script>
 
-    <div class="alert alert-danger alert-dismissable">
+    <div class="alert alert-danger">
 
         <?php
         $msg .= "<ul>";
