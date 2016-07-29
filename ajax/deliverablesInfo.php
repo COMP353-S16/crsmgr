@@ -19,7 +19,10 @@ while($deliverable_data = $query->fetch()) {
     $info['data'][] = array(
         "name" => $deliverable->getDName(),
         "datePosted" => $deliverable->getStartDate(),
-        "dueDate" => $deliverable->getEndDate()
+        "dueDate" => $deliverable->getEndDate(),
+        "did" => $deliverable->getDid(),
+        "gid" => (int)$gid,
+        "sid" => $deliverable->getSemesterId()
 
     );
 }
