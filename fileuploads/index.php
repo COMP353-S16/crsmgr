@@ -24,9 +24,7 @@ else
         ?>
         <script>
             $(function(){
-                $('.progress-bar').removeClass('progress-bar-success').addClass('progress-bar-danger');
-                groupFiles.ajax.reload();
-                loadFileSummary();
+                $('.progress-bar').removeClass('progress-bar-success progress-bar-warning').addClass('progress-bar-danger');
             });
         </script>
         <br>
@@ -57,6 +55,7 @@ else
 
         <script>
             $(function(){
+                $('.progress-bar').removeClass('progress-bar-warning').addClass('progress-bar-success');
                 groupFiles.ajax.reload();
                 loadFileSummary();
 

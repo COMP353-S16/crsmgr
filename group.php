@@ -1,10 +1,10 @@
 <?php
 session_start();
-require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
+require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
 $Student = WebUser::getUser();
-if($Student instanceof Student)
+if ($Student instanceof Student)
 {
     $Group = new Group($Student->getGid());
 
@@ -69,16 +69,17 @@ else
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-    
+
     <style>
         /*fixes modal window issue */
         .ui-widget-overlay {
             position: fixed;
-            z-index:10000
+            z-index: 10000
         }
+
         .selectable {
 
-            cursor:pointer;
+            cursor: pointer;
         }
 
     </style>
@@ -91,9 +92,9 @@ else
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
         <?php
-        require_once ($_SERVER['DOCUMENT_ROOT'].'/layout/header.php');
-        require_once ($_SERVER['DOCUMENT_ROOT'].'/layout/navbar-right.php');
-        require_once ($_SERVER['DOCUMENT_ROOT'].'/layout/navbar-side.php');
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/header.php');
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navbar-right.php');
+        require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navbar-side.php');
         ?>
 
     </nav>
@@ -103,12 +104,14 @@ else
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">Group <strong><?php echo $Group->getGName()?>  <?php echo ($isGroupClosed ? "<i>[CLOSED]</i>" : ""); ?></strong></h1>
+                    <h1 class="page-header">Group
+                        <strong><?php echo $Group->getGName() ?><?php echo($isGroupClosed ? "<i>[CLOSED]</i>" : ""); ?></strong>
+                    </h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
             <?php
-            if($isGroupClosed)
+            if ($isGroupClosed)
             {
                 ?>
                 <p class="text-center text-danger text-capitalize"> This group no longer has access to group files.</p>
@@ -118,12 +121,20 @@ else
             <div class="row">
                 <div class="col-md-6">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#members" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a></li>
-                        <li><a href="#deliverables" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
-                        <li style="<?php echo ( $isGroupClosed ? "display:none;" : ""); ?>"><a href="#files" data-toggle="tab">All Files <span class="glyphicon glyphicon-th-list"></span></a></li>
+                        <li class="active"><a href="#members" data-toggle="tab">Members
+                                <span class="glyphicon glyphicon-user"></span></a></li>
+                        <li><a href="#deliverables" data-toggle="tab">Deliverables
+                                <span class="glyphicon glyphicon-info-sign"></span></a></li>
+                        <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>">
+                            <a href="#files" data-toggle="tab">All Files
+                                <span class="glyphicon glyphicon-th-list"></span></a></li>
 
-                        <li style="<?php echo ( $isGroupClosed ? "display:none;" : ""); ?>"><a href="#filesubmission" data-toggle="tab">File Submission <span class="glyphicon glyphicon-upload"></span></a> </li>
-                        <li style="<?php echo ( $isGroupClosed ? "display:none;" : ""); ?>"><a href="#deletedfiles" data-toggle="tab">Deleted Files <span class="glyphicon glyphicon-trash"></span> </a></li>
+                        <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>">
+                            <a href="#filesubmission" data-toggle="tab">File Submission
+                                <span class="glyphicon glyphicon-upload"></span></a></li>
+                        <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>">
+                            <a href="#deletedfiles" data-toggle="tab">Deleted Files
+                                <span class="glyphicon glyphicon-trash"></span> </a></li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="members">
@@ -204,7 +215,7 @@ else
                                     <th>Revisions</th>
                                     <th>Size</th>
                                     <th>Expires</th>
-                                    <th></th>
+
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -217,58 +228,56 @@ else
                             <h4>File Submission</h4>
 
                             <?php
-                            if($query->rowCount()>0)
+                            if ($query->rowCount() > 0)
                             {
-                            ?>
-                            <!-- File Uploader -->
-                            <form id="uploadForm">
+                                ?>
+                                <!-- File Uploader -->
+                                <form id="uploadForm">
 
-                                <div class="form-group">
-                                    <label for="sel1">Select Deliverable</label>
-                                    <select class="form-control" id="deliverableSelect">
-                                        <?php
+                                    <div class="form-group">
+                                        <label for="sel1">Select Deliverable</label>
+                                        <select class="form-control" id="deliverableSelect">
+                                            <?php
 
-                                        while($del = $query->fetch())
-                                        {
-                                            $Deliverable = new Deliverable($del['did']);
-
-                                            $startDate = $Deliverable->getStartDate();
-
-                                            if(time() >= strtotime($startDate))
+                                            while ($del = $query->fetch())
                                             {
+                                                $Deliverable = new Deliverable($del['did']);
+
+                                                $startDate = $Deliverable->getStartDate();
+
+                                                if (time() >= strtotime($startDate))
+                                                {
 
 
-                                                ?>
-                                                <option value="<?php echo $del['did']; ?>"><?php echo $Deliverable->getDName(); ?>
-                                                   - Due on <?php echo $Deliverable->getEndDate(); ?></option>
-                                                <?php
+                                                    ?>
+                                                    <option value="<?php echo $del['did']; ?>"><?php echo $Deliverable->getDName(); ?>
+                                                        - Due on <?php echo $Deliverable->getEndDate(); ?></option>
+                                                    <?php
+                                                }
                                             }
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
+                                            ?>
+                                        </select>
+                                    </div>
 
-                                <label id="label-browser" class="btn btn-success btn-file">
-                                    Browse
-                                    <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
-                                </label>
-
+                                    <label id="label-browser" class="btn btn-success btn-file">
+                                        Browse
+                                        <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
+                                    </label>
 
 
+                                    <button class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
+                                    Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
+                                    <p>
+                                    <div class="progress" style="display: none;">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="0"
+                                            aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
+                                    </div>
+                                    <div id="uploadResult"></div>
 
-                                <button class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
-                                Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
-                                <p>
-                                <div class="progress" style="display: none;">
-                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0"
-                                         aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
-                                </div>
-                                <div id="uploadResult"></div>
+                                </form>
+                                <!-- /File Uploader -->
 
-                            </form>
-                            <!-- /File Uploader -->
-
-                            <?php
+                                <?php
                             }
                             else
                             {
@@ -282,50 +291,49 @@ else
                     </div>
                 </div>
                 <div class="col-md-3">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                Group Info
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li>Group ID: <?php echo $Group->getGid(); ?></li>
-                                    <li>Group name: <?php echo $Group->getGName(); ?></li>
-                                    <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
-                                        echo $group_leader->getFirstName() .' ' .$group_leader->getLastName();?></li>
-                                    <li>
-                                        Access:
-                                        <ul>
-                                            <li> Start: <?php echo $Group->getSemester()->getSemesterStartDate(); ?></li>
-                                            <li> End: <?php echo $Group->getSemester()->getSemseterEndDate();?></li>
-                                        </ul>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Group Info
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li>Group ID: <?php echo $Group->getGid(); ?></li>
+                                <li>Group name: <?php echo $Group->getGName(); ?></li>
+                                <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
+                                    echo $group_leader->getFirstName() . ' ' . $group_leader->getLastName(); ?></li>
+                                <li>
+                                    Access:
+                                    <ul>
+                                        <li> Start: <?php echo $Group->getSemester()->getSemesterStartDate(); ?></li>
+                                        <li> End: <?php echo $Group->getSemester()->getSemseterEndDate(); ?></li>
+                                    </ul>
 
-                                    </li>
-                                </ul>
-                                <p class="text-center">Status</p>
-                                <?php  echo (($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>") ; ?>
-                            </div>
+                                </li>
+                            </ul>
+                            <p class="text-center">Status</p>
+                            <?php echo(($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>"); ?>
                         </div>
                     </div>
+                </div>
                 <div class="col-md-3">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
-                                Group Files
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li>Bandwidth: <span id="bandwidth">-</span> </li>
-                                    <li>Total Files: <span id="totalFiles">-</span> </li>
-                                    <li>Deleted Files: <span id="totalDeletedFiles">-</span> </li>
-                                    <li>Used Bandwidth: <span id="usedBandwidth">-</span> </li>
-                                    <li>Number of Downloads: <span id="downloads">-</span> </li>
-                                    <li>Number of Uploaded Files: <span id="uploadedFiles">-</span> </li>
-                                </ul>
-                            </div>
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            Group Files
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li>Bandwidth: <span id="bandwidth">-</span></li>
+                                <li>Total Files: <span id="totalFiles">-</span></li>
+                                <li>Deleted Files: <span id="totalDeletedFiles">-</span></li>
+                                <li>Used Bandwidth: <span id="usedBandwidth">-</span></li>
+                                <li>Number of Downloads: <span id="downloads">-</span></li>
+                                <li>Number of Uploaded Files: <span id="uploadedFiles">-</span></li>
+                            </ul>
                         </div>
                     </div>
+                </div>
 
             </div>
-
 
 
             <!-- /.row -->
@@ -335,30 +343,32 @@ else
     <!-- /#page-wrapper -->
     <!-- MODAL WINDOWS -->
     <div id="versionsModal" style="display:none;">
- 
 
-            <table width="100%" border="0" class="table table-bordered" id="versionsTable">
-                <thead>
-                <tr>
 
-                    <th>ID</th>
-                    <th>User</th>
-                    <th>Date</th>
-                    <th>Size</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+        <table width="100%" border="0" class="table table-bordered" id="versionsTable">
+            <thead>
+            <tr>
+
+                <th>ID</th>
+                <th>User</th>
+                <th>Date</th>
+                <th>Size</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
 
     </div>
 
     <div id="deleteEntriesContainer" style="display: none;">
-        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><div id="deleteEntryContent"></div></p>
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+        <div id="deleteEntryContent"></div>
+        </p>
     </div>
 
-    <div id="deleteProgress"></div>
-    
+    <div id="deleteProgress" style="display: none;"></div>
+
     <div id="recoverFilesContainer" style="display: none;"></div>
 
 
@@ -398,98 +408,91 @@ else
 
 <script>
 
-    $(function (){
+    $(function ()
+    {
 
 
         members = $('#memberstable').DataTable({
-            "processing": true,
-            "serverSide": false,
-            "displayLength": 25,
-            "ajax": {
+            "processing" : true,
+            "serverSide" : false,
+            "displayLength" : 25,
+            "ajax" : {
                 "url" : "ajax/membersInfo.php",
                 "type" : "POST",
                 "data" : {
                     "gid" : '<?php echo $Group->getGid(); ?>',
-
                 }
             },
-            "columns": [
-                {"data": "name"},
-                {"data": "username"},
-                {"data": "email"}
+            "columns" : [
+                {"data" : "name"},
+                {"data" : "username"},
+                {"data" : "email"}
             ]
         });
 
 
         deliverables = $('#deliverablestable').DataTable({
-            "processing": true,
-            "serverSide": false,
-            "displayLength": 25,
-            dom: 'Bfrtip',
-            buttons: [
+            "processing" : true,
+            "serverSide" : false,
+            "displayLength" : 25,
+            dom : 'Bfrtip',
+            buttons : [
                 {
-                    text: 'Refresh',
-                    action: function ( e, dt, node, config ) {
+                    text : 'Refresh',
+                    action : function (e, dt, node, config)
+                    {
                         deliverables.ajax.reload();
                     }
                 }
             ],
-            "ajax": {
+            "ajax" : {
                 "url" : "ajax/deliverablesInfo.php",
                 "type" : "POST",
                 "data" : {
                     "gid" : '<?php echo $Group->getGid(); ?>',
                 }
             },
-            "columns": [
-                {"data": "name"},
-                {"data": "datePosted"},
-                {"data": "dueDate"}
+            "columns" : [
+                {"data" : "name"},
+                {"data" : "datePosted"},
+                {"data" : "dueDate"}
             ]
         });
 
 
-
-
         $("#fileUpload").liteUploader({
-            script: "fileuploads/",
-            params: {
-                gid: "<?php echo $Group->getGid();?>",  // group id
+            script : "fileuploads/",
+            params : {
+                gid : "<?php echo $Group->getGid();?>",  // group id
             },
-            singleFileUploads: true,
+            singleFileUploads : true,
 
-            rules: {
+            rules : {
                 //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
-                maxSize: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))) * 1024 * 1024; ?>
+                maxSize : '<?php echo CoreConfig::settings()['uploads']['maxupload'] ; ?>'
             },
-            beforeRequest : function(files, formData)
+            beforeRequest : function (files, formData)
             {
 
-                formData.append("did", $('#deliverableSelect').val() );
+                formData.append("did", $('#deliverableSelect').val());
                 return Promise.resolve(formData);
             }
-        }).on("lu:start", function(e, files){
+        }).on("lu:start", function (e, files)
+        {
             $('.progress').fadeIn();
-        }).on("lu:before", function (e, files) {
-
-            $('.progress-bar').attr('aria-valuenow', 0)
+            $('.progress-bar').fadeIn().attr('aria-valuenow', 0)
+                .removeClass('progress-bar-danger progress-bar-success')
                 .width(0 + "%")
                 .text(0 + '%');
             $('#uploadResult').html("");
+        }).on("lu:before", function (e, files)
+        {
 
+        }).on("lu:cancel", function (e)
+        {
 
-        }).on("lu:cancel", function (e) {
-
-            $('.progress-bar').attr('aria-valuenow', 0)
-                .removeClass('progress-bar-danger').addClass('progress-bar-success')
-                .width(0 + "%")
-                .text(0 + '%');
-
-            $('#progress').html(percentage + "%");
-
-
-
-        }).on("lu:success", function (e, response) {
+        }).on("lu:success", function (e, response)
+        {
 
             $('#uploadResult').html(response);
 
@@ -500,161 +503,155 @@ else
 
             //groupFiles.ajax.reload();
 
-        }).on("lu:progress", function (e, percentage) {
-
+        }).on("lu:progress", function (e, percentage)
+        {
             $('.progress-bar').attr('aria-valuenow', percentage)
-                .removeClass('progress-bar-danger').addClass('progress-bar-success')
-                .width(percentage + "%")
-                .text(percentage + '%');
+                              .addClass('progress-bar-warning')
+                              .width(percentage + "%")
+                              .text(percentage + '%');
 
             $('#progress').html(percentage + "%");
+            if(percentage == 100)
+            {
 
-        }).on("lu:errors", function (e, errors) {
-            console.log(errors);
-
-            for (var i = 0; i < errors.length; i++) {
-                if (errors[i].type = "type") {
-                    console.log('Invalid file type');
+                $('#uploadResult').html("Your file is being processed... please wait");
+            }
+        }).on("lu:errors", function (e, errors)
+        {
+            $('.progress-bar').removeClass('progress-bar-success progress-bar-warning').addClass('progress-bar-danger');
+            var output =  '<div class="alert alert-danger alert-dismissable">';
+            output += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+            output += '<ul>';
+            for (var i = 0; i < errors.length; i++)
+            {
+                if (errors[i].type = "size")
+                {
+                    output += '<li>File size exceeded limit of <strong>'+'<?php echo number_format(CoreConfig::settings()['uploads']['maxupload'] / 1024 / 1024); ?>MB</strong>'+'</li>';
                 }
             }
-
-        }).change(function () {
+            output +='</ul>';
+            output += '</div>';
+            $('#uploadResult').html(output);
+        }).change(function ()
+        {
             $(this).data("liteUploader").startUpload();
         });
 
-        $("#cancelUpload").click(function () {
+        $(document).on('click', "#cancelUpload",function ()
+        {
             $("#fileUpload").data("liteUploader").cancelUpload();
         });
 
 
-
-
-
-
-
-
-
-
         /* Group Files table */
         groupFiles = $('#groupfiles').DataTable({
-            "processing": true,
-            "serverSide": false,
-            "displayLength": 10,
-            dom: 'Bfrtip',
-            select: {
+            "processing" : true,
+            "serverSide" : false,
+            "displayLength" : 10,
+            dom : 'Bfrtip',
+            select : {
                 style : "os",
-                selector: ':checkbox'
+                selector : "td:not(:has(:button))" // a row can be selected that doesn't have a button on it
             },
-            buttons:[
+            buttons : [
                 {
-                    "extend": "selectAll",
-                    "action": function ()
-                    {
-                        var rows = groupFiles.rows();
-                        for(var i = 0; i < rows.length; i++)
-                        {
-                            $(rows[i]).find(':checkbox').prop("checked", true);
-                        }
-
-                        groupFiles.rows().select();
-                    }
+                    "extend" : "selectAll"
                 },
                 {
-                    "extend": "selectNone",
-                    "action": function ()
-                    {
-                        var rows = groupFiles.rows();
-                        for(var i = 0; i < rows.length; i++)
-                        {
-                            $(rows[i]).find(':checkbox').prop("checked", false);
-                        }
-                        groupFiles.rows().deselect();
-                    }
+                    "extend" : "selectNone"
                 },
                 {
-                    text: 'Refresh',
-                    action: function ( e, dt, node, config ) {
+                    text : 'Refresh',
+                    action : function (e, dt, node, config)
+                    {
                         groupFiles.ajax.reload();
                     }
                 },
                 {
                     "text" : "Delete",
-                    "action": deleteFiles
+                    "action" : deleteFiles
                 }
 
             ],
-            "ajax": {
+            "ajax" : {
                 "url" : "ajax/groupFiles.php",
                 "type" : "POST",
                 "data" : {
                     "gid" : '<?php echo $Group->getGid(); ?>',
                 }
             },
-            "columns": [
+            "columns" : [
 
-                {"data": "fid"},
+                {"data" : "fid"},
                 {"data" : "deliverable"},
-                {"data": "filename"},
-                {"data": "ldate"},
-                {"data": "revisions"},
+                {"data" : "filename"},
+                {"data" : "ldate"},
+                {"data" : "revisions"},
                 {"data" : "size"},
                 {
-                    'render': function ( data, type, row )
+                    'render' : function (data, type, row)
                     {
-                        return '<button id="rollbackButton" name="rollbackButton" type="button" class="btn btn-outline btn-primary btn-sm">Rollback</button>';
+                        return '<button title="Rollback to previous version" id="rollbackButton" name="rollbackButton" type="button" class="btn btn-outline btn-danger btn-square btn-sm"> <i class="fa fa-repeat"></i>  </button>';
 
                     }
                 },
                 {
-                    'render': function ( data, type, row )
+                    'render' : function (data, type, row)
                     {
-                        return '<input type="checkbox" data-fid="'+row.fid+'" name="fid[]">';
+                        return '<button title="Download '+ row.filename +'" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
 
                     }
                 }
             ],
-            columnDefs: [{
-                orderable: false,
-                targets:   [6,7]
+            columnDefs : [{
+                orderable : false,
+                targets : [6, 7]
             }],
-            'order': [[2, "asc"]],
-            "rowCallback": function (nRow, aData)
+            'order' : [[2, "asc"]],
+            "rowCallback" : function (nRow, aData)
             {
-                $(nRow).addClass('selectable');
+                $(nRow).find("td:not(:has(:button))").addClass('selectable');
             },
-            "footerCallback": function ( row, data, start, end, display )
+            "footerCallback" : function (row, data, start, end, display)
             {
                 var api = this.api(), data;
                 // Remove the formatting to get integer data for summation
-                var intVal = function ( i ) {
+                var intVal = function (i)
+                {
                     return typeof i === 'string' ?
-                    i.replace(/[\{\sKB},]/g, '')*1 :
+                    i.replace(/[\{\sKB},]/g, '') * 1 :
                         typeof i === 'number' ?
                             i : 0;
                 };
                 // Total over all pages
-                total = api.column(5).data().reduce(function (a, b) {
-                        return intVal(a) + intVal(b);
-                    },0);
+                total = api.column(5).data().reduce(function (a, b)
+                {
+                    return intVal(a) + intVal(b);
+                }, 0);
 
 
                 // Total over this page
-                pageTotal = api.column( 5, { page: 'current'} ).data().reduce( function (a, b) {
-                        return intVal(a) + intVal(b);
-                    },0);
+                pageTotal = api.column(5, {page : 'current'}).data().reduce(function (a, b)
+                {
+                    return intVal(a) + intVal(b);
+                }, 0);
 
                 // Update footer
 
                 // convert to megabytes after 1024 KB
-                if(pageTotal>1024)
+                if (pageTotal > 1024)
+                {
                     pageTotal /= 1024;
-                if(total > 1024)
+                }
+                if (total > 1024)
+                {
                     total /= 1024;
+                }
 
                 // display
-                $(api.column(5).footer()).html(pageTotal.toFixed(2) +' of  '+ total.toFixed(2) +' MB');
+                $(api.column(5).footer()).html(pageTotal.toFixed(2) + ' of  ' + total.toFixed(2) + ' MB');
             },
-            "drawCallback" : function(settings)
+            "drawCallback" : function (settings)
             {
 
             }
@@ -664,88 +661,88 @@ else
          * when clicking on edit button
          **/
 
-        $(document).on('click', '#rollbackButton', function () {
+        $(document).on('click', '#rollbackButton', function ()
+        {
             var fileData = groupFiles.row($(this).closest('tr')).data();
 
             // This is probably a window that the group leader would have open in order to change the file version... the rollback option
 
-             versionsTable = $('#versionsTable').DataTable({
-                 "processing": true,
-                 "destroy" : true,
-                 "serverSide": false,
-                 "displayLength": 25,
-                 select:
-                 {
-                     style : "os"
-                 },
-                 "ajax":
-                 {
-                     "url" : "ajax/fileVersions.php",
-                     "type" : "POST",
-                     "data" :
-                     {
-                         "fid" : fileData.fid
-                     }
-                 },
-                 "columns":
-                     [
-                     {"data": "vid"},
-                     {"data": "user"},
-                     {"data": "date"},
-                     {"data": "size"},
-                 ],
-                 'order': [[0, "asc"]]
-             });
+            versionsTable = $('#versionsTable').DataTable({
+                "processing" : true,
+                "destroy" : true,
+                "serverSide" : false,
+                "displayLength" : 25,
+                select : {
+                    style : "os"
+                },
+                "ajax" : {
+                    "url" : "ajax/fileVersions.php",
+                    "type" : "POST",
+                    "data" : {
+                        "fid" : fileData.fid
+                    }
+                },
+                "columns" : [
+                    {"data" : "vid"},
+                    {"data" : "user"},
+                    {"data" : "date"},
+                    {"data" : "size"},
+                ],
+                'order' : [[0, "asc"]]
+            });
 
 
             /* open rollback modal window */
-             $("#versionsModal").dialog({
-                 modal: true,
-                 width: 600,
-                 height: 600,
-                 title: "File: " + fileData.filename,
-                 show: "fade",
-                 buttons :
-                 {
-                     "Rollback" : function()
-                     {
-                         var versionData = versionsTable.row('.selected').data();
+            $("#versionsModal").dialog({
+                modal : true,
+                width : 600,
+                height : 600,
+                title : "File: " + fileData.filename,
+                show : "fade",
+                buttons : {
+                    "Rollback" : function ()
+                    {
+                        var versionData = versionsTable.row('.selected').data();
 
-                         if(typeof versionData === "undefined")
-                             return false;
-                         /* rollback functionality */
+                        if (typeof versionData === "undefined")
+                        {
+                            return false;
+                        }
+                        /* rollback functionality */
 
-                         $.ajax({
-                             data: {
-                                 fid : fileData.fid,
-                                 vid : versionData.vid
-                             },
-                             url: "ajax/rollback.php",
-                             dataType: "html",
-                             success: function (data)
-                             {
+                        $.ajax({
+                            data : {
+                                fid : fileData.fid,
+                                vid : versionData.vid
+                            },
+                            url : "ajax/rollback.php",
+                            dataType : "html",
+                            success : function (data)
+                            {
 
-                                 $('#rollbackResponse').html(data);
-                             }
-                         });
-                     },
-                     "Cancel" : function()
-                     {
-                         $(this).dialog("close")
-                     }
-                 },
-                 close: function (ev, ui) {
-                     versionsTable.destroy();
-                 }
-             });
-
-
-             $(document).on('click', '#versionsTable  tbody tr', function () {
-                 var versionData = versionsTable.row(this).data();
-                 //console.log(versionData);
+                                $('#rollbackResponse').html(data);
+                            }
+                        });
+                    },
+                    "Cancel" : function ()
+                    {
+                        $(this).dialog("close")
+                    }
+                },
+                close : function (ev, ui)
+                {
+                    versionsTable.destroy();
+                }
+            });
 
 
-             });
+            $(document).on('click', '#versionsTable  tbody tr', function ()
+            {
+                var versionData = versionsTable.row(this).data();
+                //console.log(versionData);
+
+
+            });
 
         });
 
@@ -755,136 +752,101 @@ else
 
         /* deleted files table */
         deletedFilesTable = $('#deletedFilesTable').DataTable({
-            "processing": true,
-            "serverSide": false,
-            "displayLength": 25,
-            dom: 'Bfrtip',
-            select: {
-                style : "os",
-                selector: ':checkbox'
+            processing : true,
+            dom : 'Bfrtip',
+            select : {
+                style : "os"
             },
-            buttons:[
+            buttons : [
                 {
-                    "extend": "selectAll",
-                    "action": function ()
-                    {
-                        var rows = deletedFilesTable.rows();
-                        for(var i = 0; i < rows.length; i++)
-                        {
-                            $(rows[i]).find(':checkbox').prop("checked", true);
-                        }
-
-                        deletedFilesTable.rows().select();
-                    }
+                    "extend" : "selectAll"
                 },
                 {
-                    "extend": "selectNone",
-                    "action": function ()
-                    {
-                        var rows = deletedFilesTable.rows();
-                        for(var i = 0; i < rows.length; i++)
-                        {
-                            $(rows[i]).find(':checkbox').prop("checked", false);
-                        }
-                        deletedFilesTable.rows().deselect();
-                    }
+                    "extend" : "selectNone"
                 },
                 {
                     "text" : "Recover",
-                    "action": recoverFiles
+                    "action" : recoverFiles
                 }
 
             ],
-            "ajax": {
+            "ajax" :
+            {
                 "url" : "ajax/deletedFilesList.php",
                 "type" : "POST",
-                "data" : {
+                "data" :
+                {
                     "gid" : "<?php echo $Group->getGid(); ?>"
                 }
             },
-            "columns": [
+            "columns" : [
 
-                {"data": "fid"},
+                {"data" : "fid"},
                 {"data" : "deliverable"},
-                {"data": "filename"},
-                {"data": "revisions"},
+                {"data" : "filename"},
+                {"data" : "revisions"},
                 {"data" : "size"},
-                {"data" : "expires"},
-
-                {
-                    'render': function ( data, type, row )
-                    {
-                        return '<input type="checkbox" data-fid="'+row.fid+'" name="fid[]">';
-
-                    }
-                }
+                {"data" : "expires"}
             ],
-            columnDefs: [{
-                orderable: false,
-                targets:   6
-            }],
-            'order': [[2, "asc"]],
-            "rowCallback": function (nRow, aData)
+            'order' : [[2, "asc"]],
+            "rowCallback" : function (nRow, aData)
             {
+                $(nRow).addClass('selectable');
             }
         });
 
         // delete files
-        function deleteFiles( e, dt, node, config )
+        function deleteFiles(e, dt, node, config)
         {
             // collect all fids
             var ids = [];
-            var files = $.map(dt.rows('.selected').data(), function (item) {
+            var files = $.map(dt.rows('.selected').data(), function (item)
+            {
 
+                ids.push(item.fid)
                 return item;
             });
-            if(files.length == 0)
+            if (ids.length == 0)
             {
                 alert('nothing to delete!');
                 return false;
             }
-            console.log(files);
+
 
             var msg = "Are you sure you wish to delete the following files?";
             msg += "<ul>";
-            for (var i in files) {
+            for (var i in files)
+            {
                 msg += "<li>" + files[i].filename + " </li>";
-                ids.push(files[i].fid);
             }
             msg += "</ul>";
             msg += "Note that all versions associated with each file will also be delete.";
 
             $('#deleteEntryContent').html(msg);
             $('#deleteEntriesContainer').dialog({
-                open: function ()
+                open : function ()
                 {
                     $('.ui-widget-overlay').hide().fadeIn();
                 },
-                show: 'fade',
-                hide: 'fade',
-                width: 420,
-                height: 500,
-                modal: true,
-                title: "Delete Files",
-                close : function()
+                show : 'fade',
+                hide : 'fade',
+                width : 420,
+                height : 500,
+                modal : true,
+                title : "Delete Files",
+                close : function ()
                 {
-                    // uncheck boxes
-                    $(":checkbox:checked").each(function(){
-                        $(this).prop("checked", false);
-
-                    });
                     // deselect rows
                     groupFiles.rows().deselect();
 
                     $(this).dialog("destroy");
                 },
-                buttons:
-                {
-                    "Delete Files" : function()
+                buttons : {
+                    "Delete Files" : function ()
                     {
                         deleteGroupFiles(ids);
                     },
-                    "Cancel": function()
+                    "Cancel" : function ()
                     {
                         $(this).dialog('destroy')
                     }
@@ -901,24 +863,24 @@ else
             $('#deleteEntryContent').html("");
 
             $('#deleteProgress').html("Deleting files...please wait").dialog({
-                modal: true,
-                width: 300,
-                resizable: false,
-                height: 230,
-                title: "File Deletion"
+                modal : true,
+                width : 300,
+                resizable : false,
+                height : 230,
+                title : "File Deletion"
             });
 
 
             $.ajax({
-                url: 'ajax/deleteFiles.php',
-                data: {fids: ids},
-                type: 'POST',
-                dataType: 'html',
-                success: function(data)
+                url : 'ajax/deleteFiles.php',
+                data : {fids : ids},
+                type : 'POST',
+                dataType : 'html',
+                success : function (data)
                 {
                     $('#deleteProgress').html(data);
                 },
-                error: function()
+                error : function ()
                 {
                     $('#deleteProgress').html("There was an error.");
                 }
@@ -931,11 +893,12 @@ else
         {
             // collect all fids
             var ids = [];
-            var files = $.map(deletedFilesTable.rows('.selected').data(), function (item) {
+            var files = $.map(deletedFilesTable.rows('.selected').data(), function (item)
+            {
 
                 return item;
             });
-            if(files.length == 0)
+            if (files.length == 0)
             {
                 return false;
             }
@@ -946,23 +909,23 @@ else
             }
 
             $('#recoverFilesContainer').html("Recovering files, please wait...").dialog({
-                modal: true,
-                width: 300,
-                resizable: false,
-                height: 230,
-                title: "File Recovery"
+                modal : true,
+                width : 300,
+                resizable : false,
+                height : 230,
+                title : "File Recovery"
             });
 
             $.ajax({
-                url: 'ajax/recoverFiles.php',
-                data: {fids: ids},
-                type: 'POST',
-                dataType: 'html',
-                success: function(data)
+                url : 'ajax/recoverFiles.php',
+                data : {fids : ids},
+                type : 'POST',
+                dataType : 'html',
+                success : function (data)
                 {
                     $('#recoverFilesContainer').html(data);
                 },
-                error: function()
+                error : function ()
                 {
                     $('#recoverFilesContainer').html("There was an error");
                 }
@@ -971,20 +934,24 @@ else
         }
 
 
-
         /**
          * when clicking on a row
          */
 
-        $(document).on('click', '#groupfiles  tbody tr td:not(:last-child)', function () {
-            var fileData = groupFiles.row(this).data();
-            //console.log(fileData);
-            window.open("view.php?fid=" + fileData.fid)
-            
-        });
-        
-    });
+        $(document).on('click', '#downloadButton', function (e)
+        {
+            var fileData = groupFiles.row($(this).closest('tr')).data();
 
+            e.preventDefault();
+            window.location.href = "view.php?fid=" + fileData.fid + "&gid=" + groupFiles.gid;
+           // window.open("view.php?fid=" + fileData.fid)
+
+        });
+
+
+
+
+    });
 
 
     // must be put here to be used globally
@@ -992,12 +959,12 @@ else
     {
 
         $.ajax({
-            data: {
+            data : {
                 gid : "<?php echo $Group->getGid(); ?>"
             },
-            url: "ajax/filesSummary.php",
-            dataType: "json",
-            success: function (data)
+            url : "ajax/filesSummary.php",
+            dataType : "json",
+            success : function (data)
             {
                 $('#downloads').text(data.downloads);
                 $('#totalFiles').text(data.totalFiles);

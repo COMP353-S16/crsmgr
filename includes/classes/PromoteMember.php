@@ -25,8 +25,17 @@ class PromoteMember
         }
     }
 
+
+    public function getErrors()
+    {
+        return $this->_errors;
+    }
+
     public function promote()
     {
+        $this->validate();
+        if(!empty($this->_errors))
+            return false;
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("UPDATE Groups SET leaderId=:leaderId WHERE gid=:gid");
         $query->bindValue(":gid", $this->_gid);

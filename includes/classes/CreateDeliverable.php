@@ -88,7 +88,16 @@ class CreateDeliverable
         {
             $this->_errors[] = "A valid semester is required";
         }
+        if($this->_sid ==null || $this->_sid == "")
+        {
+            $this->_errors[] = "A semester is required";
+        }
 
+    }
+
+    public function getSemesterId()
+    {
+        return $this->_sid;
     }
 
     /**
@@ -123,16 +132,17 @@ class CreateDeliverable
         $this->validate();
         if(!empty($this->getErrors()))
             return false;
-        
+
         $pdo = Registry::getConnection();
         try
         {
-            $pdo->beginTransaction();
 
-            $query = $pdo->prepare("INSERT INTO Deliverables (dName, startDate, endDate) VALUES (:name, :start, :end) ");
+
+            $query = $pdo->prepare("INSERT INTO Deliverables (dName, startDate, endDate, sid) VALUES (:name, :start, :end, :sid) ");
             $query->bindValue(":name", $this->getName());
             $query->bindValue(":start", $this->getStartDate());
             $query->bindValue(":end", $this->getEndDate());
+            $query->bindValue(":sid", $this->getSemesterId());
             $query->execute();
 
             $lastId = $pdo->lastInsertId();
@@ -142,21 +152,30 @@ class CreateDeliverable
             if(empty($groupIds))
                 throw new Exception("No groups found for this semester");
 
+
             foreach($groupIds as $gid)
             {
-                $query2 = $pdo->prepare("INSERT INTO GroupDeliverables VALUES (:gid, :did)");
-                $query2->bindValue(":gid", $gid);
-                $query2->bindValue(":did", $lastId);
-                $query2->execute();
+                $AssignDeliverables  = new AssignDeliverables($gid, $pdo);
+                $AssignDeliverables->addDid($lastId);
+                if(!$AssignDeliverables->assign())
+                {
+
+                    foreach($AssignDeliverables->getErrors() as $error)
+                    {
+                        $this->_errors[] = $error;
+                    }
+                    throw new Exception("Could not assign deliverable {$lastId} to group {$gid}");
+                }
             }
 
-            return $pdo->commit();
+            return true;
 
         }
         catch(Exception $e)
         {
-            $pdo->rollBack();
             $this->_errors[] = $e->getMessage();
         }
+
+        return false;
     }
 }

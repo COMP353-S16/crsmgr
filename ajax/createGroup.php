@@ -14,7 +14,7 @@ $name = $formData['newGroupName'];
 $uids = $_REQUEST['uids']; // array
 
 
-$SEMESTER = 1;
+$SEMESTER = $_REQUEST['semesterSelect'];
 $CreateGroup = new CreateGroup();
 $CreateGroup->setGroupName($name);
 $CreateGroup->setSemesterId($SEMESTER);

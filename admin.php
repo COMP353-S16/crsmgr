@@ -1,6 +1,11 @@
 <?php
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
+
+$pdo = Registry::getConnection();
+$query = $pdo->prepare("SELECT * FROM Semester");
+$query->execute();
+$semesters = $query->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -93,8 +98,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             <div class="row">
                 <div class="col-md-12">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#managegroups" data-toggle="tab">Manage Groups</a></li>
-                        <li><a href="#deliverablesManager" data-toggle="tab">Deliverables</a></li>
+                        <li class="active"><a href="#managegroups" data-toggle="tab">Manage Groups <span class="glyphicon glyphicon-globe"></span></a></li>
+                        <li><a href="#deliverablesManager" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -136,6 +141,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 <tr>
                                     <th>ID</th>
                                     <th>Name</th>
+                                    <th>Semester</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                 </tr>
@@ -239,10 +245,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                     <select class="form-control" id="selectSemesterNewDeliverable" name="selectSemesterNewDeliverable">
                                         <option value="">--Select--</option>
                                         <?php
-                                        $pdo = Registry::getConnection();
-                                        $query = $pdo->prepare("SELECT * FROM Semester");
-                                        $query->execute();
-                                        while ($sec = $query->fetch())
+
+                                        foreach ($semesters as $sec)
                                         {
                                             ?>
                                             <option value="<?php echo $sec['sid']; ?>">Semester <?php echo $sec['sid'] . ' (' . $sec['startDate'] . ') - (' . $sec['endDate'] . ')'; ?></option>
@@ -303,8 +307,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         <tr>
                             <td>Select Section:</td>
                             <td>
-                                <div class="form-group has-feedback">
-                                    <select class="form-control" id="sectionSelect">
+
+                                    <select class="form-control" id="sectionSelect" name="sectionSelect">
                                         <option value="all">All sections</option>
                                         <?php
                                         $pdo = Registry::getConnection();
@@ -322,13 +326,37 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                         ?>
 
                                     </select>
-                                    <span class="help-block"></span>
-                                </div>
+
+
                             </td>
                         </tr>
                         <tr>
+                            <td>Select Semester:</td>
+                            <td>
+                                <div class="form-group has-feedback">
+                                <select class="form-control required" id="semesterSelect" name="semesterSelect" >
+                                    <option value="">--Select--</option>
+                                    <?php
+                                    foreach ($semesters as $sec)
+                                    {
+                                        ?>
+                                        <option value="<?php echo $sec['sid']; ?>">Semester <?php echo $sec['sid'] . ' (' . $sec['startDate'] . ') - (' . $sec['endDate'] . ')'; ?></option>
+                                        <?php
+                                    }
+                                    ?>
+                                </select>
+                                    <span class="help-block"></span>
+                                    </div>
+                            </td>
+                        </tr>
+
+                        <tr>
                             <td>Student Name:</td>
-                            <td><input id="studentName" class="form-control" placeholder="Enter student name"></td>
+                            <td>
+
+                                <input id="studentName" class="form-control" placeholder="Enter student name" disabled>
+
+                            </td>
                         </tr>
                     </table>
 
@@ -402,6 +430,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                             <!-- This is used to hold group id -->
                             <input type="hidden" id="editGroupGid" value="">
+                            <input type="hidden" id="editGroupSid" value="">
+                            <!-- hidden group id: DO NOT REMOVE -->
 
                             <div id="editGroupGeneralAjax" style="display: none;"></div>
 
@@ -427,13 +457,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                     <hr>
                     <!-- Add new members to group -->
+                    <h4>New Members</h4>
                     <table class="table table-bordered">
-                        <tr>
-                            <th colspan="2">New Members</th>
-                        </tr>
                         <tr>
                             <td>Select Section:</td>
                             <td>
+
                                 <select class="form-control" id="sectionSelectEdit">
                                     <option value="all">All sections</option>
                                     <?php
@@ -450,13 +479,18 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                     ?>
 
                                 </select>
+
                             </td>
                         </tr>
                         <tr>
-                            <td>Student Name:</td>
+                            <td>Student Name: <button id="studentPool" class="btn btn-outline btn-primary btn-square btn-sm">Pool <i class="fa fa-user"></i> </button></td>
                             <td>
                                 <input id="studentNameEdit" class="form-control" placeholder="Enter student name">
+
                             </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><p class="text-warning text-right"><i>*Only students from the same semester as group will be filtered.</i></p></td>
                         </tr>
                     </table>
                     <table width="100%" class="table table-bordered" id="selectedStudentsTableEditGroup" name="selectedStudentsTableEditGroup">
@@ -464,6 +498,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         </thead>
                         <tbody></tbody>
                     </table>
+
+                    <button type="button" id="addMembers" class="btn btn-outline btn-primary btn-lg btn-block">Add Members</button>
+
+                    <br>
+                    <div id="addMembersAjax"></div>
                     <!-- /Add new members to group -->
                 </div>
 
@@ -495,6 +534,10 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         </tbody>
                     </table>
 
+                    <button type="button" id="assignDeliverables" class="btn btn-outline btn-primary btn-lg btn-block">Assign</button>
+
+                    <br>
+                    <div id="assignDeliverablesAjax"></div>
 
                 </div>
 
@@ -527,6 +570,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             </div>
 
         </div>
+
+
+        <!-- STUDENT POOL -->
+
+        <div id="studentPoolContainer" style="display: none;"></div>
 
 
     </div>
@@ -565,6 +613,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
     <script src="js/crs.js"></script>
     <script>
+
 
         $(function ()
         {
@@ -624,17 +673,27 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         "Cancel" : function ()
                         {
                             $(this).dialog("close");
+
                         }
                     },
                     close : function ()
                     {
                         $(this).dialog("destroy");
                         $('form#createGroupForm')[0].reset();
+                        $('form#createGroupForm .form-group').each(function ()
+                        {
+                            $(this).removeClass('has-success has-error has-feedback');
+                        });
+                        $('form#createGroupForm .help-block').each(function () { $(this).remove(); });
+                        $('form#createGroupForm .form-control-feedback').each(function () { $(this).remove(); });
 
                         // reset datatable
                         selectedStudentsTable.clear().draw();
                         students = [];
                         selected = [];
+
+                        // disabled autocomplete for student
+                        $('#studentName').prop("disabled", true);
                     }
                 })
             });
@@ -702,7 +761,10 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         data : {
                             studentName : request.term,
                             selectedStudents : selected,
-                            section : $('#sectionSelect').val()
+                            section : $('#sectionSelect').val(),
+                            semester : $('#semesterSelect').val()
+
+
                         },
                         success : function (data)
                         {
@@ -761,24 +823,71 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             };
 
 
+            /* when semester changes, delete students chosen */
+            $(document).on('change', '#semesterSelect', function(){
+                selected = [];
+                // selected students data. to be used in datatables
+                students = [];
+
+                selectedStudentsTable.clear().draw();
+
+                if(!$('#semesterSelect').val()=="")
+                {
+                    $('#studentName').prop("disabled", false);
+                }
+                else
+                {
+                    $('#studentName').prop("disabled", true);
+                }
+
+            });
+
             /* new group validator */
             $('form#createGroupForm').validate({
-                rules : {
-                    newGroupName : {
+                rules :
+                {
+                    newGroupName :
+                    {
                         required : true
                     },
-                    groupBandwidth : {
+                    semesterSelect :
+                    {
+                      required: true
+                    },
+                    groupBandwidth :
+                    {
                         required : true,
                         number : true,
                         min : 1,
                         max : 2048
                     }
                 },
+                messages : {
+                    newGroupName :
+                    {
+                        required : "A group name is required"
+                    },
+                    semesterSelect :
+                    {
+                        required: "A semester is required"
+                    }
+                },
                 submitHandler : function (form)
                 {
-                    var serialized = $('#createGroupForm :input').serialize();
+                    var serialized = $('#createGroupForm').serialize();
+
+                    // grab all selected students
+                    var added = [];
+                    selectedStudentsTable.rows('.selected').every(function(index){
+                        var student = this.data();
+                        added.push(student.uid);
+                    });
+
+                    if(added.length == 0)
+                        return false;
+
                     // send data to server to check for credentials
-                    $('#createGroupAjax').html("Please wait while group is being created").dialog({
+                    $('#createGroupAjax').html("Please wait while group is being created...").dialog({
                         title : 'Create Group',
                         modal : true,
                         width : 300,
@@ -787,11 +896,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         resizable : false
                     });
 
+
+
+
                     $.ajax({
                         url : 'ajax/createGroup.php',
                         data : {
                             form : serialized,
-                            uids : selected,
+                            uids : added,
                             maxb : $('#groupBandwidth').val()
                         },
                         type : 'POST',
@@ -826,7 +938,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         "extend" : "selectNone"
                     },
                     {
-                        "text" : "Remove",
+                        "text" : "Remove Student",
                         "action" : function ()
                         {
 
@@ -906,6 +1018,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 "columns" : [
                     {"data" : "did"},
                     {"data" : "name"},
+                    {"data" :"sid"},
                     {"data" : "startDate"},
                     {"data" : "endDate"}
                 ]
@@ -957,7 +1070,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             });
 
             /* new deliverable validator */
-            $('form#newDeliverableForm').validate({
+            newDeliverableValidator = $('form#newDeliverableForm').validate({
                 rules : {
                     newDeliverableName : {
                         required : true
@@ -1037,6 +1150,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     {
                         $(this).dialog("destroy");
                         $('form#newDeliverableForm')[0].reset();
+                        $('form#newDeliverableForm .form-group').each(function ()
+                        {
+                            $(this).removeClass('has-success has-error has-feedback');
+                        });
+                        $('form#newDeliverableForm .help-block').each(function () { $(this).remove(); });
+                        $('form#newDeliverableForm .form-control-feedback').each(function () { $(this).remove(); });
                     }
                 });
             });
@@ -1063,7 +1182,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                         "extend" : "selectNone"
                     },
                     {
-                        "text" : "Remove",
+                        "text" : "Remove Student",
                         "action" : function ()
                         {
 
@@ -1123,6 +1242,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 $('#groupNameEdit').val(data.gName);
                 $('#groupBandwidthEdit').val(data.bandwidth);
                 $('#editGroupGid').val(data.gid);
+                $('#editGroupSid').val(data.sid);
 
                 $('#editGroupModal').dialog({
                     width : 900,
@@ -1153,10 +1273,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                             }
                         }
                     ],
-                    "ajax" : {
+                    "ajax" :
+                    {
                         "url" : "ajax/groupFiles.php",
                         "type" : "POST",
-                        "data" : {
+                        "data" :
+                        {
                             "gid" : data.gid,
                         }
                     },
@@ -1191,7 +1313,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                             }
                         }
                     ],
-                    "ajax" : {
+                    "ajax" :
+                    {
                         "url" : "ajax/adminGroupMembers.php",
                         "type" : "POST",
                         "data" : {
@@ -1255,7 +1378,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                             }
                         }
                     ],
-                    "ajax": {
+                    "ajax":
+                    {
                         "url" : "ajax/deliverablesInfo.php",
                         "type" : "POST",
                         "data" : {
@@ -1274,20 +1398,27 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                 unassignedGroupDeliverables = $('#unassignedGroupDeliverables').DataTable({
                     "processing": true,
                     destroy : true,
+                    select : {
+                        style : "os"
+                    },
                     dom: 'Bfrtip',
                     buttons: [
                         {
                             text: 'Refresh',
-                            action: function ( e, dt, node, config ) {
-                                groupDeliverables.ajax.reload();
+                            action: function ( e, dt, node, config )
+                            {
+                                unassignedGroupDeliverables.ajax.reload();
                             }
                         }
                     ],
-                    "ajax": {
+                    "ajax":
+                    {
                         "url" : "ajax/unassignedGroupDeliverables.php",
                         "type" : "POST",
-                        "data" : {
-                            "gid" : gid
+                        "data" :
+                        {
+                            "gid" : gid,
+                            "sid" : $('#editGroupSid').val()
                         }
                     },
                     "columns": [
@@ -1307,10 +1438,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     $.ajax({
                         url : "ajax/studentSearch.php",
                         dataType : "json",
-                        data : {
+                        data :
+                        {
                             studentName : request.term,
                             selectedStudents : selectedEdit,
-                            section : $('#sectionSelectEdit').val()
+                            section : $('#sectionSelectEdit').val(),
+                            semester : $('#editGroupSid').val()
                         },
                         success : function (data)
                         {
@@ -1398,7 +1531,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     modal : true,
                     show : 'fade',
                     title : 'Delete ' + data.name,
-                    buttons : {
+                    buttons :
+                    {
                         "Delete" : function ()
                         {
                             $('#deleteMemberModal').dialog("close");
@@ -1433,16 +1567,26 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
             /* save general group information */
+
             $('form#editGroupGeneralForm').validate({
                 rules : {
-                    groupNameEdit : {
+                    groupNameEdit :
+                    {
                         required : true
                     },
-                    groupBandwidthEdit : {
+                    groupBandwidthEdit :
+                    {
                         required : true,
                         number : true,
                         min : 1,
                         max : 2048
+                    }
+                },
+                messages :
+                {
+                    groupNameEdit :
+                    {
+                        required : "A group name is required"
                     }
                 },
                 submitHandler : function (form)
@@ -1470,6 +1614,114 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                 }
             });
+
+
+            // ASSIGN DELIVERABLES
+
+            $(document).on('click', '#assignDeliverables', function(){
+                $assignButton = $(this);
+                var text = $assignButton.text();
+                var added = [];
+                var gid = $('#editGroupGid').val();
+                var sid = $('#editGroupSid').val();
+                unassignedGroupDeliverables.rows('.selected').every(function(index){
+                    var del = this.data();
+                    added.push(del.did);
+                });
+                // if no deliverable selected
+                if (added.length == 0)
+                {
+                    return false;
+                }
+
+                $assignButton.html("Assigning...").prop('disabled', true);
+
+                $.ajax({
+                    url : 'ajax/assignDeliverables.php',
+                    data :
+                    {
+                        dids : added,
+                        gid: gid,
+                        sid: sid
+                    },
+                    type : 'POST',
+                    dataType : 'html',
+                    success : function (data)
+                    {
+                        $('#assignDeliverablesAjax').html(data);
+
+                    },
+                    complete : function()
+                    {
+                        $assignButton.html(text).prop('disabled', false);
+                    }
+                });
+            });
+
+            // ADD NEW MEMBERS
+            $(document).on('click', '#addMembers', function(){
+                $addMembersButton = $(this);
+                var text = $addMembersButton.text();
+                var added = [];
+                var gid = $('#editGroupGid').val();
+                var sid = $('#editGroupSid').val();
+
+
+                selectedStudentsTableEditGroup.rows('.selected').every(function(index){
+                    var student = this.data();
+                    added.push(student.uid);
+                });
+
+                // if no one is selected
+                if (added.length == 0)
+                {
+                    return false;
+                }
+
+                $addMembersButton.html("Adding...").prop('disabled', true);
+
+                 $.ajax({
+                    url : 'ajax/addMembers.php',
+                    data :
+                    {
+                        uids : added,
+                        gid: gid,
+                        sid: sid
+
+                    },
+                    type : 'POST',
+                    dataType : 'html',
+                    success : function (data)
+                    {
+                        $('#addMembersAjax').html(data);
+
+                    },
+                    complete : function()
+                    {
+                        $addMembersButton.html(text).prop('disabled', false);
+                    }
+                });
+
+            });
+
+            $(document).on('click', '#studentPool', function(){
+                var sid = $('#editGroupSid').val();
+                $('#studentPoolContainer').dialog({
+                    width: 400,
+                    height: 400,
+                    title: 'Student List - Semester ' + sid
+                });
+                $('#studentPoolContainer').html("Loading student list...")
+                $.post("ajax/studentPool.php", {
+                    sid : sid
+                }).done(function (data)
+                {
+                    $('#studentPoolContainer').html(data);
+                });
+
+
+            });
+
         });
 
     </script>

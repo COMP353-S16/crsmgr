@@ -13,6 +13,7 @@ class Deliverable
     protected $_dName;
     protected $_startDate;
     protected $_endDate;
+    protected $_sid;
     
     public function __construct($did)
     {
@@ -34,6 +35,12 @@ class Deliverable
         $this->_dName = $deliverable['dName'];
         $this->_startDate = $deliverable['startDate'];
         $this->_endDate = $deliverable['endDate'];
+        $this->_sid = $deliverable['sid'];
+    }
+    
+    public function getSemesterId()
+    {
+        return $this->_sid;
     }
 
     /**

@@ -7,18 +7,19 @@ $SQL = "SELECT * FROM Students s, Users u, StudentSemester st
 WHERE u.uid = s.uid
 AND s.uid = st.uid
   AND st.sid = :sid
-AND (u.firstName LIKE :firstName OR u.lastName LIKE :lastName)
+AND (u.firstName LIKE :firstName OR u.lastName LIKE :lastName OR u.uid LIKE :uid)
       AND (st.uid, st.sid) NOT IN
           (SELECT gm.uid, gm.sid FROM GroupMembers gm)";
 
 $query = $pdo->prepare($SQL);
 
 
-$SEMESTER = 1;
+$SEMESTER = $_REQUEST['semester'];
 
 
 $query->bindValue(":firstName", "%".$_REQUEST['studentName']."%");
 $query->bindValue(":lastName", "%".$_REQUEST['studentName']."%");
+$query->bindValue(":uid", "%".$_REQUEST['studentName']."%");
 $query->bindValue(":sid", $SEMESTER);  //SEMESTER SHOULD GO HERE
 $query->execute();
 

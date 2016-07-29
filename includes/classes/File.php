@@ -11,6 +11,8 @@ class File
 
     private $_file;
 
+    private $_blob;
+
     private $_fileData = array (
         "name" => "",
         "basename" => "",
@@ -45,6 +47,13 @@ class File
         $this->_fileData['error'] = $error;
         $this->_fileData['size'] = $size;
         $this->_fileData['extension'] = $parts['extension'];
+
+        $this->_blob = file_get_contents($this->_fileData['tmp_name']);
+    }
+
+    public function getBlob()
+    {
+        return $this->_blob;
     }
 
 
@@ -89,11 +98,11 @@ class File
         return $this->_fileData['size'];
     }
 
-    public function getMime($path)
+    public function getMime()
     {
 
         if(!function_exists('mime_content_type')) {
-            return self::mime_content_type($path);
+            return self::mime_content_type($this->getFileExtension());
         }
         return "";
 
