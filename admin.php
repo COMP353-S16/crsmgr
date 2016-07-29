@@ -483,9 +483,10 @@ $semesters = $query->fetchAll();
                             </td>
                         </tr>
                         <tr>
-                            <td>Student Name:</td>
+                            <td>Student Name: <button id="studentPool" class="btn btn-outline btn-primary btn-square btn-sm">Pool <i class="fa fa-user"></i> </button></td>
                             <td>
                                 <input id="studentNameEdit" class="form-control" placeholder="Enter student name">
+
                             </td>
                         </tr>
                         <tr>
@@ -533,6 +534,10 @@ $semesters = $query->fetchAll();
                         </tbody>
                     </table>
 
+                    <button type="button" id="assignDeliverables" class="btn btn-outline btn-primary btn-lg btn-block">Assign</button>
+
+                    <br>
+                    <div id="assignDeliverablesAjax"></div>
 
                 </div>
 
@@ -565,6 +570,11 @@ $semesters = $query->fetchAll();
             </div>
 
         </div>
+
+
+        <!-- STUDENT POOL -->
+
+        <div id="studentPoolContainer" style="display: none;"></div>
 
 
     </div>
@@ -663,12 +673,19 @@ $semesters = $query->fetchAll();
                         "Cancel" : function ()
                         {
                             $(this).dialog("close");
+
                         }
                     },
                     close : function ()
                     {
                         $(this).dialog("destroy");
                         $('form#createGroupForm')[0].reset();
+                        $('form#createGroupForm .form-group').each(function ()
+                        {
+                            $(this).removeClass('has-success has-error has-feedback');
+                        });
+                        $('form#createGroupForm .help-block').each(function () { $(this).remove(); });
+                        $('form#createGroupForm .form-control-feedback').each(function () { $(this).remove(); });
 
                         // reset datatable
                         selectedStudentsTable.clear().draw();
@@ -1053,7 +1070,7 @@ $semesters = $query->fetchAll();
             });
 
             /* new deliverable validator */
-            $('form#newDeliverableForm').validate({
+            newDeliverableValidator = $('form#newDeliverableForm').validate({
                 rules : {
                     newDeliverableName : {
                         required : true
@@ -1133,6 +1150,12 @@ $semesters = $query->fetchAll();
                     {
                         $(this).dialog("destroy");
                         $('form#newDeliverableForm')[0].reset();
+                        $('form#newDeliverableForm .form-group').each(function ()
+                        {
+                            $(this).removeClass('has-success has-error has-feedback');
+                        });
+                        $('form#newDeliverableForm .help-block').each(function () { $(this).remove(); });
+                        $('form#newDeliverableForm .form-control-feedback').each(function () { $(this).remove(); });
                     }
                 });
             });
@@ -1250,10 +1273,12 @@ $semesters = $query->fetchAll();
                             }
                         }
                     ],
-                    "ajax" : {
+                    "ajax" :
+                    {
                         "url" : "ajax/groupFiles.php",
                         "type" : "POST",
-                        "data" : {
+                        "data" :
+                        {
                             "gid" : data.gid,
                         }
                     },
@@ -1288,7 +1313,8 @@ $semesters = $query->fetchAll();
                             }
                         }
                     ],
-                    "ajax" : {
+                    "ajax" :
+                    {
                         "url" : "ajax/adminGroupMembers.php",
                         "type" : "POST",
                         "data" : {
@@ -1352,7 +1378,8 @@ $semesters = $query->fetchAll();
                             }
                         }
                     ],
-                    "ajax": {
+                    "ajax":
+                    {
                         "url" : "ajax/deliverablesInfo.php",
                         "type" : "POST",
                         "data" : {
@@ -1371,20 +1398,27 @@ $semesters = $query->fetchAll();
                 unassignedGroupDeliverables = $('#unassignedGroupDeliverables').DataTable({
                     "processing": true,
                     destroy : true,
+                    select : {
+                        style : "os"
+                    },
                     dom: 'Bfrtip',
                     buttons: [
                         {
                             text: 'Refresh',
-                            action: function ( e, dt, node, config ) {
-                                groupDeliverables.ajax.reload();
+                            action: function ( e, dt, node, config )
+                            {
+                                unassignedGroupDeliverables.ajax.reload();
                             }
                         }
                     ],
-                    "ajax": {
+                    "ajax":
+                    {
                         "url" : "ajax/unassignedGroupDeliverables.php",
                         "type" : "POST",
-                        "data" : {
-                            "gid" : gid
+                        "data" :
+                        {
+                            "gid" : gid,
+                            "sid" : $('#editGroupSid').val()
                         }
                     },
                     "columns": [
@@ -1404,7 +1438,8 @@ $semesters = $query->fetchAll();
                     $.ajax({
                         url : "ajax/studentSearch.php",
                         dataType : "json",
-                        data : {
+                        data :
+                        {
                             studentName : request.term,
                             selectedStudents : selectedEdit,
                             section : $('#sectionSelectEdit').val(),
@@ -1496,7 +1531,8 @@ $semesters = $query->fetchAll();
                     modal : true,
                     show : 'fade',
                     title : 'Delete ' + data.name,
-                    buttons : {
+                    buttons :
+                    {
                         "Delete" : function ()
                         {
                             $('#deleteMemberModal').dialog("close");
@@ -1531,20 +1567,25 @@ $semesters = $query->fetchAll();
 
 
             /* save general group information */
+
             $('form#editGroupGeneralForm').validate({
                 rules : {
-                    groupNameEdit : {
+                    groupNameEdit :
+                    {
                         required : true
                     },
-                    groupBandwidthEdit : {
+                    groupBandwidthEdit :
+                    {
                         required : true,
                         number : true,
                         min : 1,
                         max : 2048
                     }
                 },
-                messages : {
-                    groupNameEdit : {
+                messages :
+                {
+                    groupNameEdit :
+                    {
                         required : "A group name is required"
                     }
                 },
@@ -1575,6 +1616,48 @@ $semesters = $query->fetchAll();
             });
 
 
+            // ASSIGN DELIVERABLES
+
+            $(document).on('click', '#assignDeliverables', function(){
+                $assignButton = $(this);
+                var text = $assignButton.text();
+                var added = [];
+                var gid = $('#editGroupGid').val();
+                var sid = $('#editGroupSid').val();
+                unassignedGroupDeliverables.rows('.selected').every(function(index){
+                    var del = this.data();
+                    added.push(del.did);
+                });
+                // if no deliverable selected
+                if (added.length == 0)
+                {
+                    return false;
+                }
+
+                $assignButton.html("Assigning...").prop('disabled', true);
+
+                $.ajax({
+                    url : 'ajax/assignDeliverables.php',
+                    data :
+                    {
+                        dids : added,
+                        gid: gid,
+                        sid: sid
+                    },
+                    type : 'POST',
+                    dataType : 'html',
+                    success : function (data)
+                    {
+                        $('#assignDeliverablesAjax').html(data);
+
+                    },
+                    complete : function()
+                    {
+                        $assignButton.html(text).prop('disabled', false);
+                    }
+                });
+            });
+
             // ADD NEW MEMBERS
             $(document).on('click', '#addMembers', function(){
                 $addMembersButton = $(this);
@@ -1584,6 +1667,10 @@ $semesters = $query->fetchAll();
                 var sid = $('#editGroupSid').val();
 
 
+                selectedStudentsTableEditGroup.rows('.selected').every(function(index){
+                    var student = this.data();
+                    added.push(student.uid);
+                });
 
                 // if no one is selected
                 if (added.length == 0)
@@ -1617,7 +1704,23 @@ $semesters = $query->fetchAll();
 
             });
 
+            $(document).on('click', '#studentPool', function(){
+                var sid = $('#editGroupSid').val();
+                $('#studentPoolContainer').dialog({
+                    width: 400,
+                    height: 400,
+                    title: 'Student List - Semester ' + sid
+                });
+                $('#studentPoolContainer').html("Loading student list...")
+                $.post("ajax/studentPool.php", {
+                    sid : sid
+                }).done(function (data)
+                {
+                    $('#studentPoolContainer').html(data);
+                });
 
+
+            });
 
         });
 

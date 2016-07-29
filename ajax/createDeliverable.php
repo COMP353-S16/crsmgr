@@ -6,7 +6,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 $formData = array();
 parse_str($_REQUEST['form'], $formData);
 
-$gids = $_REQUEST['gids'];
+$gids = (!empty($_REQUEST['gids']) ? $_REQUEST['gids'] : array());
 
 
 $CreateDeliverable = new CreateDeliverable();

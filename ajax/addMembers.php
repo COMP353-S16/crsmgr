@@ -25,6 +25,20 @@ if($AddMembers->add())
                selectedEdit = [];
                studentsEdit = [];
            });
+
+            // update table
+            var gid = '<?php echo $gid; ?>';
+            groups.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                var data = this.data();
+                if(data.gid == gid)
+                {
+
+                    data.totalMembers++;
+                    this.invalidate();
+                }
+            });
+
+            groups.draw();
         });
     </script>
     <?php
@@ -33,7 +47,7 @@ else
 {
     $errors = $AddMembers->getErrors();
     ?>
-    <div class="alert alert-danger alert-dismissable">
+    <div class="alert alert-danger">
         <?php
         $msg .= "<ul>";
         foreach ($errors as $error)

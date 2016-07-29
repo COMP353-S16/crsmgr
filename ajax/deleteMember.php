@@ -26,6 +26,21 @@ if($DeleteMember->delete())
                 }
             });
         });
+
+
+        // update table
+        var gid = '<?php echo $_REQUEST['gid']; ?>';
+        groups.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+            var data = this.data();
+            if(data.gid == gid)
+            {
+
+                data.totalMembers--;
+                this.invalidate();
+            }
+        });
+
+        groups.draw();
     </script>
     <?php
 }
