@@ -38,7 +38,7 @@ if($rows<=0)
 
 
             ?>
-            <li><?php echo $Student->getFirstName() . ' ' . $Student->getLastName() . ' - ID#' . $Student->getUid() . ' - Section ' . $Student->getSemesters()->getSemesterName($_REQUEST['sid']); ?></li>
+            <li><?php echo $Student->getFirstName() . ' ' . $Student->getLastName() . ' - ID#' . $Student->getUid() . ' - Section ' . $Student->getSemesters()->getSectionName($_REQUEST['sid']); ?></li>
             <?php
         }
     }
