@@ -1,21 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: fatin
- * Date: 2016-07-18
- * Time: 7:25 PM
- */
-
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
+
+
+if (!WebUser::getUser()->isProf())
+{
+    exit("<p class='text-danger text-center'>You do not have enough privileges to delete a group</p>");
+}
+
 
 $gid = $_POST["gid"];
 
 $groupDelete = new DeleteGroup($gid);
 
-if($groupDelete->deleteGroup())
-{?>
-
+if ($groupDelete->deleteGroup())
+{
+    ?>
 
 
     <div id="responseMessageDelete" class="alert alert-success alert-dismissable" style="display: none;">
@@ -24,25 +24,27 @@ if($groupDelete->deleteGroup())
 
 
     <script>
-        $(function(){
+        $(function ()
+        {
 
             $('#responseMessageDelete').fadeIn();
 
             // refresh table
-            groups.ajax.reload(function(json){
+            groups.ajax.reload(function (json)
+            {
 
                 // add the close button
                 $('#deleteGroupModal').dialog({
-                    title: "Delete Successful",
+                    title : "Delete Successful",
                     buttons : {
-                        "Close" : function()
+                        "Close" : function ()
                         {
                             $(this).dialog("destroy");
                         }
                     }
                 });
 
-            },false);
+            }, false);
 
 
         });
@@ -55,11 +57,12 @@ else
     $errors = $groupDelete->getErrors();;
     ?>
     <script>
-        $(function(){
+        $(function ()
+        {
 
             $('#deleteGroupModal').dialog({
                 buttons : {
-                    "Close" : function()
+                    "Close" : function ()
                     {
                         $(this).dialog("destroy");
                     }
@@ -84,4 +87,4 @@ else
     <?php
 
 }
-
+?>

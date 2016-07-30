@@ -10,16 +10,19 @@ class Student extends User
 
     private $_groups = array();
 
+    /**
+     * Student constructor.
+     *
+     * @param $uid user id
+     */
     public function __construct($uid)
     {
         parent::__construct($uid);
-     
+
         $this->extract();
         $this->extractSemesters();
         $this->extractGroups();
     }
-
-
 
     private function extract()
     {
@@ -33,7 +36,7 @@ class Student extends User
         $this->_sectionName = $data['sectionName'];
 
     }
-    
+
     private function extractSemesters()
     {
         $pdo = Registry::getConnection();
@@ -43,19 +46,27 @@ class Student extends User
         $this->_semesters = $query->fetchAll();
     }
 
-
     /**
      * extracts all the groups this student was ever part of
      */
     private function extractGroups()
     {
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT gm.gid, gm.sid FROM GroupMembers gm WHERE  gm.uid = :uid");
+        $query = $pdo->prepare("SELECT gm.gid, gm.sid, gm.sid FROM GroupMembers gm WHERE  gm.uid = :uid");
         $query->bindValue(":uid", $this->_uid);
         $query->execute();
-        $this->_groups =$query->fetchAll();
+        $this->_groups = $query->fetchAll();
 
     }
+
+    /**
+     * @return bool returns true if student is in a group not necessarily tied to a semester
+     */
+    public function isInGroup()
+    {
+        return count($this->getGroups()) > 0;
+    }
+
 
     /**
      * @return array returns a list of groups this student was ever part of along with the groups' section id
@@ -65,25 +76,47 @@ class Student extends User
         return $this->_groups;
     }
 
+    /**
+     * @param $sid semester id
+     *
+     * @return null returns group id depending on the semester given
+     */
+    public function getGroupIdFromSid($sid)
+    {
+        foreach ($this->_groups as $Group)
+        {
+            if ($Group['sid'] == $sid)
+            {
+                return $Group['gid'];
+            }
+        }
+
+        return null;
+
+    }
+
 
     /**
      * @param $sid
-     * @return bool
+     *
+     * @return bool returns true if user is part of group given semester
      */
-    public function isRegisteredForSemester($sid)
+    public function isInGroupFromSid($sid)
     {
-        foreach($this->_semesters as $semester)
+        foreach ($this->_groups as $Group)
         {
-            if($semester['sid'] == $sid)
+            if ($Group['sid'] == $sid)
             {
                 return true;
             }
         }
+
         return false;
     }
 
+
     /**
-     * @return StudentSemester
+     * @return StudentSemester returns the student's registered semesters
      */
     public function getSemesters()
     {
@@ -99,15 +132,12 @@ class Student extends User
     }
 
 
+    /**
+     * @return bool returns true if the student is registered in any semester
+     */
     public function isRegistered()
     {
-         return count($this->_semesters) > 0;
-    }
-    
-
-    public function getSectionName()
-    {
-        return $this->_sectionName;
+        return count($this->_semesters) > 0;
     }
 
 

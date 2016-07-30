@@ -73,7 +73,7 @@ $semesters = $query->fetchAll();
 <div id="wrapper">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <nav class="navbar navbar-default navbar-inverse navbar-static-top" role="navigation" style="margin-bottom: 0">
         <?php
         require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/header.php');
         require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navbar-right.php');
@@ -174,11 +174,18 @@ $semesters = $query->fetchAll();
 
                             <div class="row">
                                 <div class="col-lg-4">
+
+
+                                    <form role="form" id="newSemesterForm">
+
+
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">
                                             New Semester
                                         </div>
                                         <div class="panel-body">
+
+
 
                                             <table class="table" width="100%">
                                                 <thead>
@@ -209,11 +216,18 @@ $semesters = $query->fetchAll();
 
                                         </div>
                                         <div class="panel-footer">
-                                            <button id="createSemester" type="button"
+                                            <button id="createSemester" type="submit"
                                                 class="btn btn-primary btn-lg btn-block">Create
                                             </button>
+                                            <br>
+                                            <div id="createSemesterAjaxResponse" style="display: none;"></div>
                                         </div>
                                     </div>
+
+
+                                    </form>
+
+
                                 </div>
 
 
@@ -729,8 +743,7 @@ $semesters = $query->fetchAll();
                 "displayLength" : 25,
                 "ajax" : {
                     "url" : "ajax/groupsInfo.php",
-                    "type" : "POST",
-                    "data" : {}
+                    "type" : "POST"
                 },
                 "columns" : [
                     {"data" : "gid"},
@@ -742,13 +755,8 @@ $semesters = $query->fetchAll();
                     {
                         'render' : function (data, type, row)
                         {
-
                             var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-square btn-sm"><i class="fa fa-pencil-square"></i></button>&nbsp';
-
-
                             var deleteB = '<button data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i> </button>';
-
-
                             return edit + deleteB;
                         }
                     }
@@ -785,16 +793,17 @@ $semesters = $query->fetchAll();
                     close : function ()
                     {
                         $(this).dialog("destroy");
-                        $('form#createGroupForm')[0].reset();
-                        $('form#createGroupForm .form-group').each(function ()
+                        $form = $('form#createGroupForm');
+                        $form[0].reset();
+                        $form.find('.form-group').each(function ()
                         {
                             $(this).removeClass('has-success has-error has-feedback');
                         });
-                        $('form#createGroupForm .help-block').each(function ()
+                        $form.find('.help-block').each(function ()
                         {
                             $(this).remove();
                         });
-                        $('form#createGroupForm .form-control-feedback').each(function ()
+                        $form.find('.form-control-feedback').each(function ()
                         {
                             $(this).remove();
                         });
@@ -828,18 +837,12 @@ $semesters = $query->fetchAll();
                     "buttons" : {
                         "Delete Group" : function ()
                         {
-
-
                             $('#deleteGroupModal').dialog({buttons : {}}).html("Deleting group, lease wait...");
 
                             $.ajax({
                                 url : 'ajax/groupDelete.php',
                                 data : "gid=" + gid,
                                 type : 'POST',
-                                error : function ()
-                                {
-                                    console.log('An error occured');
-                                },
                                 dataType : 'html',
                                 success : function (data)
                                 {
@@ -866,6 +869,7 @@ $semesters = $query->fetchAll();
             students = [];
             $("input#studentName").autocomplete({
                 appendTo : "#createGroupModal",
+                minLength : 1,
                 source : function (request, response)
                 {
                     $.ajax({
@@ -904,7 +908,6 @@ $semesters = $query->fetchAll();
                 {
                     $(this).removeClass('ui-autocomplete-loading');
                 },
-                minLength : 1,
                 select : function (event, ui)
                 {
                     // push id into selected ids array
@@ -945,7 +948,7 @@ $semesters = $query->fetchAll();
 
                 selectedStudentsTable.clear().draw();
 
-                if (!$('#semesterSelect').val() == "")
+                if ($('#semesterSelect').val() != "")
                 {
                     $('#studentName').prop("disabled", false);
                 }
@@ -969,7 +972,7 @@ $semesters = $query->fetchAll();
                         required : true,
                         number : true,
                         min : 1,
-                        max : 2048
+                        max : 2048  //TODO These values should be given through some PHP setting
                     }
                 },
                 messages : {
@@ -996,7 +999,6 @@ $semesters = $query->fetchAll();
                     {
                         return false;
                     }
-
                     // send data to server to check for credentials
                     $('#createGroupAjax').html("Please wait while group is being created...").dialog({
                         title : 'Create Group',
@@ -1007,19 +1009,15 @@ $semesters = $query->fetchAll();
                         resizable : false
                     });
 
-
                     $.ajax({
                         url : 'ajax/createGroup.php',
+                        type : 'POST',
+                        dataType : 'html',
                         data : {
                             form : serialized,
                             uids : added,
                             maxb : $('#groupBandwidth').val()
                         },
-                        type : 'POST',
-                        error : function ()
-                        {
-                        },
-                        dataType : 'html',
                         success : function (data)
                         {
                             $('#createGroupAjax').html(data);
@@ -1027,7 +1025,6 @@ $semesters = $query->fetchAll();
                     });
                 }
             });
-
 
             /* SELECTED STUDENTS TABLE */
             selectedStudentsTable = $('#selectedStudentsTable').DataTable({
@@ -1050,7 +1047,6 @@ $semesters = $query->fetchAll();
                         "text" : "Remove Student",
                         "action" : function ()
                         {
-
                             // get rows
                             var rows = selectedStudentsTable.rows('.selected');
                             // loop through every row
@@ -1076,7 +1072,6 @@ $semesters = $query->fetchAll();
 
                         }
                     }
-
                 ],
                 columns : [
                     {
@@ -1100,8 +1095,6 @@ $semesters = $query->fetchAll();
                             {
                                 check = true;
                             }
-
-
                             return '<input type="radio" id="groupLeader" name="groupLeader" value="' + row.uid + '" checked="' + check + '">';
 
                         }
@@ -1172,7 +1165,7 @@ $semesters = $query->fetchAll();
             });
 
             /* new deliverable date pickers */
-            $('#newDeliverableStartDate, #newDeliverableEndDate').datepicker({
+            $('#newDeliverableStartDate, #newDeliverableEndDate, #newSemesterEndDate, #newSemesterStartDate').datepicker({
                 changeMonth : true,
                 changeYear : true,
                 showButtonPanel : true,
@@ -1262,16 +1255,17 @@ $semesters = $query->fetchAll();
                     close : function ()
                     {
                         $(this).dialog("destroy");
-                        $('form#newDeliverableForm')[0].reset();
-                        $('form#newDeliverableForm .form-group').each(function ()
+                        $form = $('form#newDeliverableForm');
+                        $form[0].reset();
+                        $form.find('.form-group').each(function ()
                         {
                             $(this).removeClass('has-success has-error has-feedback');
                         });
-                        $('form#newDeliverableForm .help-block').each(function ()
+                        $form.find('.help-block').each(function ()
                         {
                             $(this).remove();
                         });
-                        $('form#newDeliverableForm .form-control-feedback').each(function ()
+                        $form.find('.form-control-feedback').each(function ()
                         {
                             $(this).remove();
                         });
@@ -1563,9 +1557,22 @@ $semesters = $query->fetchAll();
                     show : 'fade',
                     close : function ()
                     {
+                        $form = $('form#editGroupGeneralForm');
                         $('#editGroupGeneralAjax').hide().html("");
-                        $('form#editGroupGeneralForm')[0].reset();
+                        $form[0].reset();
 
+                        $form.find('.form-group').each(function ()
+                        {
+                            $(this).removeClass('has-success has-error has-feedback');
+                        });
+                        $form.find('.help-block').each(function ()
+                        {
+                            $(this).remove();
+                        });
+                        $form.find('.form-control-feedback').each(function ()
+                        {
+                            $(this).remove();
+                        });
                     }
                 });
 
@@ -1911,10 +1918,55 @@ $semesters = $query->fetchAll();
                 });
 
                 var message = "Are you sure you want to delete deliverable <strong>" + data.name + "</strong>?<p></p>";
-                message += "<p class='text-danger'>Please note that this action cannot be undone and all related deliverable files will be purged.</p>"
+                message += "<p class='text-danger'>Please note that this action cannot be undone and all related deliverable files will be purged.</p>";
                 $('#deleteGroupDeliverableConfirmation').html(message);
 
             });
+
+
+
+
+            $('#newSemesterForm').validate({
+                rules : {
+                    newSemesterStartDate :
+                    {
+                        required : true,
+                        date : true
+                    },
+                    newSemesterEndDate :
+                    {
+                        required : true,
+                        date : true
+                    }
+                },
+                submitHandler : function (form)
+                {
+                    $button = $('#createSemester');
+                    var buttonText = $button.text();
+                    var serialized = $(form).serialize();
+                    $button.text("Creating...").attr('disabled', true);
+                    $.ajax({
+                        url : "ajax/createSemester.php",
+                        type : "POST",
+                        dataType : "html",
+                        data : serialized,
+                        success : function (data)
+                        {
+                            $button.text(buttonText);
+                            $('#createSemesterAjaxResponse').fadeIn().html(data);
+
+                        },
+                        complete : function()
+                        {
+                            $button.attr('disabled', false);
+                        }
+                    });
+
+
+                }
+            });
+
+
         });
 
     </script>

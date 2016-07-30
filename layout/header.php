@@ -8,6 +8,6 @@ require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="index.html"><?php echo CoreConfig::settings()['appname']; ?></a>
+    <a class="navbar-brand" href="../"><?php echo CoreConfig::settings()['appname']; ?></a>
 </div>
 <!-- /.navbar-header -->

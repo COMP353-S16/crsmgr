@@ -19,7 +19,7 @@ while($member = $query->fetch()) {
     $info['data'][] = array(
         "uid" => $Student->getUid(),
         "name" => $Student->getFirstName() .' ' .$Student->getLastName(),
-        "section" => $Student->getSemesters()->getSemesterName($_REQUEST['sid']),
+        "section" => $Student->getSemesters()->getSectionName($_REQUEST['sid']),
         "email" => $Student->getEmail(),
         "isLeader" => $Group->isLeader($Student->getUid())
 
