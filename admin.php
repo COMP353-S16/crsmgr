@@ -49,11 +49,9 @@ $semesters = $query->fetchAll();
     <link href="bower_components/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// --><!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script><![endif]-->
 
 
     <style>
@@ -75,7 +73,7 @@ $semesters = $query->fetchAll();
 <div id="wrapper">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <nav class="navbar navbar-default navbar-inverse navbar-static-top" role="navigation" style="margin-bottom: 0">
         <?php
         require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/header.php');
         require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navbar-right.php');
@@ -91,6 +89,24 @@ $semesters = $query->fetchAll();
                 <div class="col-lg-12">
 
                     <h1 class="page-header">Course Management</h1>
+                    Access Type:
+                    <?php
+
+                    if (WebUser::getUser()->isProf())
+                    {
+                        echo "PROFESSOR";
+                    }
+                    else if (WebUser::getUser()->isSysAdmin())
+                    {
+                        echo "ADMINISTRATOR";
+                    }
+                    else if (WebUser::getUser()->isTa())
+                    {
+                        echo "TEACHER ASSISTANT";
+                    }
+
+                    ?>
+                    <br>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -126,14 +142,9 @@ $semesters = $query->fetchAll();
                                 </tbody>
                             </table>
 
-                            <?php
-                            if (WebUser::getUser()->isProf() || WebUser::getUser()->isSysAdmin())
-                            {
-                                ?>
 
-                                <button type="button" id="createGroupButton" class="btn btn-success">Add new group</button>
-                                <?php
-                            } ?>
+                            <button type="button" id="createGroupButton" class="btn btn-success">Create Group</button>
+
 
                         </div>
                         <div class="tab-pane fade" id="deliverablesManager">
@@ -154,80 +165,85 @@ $semesters = $query->fetchAll();
 
                                 </tbody>
                             </table>
-
-                            <?php
-                            if (WebUser::getUser()->isProf() || WebUser::getUser()->isSysAdmin())
-                            {
-                                ?>
-                                <button type="button" id="createNewDeliverable" class="btn btn-primary">New Deliverable</button>
-                                <?php
-                            }
-                            ?>
-
-
+                            <button type="button" id="createNewDeliverable" class="btn btn-primary">New Deliverable
+                            </button>
                         </div>
                         <div class="tab-pane fade" id="semesterManage">
                             <h4>Semesters</h4>
 
 
-
-
-
                             <div class="row">
-                            <div class="col-lg-4">
-                                <div class="panel panel-primary">
-                                    <div class="panel-heading">
-                                       New Semester
-                                    </div>
-                                    <div class="panel-body">
+                                <div class="col-lg-4">
 
-                                        <table class="table" width="100%">
-                                            <thead>
-                                            <tr>
-                                                <td>Start date: </td>
-                                                <td>
-                                                    <div class="form-group has-feedback">
-                                                        <input id="newSemesterStartDate" name="newSemesterStartDate" class="form-control" placeholder="Enter semester end date">
-                                                        <span class="help-block"></span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>End date: </td>
-                                                <td>
-                                                    <div class="form-group has-feedback">
-                                                        <input id="newSemesterEndDate" name="newSemesterEndDate" class="form-control" placeholder="Enter semester end date">
-                                                        <span class="help-block"></span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            </thead>
-                                        </table>
 
+                                    <form role="form" id="newSemesterForm">
+
+
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            New Semester
+                                        </div>
+                                        <div class="panel-body">
+
+
+
+                                            <table class="table" width="100%">
+                                                <thead>
+                                                <tr>
+                                                    <td>Start date:</td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input id="newSemesterStartDate" name="newSemesterStartDate"
+                                                                class="form-control"
+                                                                placeholder="Enter semester end date">
+                                                            <span class="help-block"></span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>End date:</td>
+                                                    <td>
+                                                        <div class="form-group has-feedback">
+                                                            <input id="newSemesterEndDate" name="newSemesterEndDate"
+                                                                class="form-control"
+                                                                placeholder="Enter semester end date">
+                                                            <span class="help-block"></span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </thead>
+                                            </table>
+
+                                        </div>
+                                        <div class="panel-footer">
+                                            <button id="createSemester" type="submit"
+                                                class="btn btn-primary btn-lg btn-block">Create
+                                            </button>
+                                            <br>
+                                            <div id="createSemesterAjaxResponse" style="display: none;"></div>
+                                        </div>
                                     </div>
-                                    <div class="panel-footer">
-                                        <button id="createSemester" type="button" class="btn btn-primary btn-lg btn-block">Create</button>
+
+
+                                    </form>
+
+
+                                </div>
+
+
+                                <div class="col-lg-4">
+                                    <div class="panel panel-primary">
+                                        <div class="panel-heading">
+                                            Semester History
+                                        </div>
+                                        <div class="panel-body">
+
+
+                                        </div>
                                     </div>
                                 </div>
+
                             </div>
-
-
-
-                            <div class="col-lg-4">
-                                <div class="panel panel-primary">
-                                    <div class="panel-heading">
-                                        Semester History
-                                    </div>
-                                    <div class="panel-body">
-
-
-                                    </div>
-                                </div>
-                            </div>
-
-                                </div>
-
-
 
 
                         </div>
@@ -261,7 +277,8 @@ $semesters = $query->fetchAll();
         <!-- Delete Member confirmation -->
         <div id="deleteMemberModal" style="display:none">
             <p>
-                <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><span id="deleteMemberConfirmationMessage"></span>
+                <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span><span
+                    id="deleteMemberConfirmationMessage"></span>
             </p>
         </div>
 
@@ -282,8 +299,8 @@ $semesters = $query->fetchAll();
                             <td>Deliverable name:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <input placeholder="Deliverable name" name="newDeliverableName" id="newDeliverableName" class="form-control">
-                                    <span class="help-block"></span>
+                                    <input placeholder="Deliverable name" name="newDeliverableName"
+                                        id="newDeliverableName" class="form-control"> <span class="help-block"></span>
                                 </div>
                             </td>
 
@@ -292,7 +309,8 @@ $semesters = $query->fetchAll();
                             <td>Start date:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <input placeholder="Start date" id="newDeliverableStartDate" name="newDeliverableStartDate" class="form-control">
+                                    <input placeholder="Start date" id="newDeliverableStartDate"
+                                        name="newDeliverableStartDate" class="form-control">
                                     <span class="help-block"></span>
                                 </div>
 
@@ -302,7 +320,8 @@ $semesters = $query->fetchAll();
                             <td>End date:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <input placeholder="End date" id="newDeliverableEndDate" name="newDeliverableEndDate" class="form-control">
+                                    <input placeholder="End date" id="newDeliverableEndDate"
+                                        name="newDeliverableEndDate" class="form-control">
                                     <span class="help-block"></span></div>
                             </td>
                         </tr>
@@ -310,14 +329,16 @@ $semesters = $query->fetchAll();
                             <td>Semester:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <select class="form-control" id="selectSemesterNewDeliverable" name="selectSemesterNewDeliverable">
+                                    <select class="form-control" id="selectSemesterNewDeliverable"
+                                        name="selectSemesterNewDeliverable">
                                         <option value="">--Select--</option>
                                         <?php
 
                                         foreach ($semesters as $sec)
                                         {
                                             ?>
-                                            <option value="<?php echo $sec['sid']; ?>">Semester <?php echo $sec['sid'] . ' (' . $sec['startDate'] . ') - (' . $sec['endDate'] . ')'; ?></option>
+                                            <option value="<?php echo $sec['sid']; ?>">
+                                                Semester <?php echo $sec['sid'] . ' (' . $sec['startDate'] . ') - (' . $sec['endDate'] . ')'; ?></option>
                                             <?php
                                         }
                                         ?>
@@ -358,8 +379,8 @@ $semesters = $query->fetchAll();
                             <td>Group Name:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <input id="newGroupName" name="newGroupName" class="form-control" placeholder="Enter group name">
-                                    <span class="help-block"></span>
+                                    <input id="newGroupName" name="newGroupName" class="form-control"
+                                        placeholder="Enter group name"> <span class="help-block"></span>
                                 </div>
                             </td>
                         </tr>
@@ -367,8 +388,8 @@ $semesters = $query->fetchAll();
                             <td>Maximum Bandwidth:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <input id="groupBandwidth" name="groupBandwidth" class="form-control" placeholder="Enter group file bandwidth (MB)">
-                                    <span class="help-block"></span>
+                                    <input id="groupBandwidth" name="groupBandwidth" class="form-control"
+                                        placeholder="Enter group file bandwidth (MB)"> <span class="help-block"></span>
                                 </div>
                             </td>
                         </tr>
@@ -408,12 +429,12 @@ $semesters = $query->fetchAll();
                                         foreach ($semesters as $sec)
                                         {
                                             ?>
-                                            <option value="<?php echo $sec['sid']; ?>">Semester <?php echo $sec['sid'] . ' (' . $sec['startDate'] . ') - (' . $sec['endDate'] . ')'; ?></option>
+                                            <option value="<?php echo $sec['sid']; ?>">
+                                                Semester <?php echo $sec['sid'] . ' (' . $sec['startDate'] . ') - (' . $sec['endDate'] . ')'; ?></option>
                                             <?php
                                         }
                                         ?>
-                                    </select>
-                                    <span class="help-block"></span>
+                                    </select> <span class="help-block"></span>
                                 </div>
                             </td>
                         </tr>
@@ -478,8 +499,8 @@ $semesters = $query->fetchAll();
                                     <td>Group Name:</td>
                                     <td>
                                         <div class="form-group has-feedback">
-                                            <input id="groupNameEdit" name="groupNameEdit" class="form-control" placeholder="Enter group name">
-                                            <span class="help-block"></span>
+                                            <input id="groupNameEdit" name="groupNameEdit" class="form-control"
+                                                placeholder="Enter group name"> <span class="help-block"></span>
                                         </div>
                                     </td>
                                 </tr>
@@ -487,14 +508,17 @@ $semesters = $query->fetchAll();
                                     <td>Maximum Bandwidth:</td>
                                     <td>
                                         <div class="form-group has-feedback">
-                                            <input id="groupBandwidthEdit" name="groupBandwidthEdit" class="form-control" placeholder="Enter group file bandwidth (MB)">
+                                            <input id="groupBandwidthEdit" name="groupBandwidthEdit"
+                                                class="form-control" placeholder="Enter group file bandwidth (MB)">
                                             <span class="help-block"></span>
                                         </div>
                                     </td>
                                 </tr>
                             </table>
 
-                            <button type="submit" id="saveGeneralInformation" class="btn btn-outline btn-primary btn-lg btn-block">Save</button>
+                            <button type="submit" id="saveGeneralInformation"
+                                class="btn btn-outline btn-primary btn-lg btn-block">Save
+                            </button>
 
                             <!-- This is used to hold group id -->
                             <input type="hidden" id="editGroupGid" value="">
@@ -556,7 +580,8 @@ $semesters = $query->fetchAll();
                                     <i class="fa fa-user"></i></button>
                             </td>
                             <td>
-                                <input id="studentNameEdit" class="form-control" placeholder="Enter student name">
+                                <input
+                                    id="studentNameEdit" class="form-control" placeholder="Enter student name">
 
                             </td>
                         </tr>
@@ -565,13 +590,18 @@ $semesters = $query->fetchAll();
                                     <i>*Only students from the same semester as group will be filtered.</i></p></td>
                         </tr>
                     </table>
-                    <table width="100%" class="table table-bordered" id="selectedStudentsTableEditGroup" name="selectedStudentsTableEditGroup">
+                    <table width="100%" class="table table-bordered" id="selectedStudentsTableEditGroup"
+                        name="selectedStudentsTableEditGroup">
                         <thead>
                         </thead>
                         <tbody></tbody>
                     </table>
 
-                    <button type="button" id="addMembers" class="btn btn-outline btn-primary btn-lg btn-block">Add Members</button>
+                    <button type="button"
+                        id="addMembers"
+                        class="btn btn-outline btn-primary btn-lg btn-block">
+                        Add Members
+                    </button>
 
                     <br>
                     <div id="addMembersAjax"></div>
@@ -595,7 +625,8 @@ $semesters = $query->fetchAll();
                     </table>
                     <hr>
                     <h4>Unassigned Deliverables</h4>
-                    <table width="100%" border="0" class="table table-bordered table-hover" id="unassignedGroupDeliverables">
+                    <table width="100%" border="0" class="table table-bordered table-hover"
+                        id="unassignedGroupDeliverables">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -607,7 +638,11 @@ $semesters = $query->fetchAll();
                         </tbody>
                     </table>
 
-                    <button type="button" id="assignDeliverables" class="btn btn-outline btn-primary btn-lg btn-block">Assign</button>
+                    <button type="button"
+                        id="assignDeliverables"
+                        class="btn btn-outline btn-primary btn-lg btn-block">
+                        Assign
+                    </button>
 
                     <br>
                     <div id="assignDeliverablesAjax"></div>
@@ -698,8 +733,6 @@ $semesters = $query->fetchAll();
 
     <script src="js/crs.js"></script>
     <script>
-
-
         $(function ()
         {
 
@@ -710,8 +743,7 @@ $semesters = $query->fetchAll();
                 "displayLength" : 25,
                 "ajax" : {
                     "url" : "ajax/groupsInfo.php",
-                    "type" : "POST",
-                    "data" : {}
+                    "type" : "POST"
                 },
                 "columns" : [
                     {"data" : "gid"},
@@ -723,11 +755,8 @@ $semesters = $query->fetchAll();
                     {
                         'render' : function (data, type, row)
                         {
-
                             var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-square btn-sm"><i class="fa fa-pencil-square"></i></button>&nbsp';
-                            var deleteB = '<button  data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i> </button>';
-
-
+                            var deleteB = '<button data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i> </button>';
                             return edit + deleteB;
                         }
                     }
@@ -764,16 +793,17 @@ $semesters = $query->fetchAll();
                     close : function ()
                     {
                         $(this).dialog("destroy");
-                        $('form#createGroupForm')[0].reset();
-                        $('form#createGroupForm .form-group').each(function ()
+                        $form = $('form#createGroupForm');
+                        $form[0].reset();
+                        $form.find('.form-group').each(function ()
                         {
                             $(this).removeClass('has-success has-error has-feedback');
                         });
-                        $('form#createGroupForm .help-block').each(function ()
+                        $form.find('.help-block').each(function ()
                         {
                             $(this).remove();
                         });
-                        $('form#createGroupForm .form-control-feedback').each(function ()
+                        $form.find('.form-control-feedback').each(function ()
                         {
                             $(this).remove();
                         });
@@ -807,18 +837,12 @@ $semesters = $query->fetchAll();
                     "buttons" : {
                         "Delete Group" : function ()
                         {
-
-
                             $('#deleteGroupModal').dialog({buttons : {}}).html("Deleting group, lease wait...");
 
                             $.ajax({
                                 url : 'ajax/groupDelete.php',
                                 data : "gid=" + gid,
                                 type : 'POST',
-                                error : function ()
-                                {
-                                    console.log('An error occured');
-                                },
                                 dataType : 'html',
                                 success : function (data)
                                 {
@@ -845,6 +869,7 @@ $semesters = $query->fetchAll();
             students = [];
             $("input#studentName").autocomplete({
                 appendTo : "#createGroupModal",
+                minLength : 1,
                 source : function (request, response)
                 {
                     $.ajax({
@@ -883,7 +908,6 @@ $semesters = $query->fetchAll();
                 {
                     $(this).removeClass('ui-autocomplete-loading');
                 },
-                minLength : 1,
                 select : function (event, ui)
                 {
                     // push id into selected ids array
@@ -924,7 +948,7 @@ $semesters = $query->fetchAll();
 
                 selectedStudentsTable.clear().draw();
 
-                if (!$('#semesterSelect').val() == "")
+                if ($('#semesterSelect').val() != "")
                 {
                     $('#studentName').prop("disabled", false);
                 }
@@ -948,7 +972,7 @@ $semesters = $query->fetchAll();
                         required : true,
                         number : true,
                         min : 1,
-                        max : 2048
+                        max : 2048  //TODO These values should be given through some PHP setting
                     }
                 },
                 messages : {
@@ -961,7 +985,7 @@ $semesters = $query->fetchAll();
                 },
                 submitHandler : function (form)
                 {
-                    var serialized = $('#createGroupForm').serialize();
+                    var serialized = $(form).serialize();
 
                     // grab all selected students
                     var added = [];
@@ -975,7 +999,6 @@ $semesters = $query->fetchAll();
                     {
                         return false;
                     }
-
                     // send data to server to check for credentials
                     $('#createGroupAjax').html("Please wait while group is being created...").dialog({
                         title : 'Create Group',
@@ -986,19 +1009,15 @@ $semesters = $query->fetchAll();
                         resizable : false
                     });
 
-
                     $.ajax({
                         url : 'ajax/createGroup.php',
+                        type : 'POST',
+                        dataType : 'html',
                         data : {
                             form : serialized,
                             uids : added,
                             maxb : $('#groupBandwidth').val()
                         },
-                        type : 'POST',
-                        error : function ()
-                        {
-                        },
-                        dataType : 'html',
                         success : function (data)
                         {
                             $('#createGroupAjax').html(data);
@@ -1006,7 +1025,6 @@ $semesters = $query->fetchAll();
                     });
                 }
             });
-
 
             /* SELECTED STUDENTS TABLE */
             selectedStudentsTable = $('#selectedStudentsTable').DataTable({
@@ -1029,7 +1047,6 @@ $semesters = $query->fetchAll();
                         "text" : "Remove Student",
                         "action" : function ()
                         {
-
                             // get rows
                             var rows = selectedStudentsTable.rows('.selected');
                             // loop through every row
@@ -1055,7 +1072,6 @@ $semesters = $query->fetchAll();
 
                         }
                     }
-
                 ],
                 columns : [
                     {
@@ -1079,8 +1095,6 @@ $semesters = $query->fetchAll();
                             {
                                 check = true;
                             }
-
-
                             return '<input type="radio" id="groupLeader" name="groupLeader" value="' + row.uid + '" checked="' + check + '">';
 
                         }
@@ -1151,7 +1165,7 @@ $semesters = $query->fetchAll();
             });
 
             /* new deliverable date pickers */
-            $('#newDeliverableStartDate, #newDeliverableEndDate').datepicker({
+            $('#newDeliverableStartDate, #newDeliverableEndDate, #newSemesterEndDate, #newSemesterStartDate').datepicker({
                 changeMonth : true,
                 changeYear : true,
                 showButtonPanel : true,
@@ -1241,16 +1255,17 @@ $semesters = $query->fetchAll();
                     close : function ()
                     {
                         $(this).dialog("destroy");
-                        $('form#newDeliverableForm')[0].reset();
-                        $('form#newDeliverableForm .form-group').each(function ()
+                        $form = $('form#newDeliverableForm');
+                        $form[0].reset();
+                        $form.find('.form-group').each(function ()
                         {
                             $(this).removeClass('has-success has-error has-feedback');
                         });
-                        $('form#newDeliverableForm .help-block').each(function ()
+                        $form.find('.help-block').each(function ()
                         {
                             $(this).remove();
                         });
-                        $('form#newDeliverableForm .form-control-feedback').each(function ()
+                        $form.find('.form-control-feedback').each(function ()
                         {
                             $(this).remove();
                         });
@@ -1335,6 +1350,7 @@ $semesters = $query->fetchAll();
 
                 var data = groups.row($(this).closest('tr')).data();
                 var gid = data.gid;
+                var sid = data.sid;
 
                 // add values to inputs
                 $('#groupNameEdit').val(data.gName);
@@ -1342,18 +1358,46 @@ $semesters = $query->fetchAll();
                 $('#editGroupGid').val(data.gid);
                 $('#editGroupSid').val(data.sid);
 
-                $('#editGroupModal').dialog({
-                    width : 900,
-                    height : 800,
-                    modal : true,
-                    title : data.gName,
-                    show : 'fade',
-                    close : function ()
-                    {
-                        $('#editGroupGeneralAjax').hide().html("");
-                        $('form#editGroupGeneralForm')[0].reset();
-                    }
+                // INITIALIZA UNASSIGNED GROUP DELIVERABLES
+                unassignedGroupDeliverables = $('#unassignedGroupDeliverables').DataTable({
+                    "processing" : true,
+                    destroy : true,
+                    "pageLength" : 10,
+                    select : {
+                        style : "os"
+                    },
+                    dom : 'Bfrtip',
+                    buttons : [
+                        {
+                            "extend" : "selectAll"
+                        },
+                        {
+                            "extend" : "selectNone"
+                        },
+                        {
+
+                            text : 'Refresh',
+                            action : function (e, dt, node, config)
+                            {
+                                dt.ajax.reload();
+                            }
+                        }
+                    ],
+                    "ajax" : {
+                        "url" : "ajax/unassignedGroupDeliverables.php",
+                        "type" : "POST",
+                        "data" : {
+                            "gid" : gid,
+                            "sid" : sid
+                        }
+                    },
+                    "columns" : [
+                        {"data" : "name"},
+                        {"data" : "datePosted"},
+                        {"data" : "dueDate"}
+                    ]
                 });
+
 
                 // INITIALIZE GROUP FILES
                 groupFiles = $('#groupFiles').DataTable({
@@ -1368,7 +1412,7 @@ $semesters = $query->fetchAll();
                             text : 'Refresh',
                             action : function (e, dt, node, config)
                             {
-                                groupFiles.ajax.reload();
+                                dt.ajax.reload();
                             }
                         }
                     ],
@@ -1406,7 +1450,7 @@ $semesters = $query->fetchAll();
                             text : 'Refresh',
                             action : function (e, dt, node, config)
                             {
-                                groupMembers.ajax.reload();
+                                dt.ajax.reload();
                             }
                         }
                     ],
@@ -1449,6 +1493,8 @@ $semesters = $query->fetchAll();
 
                                     promote = '<button data-gid="' + data.gid + '" id="promoteMember" title="Promote member" type="button" class="btn btn-success btn-square btn-sm"><i class="fa fa-arrow-circle-up"></i></button>&nbsp';
                                 }
+
+
                                 return deleteB + promote;
                             }
                         }
@@ -1464,6 +1510,7 @@ $semesters = $query->fetchAll();
 
                 groupDeliverables = $('#groupDeliverables').DataTable({
                     "processing" : true,
+                    "pageLength" : 10,
                     destroy : true,
                     dom : 'Bfrtip',
                     buttons : [
@@ -1471,7 +1518,7 @@ $semesters = $query->fetchAll();
                             text : 'Refresh',
                             action : function (e, dt, node, config)
                             {
-                                groupDeliverables.ajax.reload();
+                                dt.ajax.reload();
                             }
                         }
                     ],
@@ -1502,44 +1549,33 @@ $semesters = $query->fetchAll();
                 });
 
 
-                // INITIALIZA UNASSIGNED GROUP DELIVERABLES
-                unassignedGroupDeliverables = $('#unassignedGroupDeliverables').DataTable({
-                    "processing" : true,
-                    destroy : true,
-                    select : {
-                        style : "os"
-                    },
-                    dom : 'Bfrtip',
-                    buttons : [
-                        {
-                            "extend" : "selectAll"
-                        },
-                        {
-                            "extend" : "selectNone"
-                        },
-                        {
+                $('#editGroupModal').dialog({
+                    width : 900,
+                    height : 800,
+                    modal : true,
+                    title : data.gName,
+                    show : 'fade',
+                    close : function ()
+                    {
+                        $form = $('form#editGroupGeneralForm');
+                        $('#editGroupGeneralAjax').hide().html("");
+                        $form[0].reset();
 
-                            text : 'Refresh',
-                            action : function (e, dt, node, config)
-                            {
-                                unassignedGroupDeliverables.ajax.reload();
-                            }
-                        }
-                    ],
-                    "ajax" : {
-                        "url" : "ajax/unassignedGroupDeliverables.php",
-                        "type" : "POST",
-                        "data" : {
-                            "gid" : gid,
-                            "sid" : $('#editGroupSid').val()
-                        }
-                    },
-                    "columns" : [
-                        {"data" : "name"},
-                        {"data" : "datePosted"},
-                        {"data" : "dueDate"}
-                    ]
+                        $form.find('.form-group').each(function ()
+                        {
+                            $(this).removeClass('has-success has-error has-feedback');
+                        });
+                        $form.find('.help-block').each(function ()
+                        {
+                            $(this).remove();
+                        });
+                        $form.find('.form-control-feedback').each(function ()
+                        {
+                            $(this).remove();
+                        });
+                    }
                 });
+
 
             });
 
@@ -1882,10 +1918,55 @@ $semesters = $query->fetchAll();
                 });
 
                 var message = "Are you sure you want to delete deliverable <strong>" + data.name + "</strong>?<p></p>";
-                message += "<p class='text-danger'>Please note that this action cannot be undone and all related deliverable files will be purged.</p>"
+                message += "<p class='text-danger'>Please note that this action cannot be undone and all related deliverable files will be purged.</p>";
                 $('#deleteGroupDeliverableConfirmation').html(message);
 
             });
+
+
+
+
+            $('#newSemesterForm').validate({
+                rules : {
+                    newSemesterStartDate :
+                    {
+                        required : true,
+                        date : true
+                    },
+                    newSemesterEndDate :
+                    {
+                        required : true,
+                        date : true
+                    }
+                },
+                submitHandler : function (form)
+                {
+                    $button = $('#createSemester');
+                    var buttonText = $button.text();
+                    var serialized = $(form).serialize();
+                    $button.text("Creating...").attr('disabled', true);
+                    $.ajax({
+                        url : "ajax/createSemester.php",
+                        type : "POST",
+                        dataType : "html",
+                        data : serialized,
+                        success : function (data)
+                        {
+                            $button.text(buttonText);
+                            $('#createSemesterAjaxResponse').fadeIn().html(data);
+
+                        },
+                        complete : function()
+                        {
+                            $button.attr('disabled', false);
+                        }
+                    });
+
+
+                }
+            });
+
+
         });
 
     </script>

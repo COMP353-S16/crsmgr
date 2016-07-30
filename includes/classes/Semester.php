@@ -21,6 +21,8 @@ class Semester
         $this->extract();
     }
 
+
+
     private function extract()
     {
         $pdo = Registry::getConnection();
@@ -31,6 +33,13 @@ class Semester
         $this->_startDate = $data['startDate'];
         $this->_endDate = $data['endDate'];
     }
+
+    public function getId()
+    {
+        return $this->_sid;
+    }
+
+
     public function getSemesterStartDate()
     {
         return $this->_startDate;

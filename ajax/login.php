@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 /**
  * Created by PhpStorm.
@@ -11,10 +12,22 @@ $Login = new Login($_POST);
 
 if($Login->login())
 {
-    ?>
-    <script>window.location.replace("home.php");</script>
+    $student = WebUser::getUser()->isStudent();
+    if($student)
+    {
+        ?>
+        <script>window.location.replace("home.php");</script>
 
-    <?php
+        <?php
+    }
+    else
+    {
+        ?>
+        <script>window.location.replace("admin.php");</script>
+
+        <?php
+    }
+
 }
 else
 {

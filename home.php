@@ -7,11 +7,7 @@ if(!$Student instanceof Student)
 {
     exit("You are not a student.");
 }
-else
-{
-    $Student_Info = $Student->getStudentInfo();
-    $section = new Section($Student->getSid());
-}
+
 ?>
 
 <!DOCTYPE html>
@@ -53,7 +49,7 @@ else
     <div id="wrapper">
 
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <nav class="navbar navbar-inverse navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
             <?php
             require_once ($_SERVER['DOCUMENT_ROOT'].'/layout/header.php');
             require_once ($_SERVER['DOCUMENT_ROOT'].'/layout/navbar-right.php');
@@ -79,29 +75,58 @@ else
                             <br>
                             <?php
 
-                            if($Student->isInGroup())
-                            {
-                                $group = new Group($Student->getGid());
-                                $Semester = new Semester($group->getSid());
 
+                            $Semesters = new Semesters();
+                            $sid = $Semesters->getSid();
+                            if(!$Semesters->exist())
+                            {
                                 ?>
+                                <h2>No valid semesters</h2>
+                                <?php
+                            }
+                            else if($Student->getSemesters()->isRegisteredForSemester($sid))
+                            {
+                                if($Student->isInGroupFromSid($sid))
+                                {
+                                    $Student_Info = $Student->getStudentInfo();
+
+                                    $gid = $Student->getGroupIdFromSid($sid);
+                                    $group = new Group($gid);
+                                    $Semester = new Semester($group->getSid());
+                                    ?>
                                     <blockquote>
                                         <p>Email: <strong><?php echo $Student->getEmail() ?></strong></p>
-                                        <p>Section: <strong><?php echo $Student->getSectionName()?></strong></p>
-                                        <p>Course ends on: <strong><?php echo $Semester->getSemseterEndDate(); ?></strong></p>
+                                        <p>Section: <strong><?php echo $Student->getSemesters()->getSectionName($sid); ?></strong></p>
+                                        <p>Course ends on:
+                                            <strong><?php echo $Semester->getSemseterEndDate(); ?></strong></p>
                                         <p>Group ID: <strong><?php echo $group->getGid() ?></strong></p>
                                         <p>Group name: <strong><?php echo $group->getGName() ?></strong></p>
                                         <p>Number of files
-                                            uploaded: <strong><?php echo $Student_Info->getNbOfFilesUploaded() ?></strong></p>
+                                            uploaded:
+                                            <strong><?php echo $Student_Info->getNbOfFilesUploaded() ?></strong></p>
                                         <p>Number of files
-                                            downloaded: <strong><?php echo $Student_Info->getNbOfFilesDownloaded() ?></strong></p>
-                                        <p>Last uploaded file: <strong><?php echo $Student_Info->getLastUploadedFile() ?></strong></p>
+                                            downloaded:
+                                            <strong><?php echo $Student_Info->getNbOfFilesDownloaded() ?></strong></p>
+                                        <p>Last uploaded file:
+                                            <strong><?php echo $Student_Info->getLastUploadedFile() ?></strong></p>
                                     </blockquote>
                                     <div class="col-md-10"></div>
                                     <button type="button" id="view" class="btn btn-primary">View Group</button>
                                     <?php
-
+                                }
+                                else
+                                {
+                                    $Semester = new Semester($sid);
+                                    ?>
+                                    <h4>You are not part of any groups this semester</h4>
+                                    <p class="text-primary">
+                                        Current: Semester <strong><?php echo $Semester->getId();?></strong> <br>
+                                        From: <strong><?php echo $Semester->getSemesterStartDate(); ?></strong> to <strong><?php echo $Semester->getSemseterEndDate();?></strong> <br>
+                                    </p>
+                                    <?php
+                                }
                             }
+
                             else
                             { ?>
                                 <h4>You are not yet in a group.</h4>

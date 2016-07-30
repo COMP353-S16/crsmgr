@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: dimitri
- * Date: 2016-07-09
- * Time: 2:01 PM
- */
 class Login
 {
 

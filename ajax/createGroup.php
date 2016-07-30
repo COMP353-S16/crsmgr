@@ -5,6 +5,14 @@ if(!isset($_REQUEST))
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
+
+
+if(!WebUser::getUser()->isProf())
+{
+    exit("<p class='text-danger text-center'>You do not have enough privileges to create a group</p>");
+}
+
+
 $formData = array();
 parse_str($_REQUEST['form'], $formData);
 
@@ -14,7 +22,9 @@ $name = $formData['newGroupName'];
 $uids = $_REQUEST['uids']; // array
 
 
-$SEMESTER = $_REQUEST['semesterSelect'];
+$SEMESTER = $formData['semesterSelect'];
+
+
 $CreateGroup = new CreateGroup();
 $CreateGroup->setGroupName($name);
 $CreateGroup->setSemesterId($SEMESTER);
@@ -43,12 +53,15 @@ if($CreateGroup->create())
                         }
                     }
                 });
+
+
+                // close form dialog
+                $("#createGroupModal").dialog("close");
             });
 
             // reset form
 
-            // close form dialog
-            $("#createGroupModal").dialog("destroy");
+
 
             //
             selectedStudentsTable.clear().draw();

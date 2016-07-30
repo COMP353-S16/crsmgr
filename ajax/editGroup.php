@@ -2,6 +2,11 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
+if(!WebUser::getUser()->isProf())
+{
+    exit("<p class='text-danger text-center'>You do not have enough privileges to modify group information</p>");
+}
+
 
 $formData = array();
 parse_str($_REQUEST['form'], $formData);
@@ -16,7 +21,7 @@ if($EditGroup->edit())
 {
     ?>
     <br>
-    <div id="responseMessageCreate" class="alert alert-success alert-dismissable">
+    <div id="responseMessageCreate" class="alert alert-success">
 
         Saved!
     </div>
@@ -54,7 +59,7 @@ else
 {
     $errors = $EditGroup->getErrors();
     ?>
-    <div class="alert alert-danger alert-dismissable">
+    <div class="alert alert-danger">
         <?php
         $msg .= "<ul>";
         foreach ($errors as $error)

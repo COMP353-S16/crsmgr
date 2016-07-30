@@ -6,12 +6,26 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 $Student = WebUser::getUser();
 if ($Student instanceof Student)
 {
-    $Group = new Group($Student->getGid());
+    $Semesters = new Semesters();
+    $sid = $Semesters->getSid();
+
+
+    $gid = null;
+    if($Student->getSemesters()->isRegisteredForSemester($sid) && $Student->isInGroupFromSid($sid))
+    {
+        $gid = $Student->getGroupIdFromSid($sid);
+        $Group = new Group($gid);
+    }
+    else
+    {
+        header("location: home.php");
+    }
+
 
     $pdo = Registry::getConnection();
     $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
                         WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did");
-    $query->bindValue(":gid", $Student->getGid());
+    $query->bindValue(":gid", $gid);
     $query->execute();
 
     $isGroupClosed = $Group->isGroupClosed();
@@ -90,7 +104,7 @@ else
 <div id="wrapper">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <nav class="navbar navbar-inverse navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
         <?php
         require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/header.php');
         require_once($_SERVER['DOCUMENT_ROOT'] . '/layout/navbar-right.php');
