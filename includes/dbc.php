@@ -11,13 +11,14 @@ spl_autoload_register('my_autoloader');
 Registry::setConfig(new MySqlConfig(DatabaseManager::dbUser, DatabaseManager::dbPass, DatabaseManager::dbName, DatabaseManager::host, DatabaseManager::dbPort));
 CoreConfig::applySettings(require_once ('settings.php'));
 
-$User = new User($_SESSION['uid']);
+
 
 if(WebUser::isLoggedIn())
 {
+    $User = new User($_SESSION['uid']);
     if($User->isStudent())
     {
-        WebUser::setUser(new Student($User->getUid(), 1));
+        WebUser::setUser(new Student($User->getUid()));
     }
     else
     {

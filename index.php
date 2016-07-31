@@ -12,7 +12,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <meta name="description" content="">
     <meta name="author" content="">
 
+
+
     <title><?php echo CoreConfig::settings()['appname']; ?></title>
+
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+
 
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -59,7 +64,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 <div class="container">
     <div class="row">
-        <div class="col-md-5 col-md-offset-3">
+        <div class="col-md-4 col-md-offset-4">
+            <br>
             <div class="login-panel panel panel-info">
                 <div class="panel-heading">
                     <h3 class="panel-title">Please Sign In</h3>

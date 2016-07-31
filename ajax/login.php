@@ -12,6 +12,7 @@ $Login = new Login($_POST);
 
 if($Login->login())
 {
+    WebUser::setUser(new User($_SESSION['uid']));
     $student = WebUser::getUser()->isStudent();
     if($student)
     {

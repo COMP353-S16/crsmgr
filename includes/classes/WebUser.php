@@ -37,16 +37,20 @@ class WebUser
     {
         $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
 
-        $loggegIn = empty($_SESSION) || !isset($_SESSION['uid']);
+        $loggegIn = (!empty($_SESSION) && isset($_SESSION['uid']));
         if($loggegIn)
+        {
+            return true;
+        }
+        else
         {
             if($redirect)
             {
                 header("location: " . $root . '?l=0&u=' . time());
 
             }
-            return true;
+            return false;
         }
-        return false;
+
     }
 }
