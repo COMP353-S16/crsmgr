@@ -1,6 +1,9 @@
 <?php
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
+//check if user is logged in
+WebUser::isLoggedIn(true);
+
 
 $pdo = Registry::getConnection();
 $query = $pdo->prepare("SELECT * FROM Semester");

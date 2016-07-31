@@ -24,14 +24,29 @@ class WebUser
         self::$_User = $user;
     }
 
-    public static function isLoggedIn() {
-        return (isset($_SESSION['username']) && isset($_SESSION['uid']) || !empty($_SESSION));
-    }
+
 
     /**
      * @return User
      */
     public static function getUser() {
         return self::$_User;
+    }
+
+    public static function isLoggedIn($redirect = false)
+    {
+        $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
+
+        $loggegIn = empty($_SESSION) || !isset($_SESSION['uid']);
+        if($loggegIn)
+        {
+            if($redirect)
+            {
+                header("location: " . $root . '?l=0&u=' . time());
+
+            }
+            return true;
+        }
+        return false;
     }
 }

@@ -37,6 +37,8 @@ class User
         $this->_privilege = $user['privilege'];
     }
 
+
+
     public function getUsername()
     {
         return $this->_username;

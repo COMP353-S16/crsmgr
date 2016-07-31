@@ -89,7 +89,21 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
                         </fieldset>
                        
-                    <div id="results"></div>
+                    <div id="results">
+
+                        <?php
+                        $time = time();
+                        // display not logged in message
+                        if(isset($_GET['l']) && isset($_GET['u']) && $_GET['l']==0 && $time == $_GET['u'])
+                        {
+                            ?>
+                            <br>
+                            <div class="alert alert-danger"><p class="text-center">You are not logged in</p></div>
+                            <?php
+                        }
+                        ?>
+
+                    </div>
                     </form>
                 </div>
 
