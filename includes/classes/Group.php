@@ -160,7 +160,8 @@ class Group
 
     public function isGroupClosed()
     {
-        return (strtotime(date("Y-m-d")) > strtotime($this->getSemester()->getSemseterEndDate()));
+
+        return (strtotime(date("Y-m-d H:i:s")) > strtotime($this->getSemester()->getSemseterEndDate()));
 
     }
 }

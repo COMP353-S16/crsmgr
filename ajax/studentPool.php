@@ -33,7 +33,7 @@ if($rows<=0)
 
         $Student = new Student($studentData['uid']);
 
-        if($Student->getSemesters()->isRegisteredForSemester($_REQUEST['sid']))
+        if($Student->getSemesters()->isRegisteredForSemester($_REQUEST['sid']) && $Student->isStudent())
         {
 
 

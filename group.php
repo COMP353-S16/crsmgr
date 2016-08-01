@@ -22,13 +22,6 @@ if ($Student instanceof Student)
         header("location: home.php");
     }
 
-
-    $pdo = Registry::getConnection();
-    $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
-                        WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did");
-    $query->bindValue(":gid", $gid);
-    $query->execute();
-
     $isGroupClosed = $Group->isGroupClosed();
 }
 else
@@ -243,6 +236,11 @@ else
                             <h4>File Submission</h4>
 
                             <?php
+                            $pdo = Registry::getConnection();
+                            $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
+                        WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did");
+                            $query->bindValue(":gid", $gid);
+                            $query->execute();
                             if ($query->rowCount() > 0)
                             {
                                 ?>

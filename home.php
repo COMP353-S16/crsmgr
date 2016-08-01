@@ -74,34 +74,39 @@ if(!$Student instanceof Student)
                 <div class="row">
                     <div class="col-lg-7">
                         <div class="well well-sm">
-                            <h3><?php echo 'Hello '.$Student->getFirstName().',';?></h3>
+                            <h3><?php echo 'Hello '.$Student->getFullName().',';?></h3>
                             <br>
                             <?php
 
 
                             $Semesters = new Semesters();
-                            $sid = $Semesters->getSid();
+
                             if(!$Semesters->exist())
                             {
                                 ?>
-                                <h2>No valid semesters</h2>
+                                <h5>There are no existing semesters.</h5>
                                 <?php
                             }
-                            else if($Student->getSemesters()->isRegisteredForSemester($sid))
+                            else if($Student->isRegistered())
                             {
+                                $sid = $Semesters->getSid();
+                                // is he in a group in this semester?
                                 if($Student->isInGroupFromSid($sid))
                                 {
                                     $Student_Info = $Student->getStudentInfo();
-
                                     $gid = $Student->getGroupIdFromSid($sid);
                                     $group = new Group($gid);
-                                    $Semester = new Semester($group->getSid());
+                                    $isGroupClosed = $group->isGroupClosed();
+
+
                                     ?>
                                     <blockquote>
                                         <p>Email: <strong><?php echo $Student->getEmail() ?></strong></p>
-                                        <p>Section: <strong><?php echo $Student->getSemesters()->getSectionName($sid); ?></strong></p>
+                                        <p>Section:
+                                            <strong><?php echo $Student->getSemesters()->getSectionName($sid); ?></strong>
+                                        </p>
                                         <p>Course ends on:
-                                            <strong><?php echo $Semester->getSemseterEndDate(); ?></strong></p>
+                                            <strong><?php echo $group->getSemester()->getSemseterEndDate(); ?></strong></p>
                                         <p>Group ID: <strong><?php echo $group->getGid() ?></strong></p>
                                         <p>Group name: <strong><?php echo $group->getGName() ?></strong></p>
                                         <p>Number of files
@@ -109,13 +114,18 @@ if(!$Student instanceof Student)
                                             <strong><?php echo $Student_Info->getNbOfFilesUploaded() ?></strong></p>
                                         <p>Number of files
                                             downloaded:
-                                            <strong><?php echo $Student_Info->getNbOfFilesDownloaded() ?></strong></p>
+                                            <strong><?php echo $Student_Info->getNbOfFilesDownloaded() ?></strong>
+                                        </p>
                                         <p>Last uploaded file:
-                                            <strong><?php echo $Student_Info->getLastUploadedFile() ?></strong></p>
+                                            <strong><?php echo $Student_Info->getLastUploadedFile(); ?></strong></p>
+                                        <p class="<?php echo ($isGroupClosed ? 'text-danger' : 'text-success' ); ?>">
+                                            Status: <?php echo ($isGroupClosed ? "[CLOSED]" : "[OPEN]"); ?>
+                                        </p>
                                     </blockquote>
                                     <div class="col-md-10"></div>
                                     <button type="button" id="view" class="btn btn-primary">View Group</button>
                                     <?php
+
                                 }
                                 else
                                 {
@@ -129,10 +139,9 @@ if(!$Student instanceof Student)
                                     <?php
                                 }
                             }
-
                             else
                             { ?>
-                                <h4>You are not yet in a group.</h4>
+                                <h4>You are not yet registered.</h4>
                             <?php
                             }
                             ?>

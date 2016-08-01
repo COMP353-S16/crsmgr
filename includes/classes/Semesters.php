@@ -41,15 +41,34 @@ class Semesters
     {
         $date = strtotime(date("Y-m-d H:i:s"));
 
+        $sid = null;
         foreach ($this->_semesters as $Semester)
         {
+
+
             if ($date >= strtotime($Semester['startDate']) && $date <= strtotime($Semester['endDate']))
             {
-                return $Semester['sid'];
+
+
+                $sid = $Semester['sid'];
             }
         }
 
-        return null;
+
+        $sid = $this->getLastSemesterId();
+
+        return $sid;
+    }
+
+    public function getLastSemesterId()
+    {
+        $last = null;
+        foreach ($this->_semesters as $Semester)
+        {
+            $last = $Semester['sid'];
+
+        }
+        return $last;
     }
 
 

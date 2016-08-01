@@ -38,10 +38,13 @@ class StudentSemester
      */
     public function isRegisteredForSemester($sid)
     {
-        foreach($this->_data as $semester)
+
+        foreach($this->_data as $i => $semester)
         {
+
             if($semester['sid'] == $sid)
             {
+
                 return true;
             }
         }
