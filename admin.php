@@ -568,7 +568,7 @@ $semesters = $query->fetchAll();
                                     $pdo = Registry::getConnection();
                                     $query1 = $pdo->prepare("SELECT DISTINCT sectionName FROM StudentSemester");
                                     $query1->execute();
-                                    while ($sec = $query->fetch())
+                                    while ($sec = $query1->fetch())
                                     {
                                         $sName = $sec['sectionName'];
                                         ?>
