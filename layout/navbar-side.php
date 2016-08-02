@@ -23,6 +23,14 @@ $WebUser = WebUser::getUser();
                 </li>
                 <?php
             }
+            if($WebUser->isSysAdmin())
+            {
+                ?>
+                <li>
+                    <a href="sys.php"><i class="fa  fa-fw fa-cog fa-spin"></i>System</a>
+                </li>
+                <?php
+            }
             ?>
         </ul>
     </div>

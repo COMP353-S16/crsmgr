@@ -1172,7 +1172,7 @@ $semesters = $query->fetchAll();
             });
 
             /* new deliverable date pickers */
-            $('#newDeliverableStartDate, #newDeliverableEndDate, #newSemesterEndDate, #newSemesterStartDate').datepicker({
+            $('#newDeliverableStartDate, #newDeliverableEndDate').datepicker({
                 changeMonth : true,
                 changeYear : true,
                 showButtonPanel : true,
@@ -1933,45 +1933,7 @@ $semesters = $query->fetchAll();
 
 
 
-            $('#newSemesterForm').validate({
-                rules : {
-                    newSemesterStartDate :
-                    {
-                        required : true,
-                        date : true
-                    },
-                    newSemesterEndDate :
-                    {
-                        required : true,
-                        date : true
-                    }
-                },
-                submitHandler : function (form)
-                {
-                    $button = $('#createSemester');
-                    var buttonText = $button.text();
-                    var serialized = $(form).serialize();
-                    $button.text("Creating...").attr('disabled', true);
-                    $.ajax({
-                        url : "ajax/createSemester.php",
-                        type : "POST",
-                        dataType : "html",
-                        data : serialized,
-                        success : function (data)
-                        {
-                            $button.text(buttonText);
-                            $('#createSemesterAjaxResponse').fadeIn().html(data);
 
-                        },
-                        complete : function()
-                        {
-                            $button.attr('disabled', false);
-                        }
-                    });
-
-
-                }
-            });
 
 
         });

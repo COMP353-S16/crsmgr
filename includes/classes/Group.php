@@ -134,6 +134,11 @@ class Group
         return false;
     }
 
+    public function getGroupFiles()
+    {
+        return new GroupFiles($this->_gid);
+    }
+
 
     /**
      * @return int returns semester id

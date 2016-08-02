@@ -16,13 +16,8 @@ if(isset($_REQUEST['fid']) && !empty($_SESSION))
 
     }
     $data = $query->fetch();
-
-
-
     $Files = new Files($data);
-
-    $file = $Files->getBaseUrl();
-
+    $file = $Files->getLatestVersion()->getBaseUrl();
     $Download = new DownloadFile($Files->getLatestVersion(), WebUser::getUser());
 
     if($Download->download())

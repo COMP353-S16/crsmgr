@@ -184,6 +184,12 @@ class Files
         return max($vids);
     }
 
+
+    public static function isValidFileName($name)
+    {
+        return preg_match('=^[^/?*;:{}\\\\]+\.[^/?*;:{}\\\\]+$=', $name);
+    }
+
     /**
      * @return Version returns the latest Version object
      */
@@ -199,23 +205,6 @@ class Files
     public function getNumberOfRevisions()
     {
         return count($this->_versions);
-    }
-
-    /**
-     * @return string returns the location of the file
-     */
-    public function getBaseUrl()
-    {
-        return $_SERVER['DOCUMENT_ROOT']. '/fileuploads/' .CoreConfig::settings()['uploads']['upload_dir'] . $this->getGroupId() .'/'. $this->getLatestVersion()->getSavedName();
-    }
-
-    /**
-     * @return string returns the location of the file relative to the webroot
-     */
-    public function getUrl()
-    {
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        return $protocol . $_SERVER['HTTP_HOST']. '/fileuploads/' .CoreConfig::settings()['uploads']['upload_dir'] . $this->getGroupId() .'/'. $this->getLatestVersion()->getSavedName();
     }
 
 }

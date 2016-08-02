@@ -28,7 +28,7 @@ foreach($files as $i => $Files)
             "revisions" => $Files->getNumberOfRevisions(),
             "size" => round($Files->getSize(),2) . " KB",
             "isDeleted" => $GroupFiles->isDeleted($Files->getId()),
-            "url" => $Files->getUrl()
+            "url" => $Files->getLatestVersion()->getUrl()
 
         );
     }

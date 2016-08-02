@@ -62,14 +62,20 @@ class UploadHandler
         $this->_GroupFiles = new GroupFiles($this->_gid);
     }
 
+    /**
+     * @param $dir sets the main directory in which all group folders will be located
+     */
     public function setUploadDirectory($dir)
     {
         if ($dir != "")
         {
             $this->_directory = $dir;
         }
+    }
 
-
+    public function getUploadDirectory()
+    {
+        return $this->_directory;
     }
 
     private function setFile($file)
@@ -89,6 +95,10 @@ class UploadHandler
 
         $postUploadSize = $usedBandwidth + $fileSize;
 
+        if(!Files::isValidFileName($this->_File->getFileName()))
+        {
+            $this->_errors[] = "Filename invalid. Cannot contain special characters \\ / : * ? \" < > |";
+        }
         if (!in_array($this->_File->getFileExtension(), $this->_allowed))
         {
             $this->_errors[] = "File type not allowed. Allow";
@@ -173,9 +183,12 @@ class UploadHandler
         $this->_file['save_as'] = self::makeSafe($this->_File->getBaseName()) . "_" . $unique . '.' . $this->_File->getFileExtension();
     }
 
+    /**
+     * @return string returns the upload directory of the file which is located in a group folder given by the group id
+     */
     public function getBuildDirectory()
     {
-        return $this->_directory . $this->_gid . '/';  // Directory to upload file;
+        return $this->getUploadDirectory() . $this->_gid . '/';  // Directory to upload file;
     }
 
     /**
@@ -272,6 +285,7 @@ class UploadHandler
 
         $pdo = Registry::getConnection();
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // in KB
+        // file data. this is only activated based on application settings
         $blob = null;
         if(CoreConfig::settings()['uploads']['storageDB'])
         {
@@ -279,11 +293,12 @@ class UploadHandler
         }
         try
         {
-            $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip, data) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip, :data)");
+            $query = $pdo->prepare("INSERT INTO Versions (uploaderId, physicalName, size, uploadDate, fid, ip, data, upload_dir) VALUES (:uploaderId, :name, :size, NOW(), :fid, :ip, :data, :dir)");
 
             $query->bindValue(":uploaderId", $this->_uid);
             $query->bindValue(":size", $fileSize);
             $query->bindValue(":name", $this->getSavedAsName());
+            $query->bindValue(":dir", $this->getBuildDirectory());  // we want to store the directory where the file is located. This is the parent directory
             $query->bindValue(":fid", $fid);
             $query->bindValue(":ip", $this->get_client_ip());
             $query->bindValue(":data", $blob, PDO::PARAM_LOB);
@@ -307,29 +322,30 @@ class UploadHandler
         $this->validate();
         if (empty($this->_errors) && UPLOAD_ERR_OK === $this->_File->getFileError())
         {
+            // where is the file going to be located?
             $uploadDirectory = $this->getBuildDirectory();
             $this->createDirectory($uploadDirectory);
+
+            // give a unique filename
             $this->makeUnique();
 
 
 
-            $success = true;
+            $fileMoveSuccess = true;
+
             if(!CoreConfig::settings()['uploads']['storageDB'])
             {
-                $success = move_uploaded_file($this->_File->getTempName(), $uploadDirectory . $this->getSavedAsName());
+                $fileMoveSuccess = move_uploaded_file($this->_File->getTempName(), $uploadDirectory . $this->getSavedAsName());
                 chmod($uploadDirectory . $this->getSavedAsName(), 0644);
             }
-
-            if ($success)
+            // if the file moved succesfully and record inserted into db
+            if ($fileMoveSuccess && $this->insert())
             {
-                if (!$this->insert())
-                {
-                    $this->_errors[] = "Could not upload file into database";
-                }
-                else
-                {
-                    return true;
-                }
+                return true;
+            }
+            else
+            {
+                $this->_errors[] = "Could not upload file into database";
             }
         }
         else
