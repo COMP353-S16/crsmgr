@@ -34,7 +34,7 @@ foreach($files as $i => $Files)
 
         );
     }
-    
+
 }
 
 echo json_encode($info);

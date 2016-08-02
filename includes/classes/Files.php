@@ -187,7 +187,7 @@ class Files
 
     public static function isValidFileName($name)
     {
-        return preg_match('=^[^/?*;:{}\\\\]+\.[^/?*;:{}\\\\]+$=', $name);
+        return !preg_match('=^[^/?*;:{}\\\\]+\.[^/?*;:{}\\\\]+$=', $name);
     }
 
     /**
