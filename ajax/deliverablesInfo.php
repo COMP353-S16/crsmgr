@@ -22,7 +22,8 @@ while($deliverable_data = $query->fetch()) {
         "dueDate" => $deliverable->getEndDate(),
         "did" => $deliverable->getDid(),
         "gid" => (int)$gid,
-        "sid" => $deliverable->getSemesterId()
+        "sid" => $deliverable->getSemesterId(),
+        "open" => $deliverable->isOpen()
 
     );
 }

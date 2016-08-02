@@ -24,6 +24,8 @@ if (WebUser::getUser()->isStudent())
 
     <title><?php echo CoreConfig::settings()['appname']; ?></title>
 
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 

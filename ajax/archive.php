@@ -2,6 +2,12 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
+if(!WebUser::getUser()->isSysAdmin())
+{
+    exit("<p class='text-danger text-center'>You do not have enough privileges to archive group files</p>");
+}
+
+
 $gid = $_REQUEST['gid'];
 
 $Archive = new Archive(new Group($gid));

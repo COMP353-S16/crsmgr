@@ -96,13 +96,20 @@ class CreateDeliverable
         {
             $this->_errors[] = "Start date must be before end date";
         }
-        if($this->_sid == "" || $this->_sid == null)
-        {
-            $this->_errors[] = "A valid semester is required";
-        }
-        if($this->_sid ==null || $this->_sid == "")
+        else if($this->_sid ==null || $this->_sid == "")
         {
             $this->_errors[] = "A semester is required";
+        }
+        else
+        {
+            $Semester = new Semester($this->_sid);
+            if( !(strtotime($this->getStartDate()) >= strtotime($Semester->getSemesterStartDate()) && strtotime($this->getEndDate()) <= strtotime($Semester->getSemseterEndDate())) )
+            {
+                $this->_errors[] = "Deliverable date must be within the bounds of semester date: ". $Semester->getSemesterStartDate() . ' and ' . $Semester->getSemseterEndDate();
+
+            }
+
+
         }
 
     }

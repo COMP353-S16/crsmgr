@@ -83,4 +83,12 @@ class Deliverable
     {
         return $this->_endDate;
     }
+
+    /**
+     * @return bool returns true if the deliverable is open; i.e. users can still upload files to it
+     */
+    public function isOpen()
+    {
+        return strtotime(date("Y-m-d H:i:s")) <= strtotime($this->getEndDate());
+    }
 }

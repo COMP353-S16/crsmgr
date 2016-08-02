@@ -30,11 +30,11 @@ foreach($files as $i => $Files)
             "deliverable" => $Deliverable->getDName(),
             "revisions" => $Files->getNumberOfRevisions(),
             "size" => round($Files->getSize(), 2) . " KB",
-            "expires" => date_format(date_create($DeletedFiles->getExpiryDate()), 'M d, Y at H:i:s')
+            "expires" => date_format(date_create($DeletedFiles->getExpiryDate()), 'M d, Y H:i:s')
 
         );
     }
-    
+
 }
 
 echo json_encode($info);

@@ -44,6 +44,8 @@ else
 
     <title><?php echo CoreConfig::settings()['appname']; ?></title>
 
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -89,7 +91,7 @@ else
 
             cursor: pointer;
         }
-
+        th.dt-center, td.dt-center { text-align: center; }
     </style>
 </head>
 
@@ -127,7 +129,7 @@ else
             }
             ?>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-9">
                     <ul class="nav nav-tabs">
                         <li class="active"><a href="#members" data-toggle="tab">Members
                                 <span class="glyphicon glyphicon-user"></span></a></li>
@@ -175,6 +177,7 @@ else
                                     <th>Name</th>
                                     <th>Date Posted</th>
                                     <th>Due Date</th>
+                                    <th>Status</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -238,7 +241,7 @@ else
                             <?php
                             $pdo = Registry::getConnection();
                             $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
-                        WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did");
+                        WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did AND NOW() >= d.startDate AND NOW() <= d.endDate");
                             $query->bindValue(":gid", $gid);
                             $query->execute();
                             if ($query->rowCount() > 0)
@@ -255,24 +258,16 @@ else
                                             while ($del = $query->fetch())
                                             {
                                                 $Deliverable = new Deliverable($del['did']);
-
-                                                $startDate = $Deliverable->getStartDate();
-
-                                                if (time() >= strtotime($startDate))
-                                                {
-
-
-                                                    ?>
-                                                    <option value="<?php echo $del['did']; ?>"><?php echo $Deliverable->getDName(); ?>
-                                                        - Due on <?php echo $Deliverable->getEndDate(); ?></option>
-                                                    <?php
-                                                }
+                                                ?>
+                                                <option value="<?php echo $del['did']; ?>"><?php echo $Deliverable->getDName(); ?>
+                                                    - Due on <?php echo $Deliverable->getEndDate(); ?></option>
+                                                <?php
                                             }
                                             ?>
                                         </select>
                                     </div>
 
-                                    <label id="label-browser" class="btn btn-success btn-file">
+                                    <label id="label-browser" class="btn btn-success btn-file" >
                                         Browse
                                         <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
                                     </label>
@@ -303,50 +298,56 @@ else
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            Group Info
-                        </div>
-                        <div class="panel-body">
-                            <ul>
-                                <li>Group ID: <?php echo $Group->getGid(); ?></li>
-                                <li>Group name: <?php echo $Group->getGName(); ?></li>
-                                <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
-                                    echo $group_leader->getFirstName() . ' ' . $group_leader->getLastName(); ?></li>
-                                <li>
-                                    Access:
-                                    <ul>
-                                        <li> Start: <?php echo $Group->getSemester()->getSemesterStartDate(); ?></li>
-                                        <li> End: <?php echo $Group->getSemester()->getSemseterEndDate(); ?></li>
-                                    </ul>
 
-                                </li>
-                            </ul>
-                            <p class="text-center">Status</p>
-                            <?php echo(($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>"); ?>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                Group Info
+                            </div>
+                            <div class="panel-body">
+                                <ul>
+                                    <li>Group ID: <?php echo $Group->getGid(); ?></li>
+                                    <li>Group name: <?php echo $Group->getGName(); ?></li>
+                                    <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
+                                        echo $group_leader->getFirstName() . ' ' . $group_leader->getLastName(); ?></li>
+                                    <li>
+                                        Access:
+                                        <ul>
+                                            <li> Start: <?php echo $Group->getSemester()->getSemesterStartDate(); ?></li>
+                                            <li> End: <?php echo $Group->getSemester()->getSemseterEndDate(); ?></li>
+                                        </ul>
+
+                                    </li>
+                                </ul>
+                                <p class="text-center">Status</p>
+                                <?php echo(($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>"); ?>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">
-                            Group Files
-                        </div>
-                        <div class="panel-body">
-                            <ul>
-                                <li>Bandwidth: <span id="bandwidth">-</span></li>
-                                <li>Total Files: <span id="totalFiles">-</span></li>
-                                <li>Deleted Files: <span id="totalDeletedFiles">-</span></li>
-                                <li>Used Bandwidth: <span id="usedBandwidth">-</span></li>
-                                <li>Number of Downloads: <span id="downloads">-</span></li>
-                                <li>Number of Uploaded Files: <span id="uploadedFiles">-</span></li>
-                            </ul>
+                    <div class="col-md-3">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                Group Files
+                            </div>
+                            <div class="panel-body">
+                                <ul>
+                                    <li>Bandwidth: <span id="bandwidth">-</span></li>
+                                    <li>Total Files: <span id="totalFiles">-</span></li>
+                                    <li>Deleted Files: <span id="totalDeletedFiles">-</span></li>
+
+                                    <li>Number of Uploaded Files: <span id="uploadedFiles">-</span></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
+
                 </div>
 
             </div>
+
+
 
 
             <!-- /.row -->
@@ -366,6 +367,7 @@ else
                 <th>User</th>
                 <th>Date</th>
                 <th>Size</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -454,7 +456,7 @@ else
                     text : 'Refresh',
                     action : function (e, dt, node, config)
                     {
-                        deliverables.ajax.reload();
+                        dt.ajax.reload();
                     }
                 }
             ],
@@ -468,7 +470,22 @@ else
             "columns" : [
                 {"data" : "name"},
                 {"data" : "datePosted"},
-                {"data" : "dueDate"}
+                {"data" : "dueDate"},
+                {
+                    'render' : function (data, type, row)
+                    {
+
+                        if(row.open)
+                        {
+                            return "<p class='text-success'>OPEN</p>";
+                        }
+                        else
+                        {
+                            return "<p class='text-danger'>OPEN</p>";
+                        }
+                    },
+                    className : "dt-center"
+                }
             ]
         });
 
@@ -498,6 +515,8 @@ else
                 .width(0 + "%")
                 .text(0 + '%');
             $('#uploadResult').html("");
+
+            $('#fileUpload').prop("disabled", true);
         }).on("lu:before", function (e, files)
         {
 
@@ -528,6 +547,7 @@ else
             {
 
                 $('#uploadResult').html("Your file is being processed... please wait");
+
             }
         }).on("lu:errors", function (e, errors)
         {
@@ -545,6 +565,7 @@ else
             output +='</ul>';
             output += '</div>';
             $('#uploadResult').html(output);
+            $('#fileUpload').prop("disabled", false);
         }).change(function ()
         {
             $(this).data("liteUploader").startUpload();
@@ -606,21 +627,23 @@ else
                     {
                         return '<button title="Rollback to previous version" id="rollbackButton" name="rollbackButton" type="button" class="btn btn-outline btn-danger btn-square btn-sm"> <i class="fa fa-repeat"></i>  </button>';
 
-                    }
+                    },
+                    className : "dt-center"
                 },
                 {
                     'render' : function (data, type, row)
                     {
                         return '<button title="Download '+ row.filename +'" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
 
-                    }
+                    },
+                    className : "dt-center"
                 }
             ],
             columnDefs : [{
                 orderable : false,
                 targets : [6, 7]
             }],
-            'order' : [[2, "asc"]],
+            'order' : [[0, "dsc"]],
             "rowCallback" : function (nRow, aData)
             {
                 $(nRow).find("td:not(:has(:button))").addClass('selectable');
@@ -686,7 +709,8 @@ else
                 "serverSide" : false,
                 "displayLength" : 25,
                 select : {
-                    style : "os"
+                    style : "os",
+                    selector : "td:not(:has(:button))" // a row can be selected that doesn't have a button on it
                 },
                 "ajax" : {
                     "url" : "ajax/fileVersions.php",
@@ -700,8 +724,21 @@ else
                     {"data" : "user"},
                     {"data" : "date"},
                     {"data" : "size"},
+                    {
+                        'render' : function (data, type, row)
+                        {
+
+                            return '<button title="Download file version '+ row.filename +'" id="downloadVersionButton" name="downloadVersionButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
+
+                        },
+                        className : "dt-center"
+                    }
                 ],
-                'order' : [[0, "asc"]]
+                'order' : [[0, "asc"]],
+                columnDefs : [{
+                    orderable : false,
+                    targets : [4]
+                }],
             });
 
 
@@ -776,6 +813,13 @@ else
                 },
                 {
                     "extend" : "selectNone"
+                },
+                {
+                    text : 'Refresh',
+                    action : function (e, dt, node, config)
+                    {
+                        dt.ajax.reload();
+                    }
                 },
                 {
                     "text" : "Recover",
@@ -956,12 +1000,18 @@ else
             var fileData = groupFiles.row($(this).closest('tr')).data();
 
             e.preventDefault();
-            window.location.href = "view.php?fid=" + fileData.fid + "&gid=" + groupFiles.gid;
-           // window.open("view.php?fid=" + fileData.fid)
 
+            window.location.href = "view.php?vid=" + fileData.vid;
         });
 
+        $(document).on('click', '#downloadVersionButton', function (e)
+        {
+            var fileData = versionsTable.row($(this).closest('tr')).data();
 
+            e.preventDefault();
+
+            window.location.href = "view.php?vid=" + fileData.vid;
+        });
 
 
     });
@@ -979,10 +1029,8 @@ else
             dataType : "json",
             success : function (data)
             {
-                $('#downloads').text(data.downloads);
                 $('#totalFiles').text(data.totalFiles);
                 $('#bandwidth').text(data.bandwidth);
-                $('#usedBandwidth').text(data.usedBandwidth);
                 $('#totalDeletedFiles').text(data.totalDeletedFiles);
                 $('#uploadedFiles').text(data.uploads);
             }
