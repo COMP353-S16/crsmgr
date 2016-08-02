@@ -29,26 +29,14 @@ while($groups = $query->fetch()) {
     $members = array();
     $files = array();
 
-    /*
-    foreach($Students as $student)
-    {
-        $Student = new Student($student['uid']);
-        $members[] = array (
-            "uid" => $Student->getUid(),
-            "label" => $Student->getFirstName() . ' ' . $Student->getLastName(),
-            "email" => $Student->getEmail(),
-            "username" => $Student->getUsername(),
-            "isLeader" => $Group->isLeader($Student->getUid())
-        );
-    }
-*/
 
     $info['data'][] = array(
         "gid" => $groups["gid"],
         "sid" => $Group->getSid(),
-        "creatorId" => $creator->getFirstName() . " "  . $creator->getLastName(),
+        "creatorId" => $creator->getFullName(),
         "leaderId" => $leader->getUid(),
         "leaderName" => $leader->getFullName(),
+        "isClosed" => $Group->isGroupClosed(),
         "gName" => $Group->getGName(),
         "totalMembers" => $Group->getTotalMembers(),
         "bandwidth" => $Group->getMaxUploadSize(),

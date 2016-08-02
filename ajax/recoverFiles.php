@@ -21,20 +21,20 @@ if($RecoverFiles->recover())
 
             // refresh both tables
             groupFiles.ajax.reload();
-            deletedFilesTable.ajax.reload(function(json){
-                // add the close button
-                console.log(json);
-                $('#recoverFilesContainer').dialog({
-                    buttons : {
-                        "Close" : function()
-                        {
-                            $(this).dialog("destroy");
-                        }
-                    }
-                });
-            },false);
+
+
+            deletedFilesTable.ajax.reload();
 
             loadFileSummary();
+
+            $('#recoverFilesContainer').dialog({
+                buttons : {
+                    "Close" : function()
+                    {
+                        $(this).dialog("destroy");
+                    }
+                }
+            });
         });
     </script>
     <?php
@@ -42,7 +42,7 @@ if($RecoverFiles->recover())
 }
 else
 {
-    $errors = $DeleteFiles->getErrors();;
+    $errors = $RecoverFiles->getErrors();;
     ?>
 
     <div class="alert alert-danger alert-dismissable">

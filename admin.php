@@ -28,6 +28,8 @@ $semesters = $query->fetchAll();
 
     <title><?php echo CoreConfig::settings()['appname']; ?></title>
 
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -71,6 +73,8 @@ $semesters = $query->fetchAll();
         .ui-autocomplete-loading {
             background: url('images/ajax.gif') no-repeat right center
         }
+
+        th.dt-center, td.dt-center { text-align: center; }
     </style>
 
 </head>
@@ -125,8 +129,7 @@ $semesters = $query->fetchAll();
                                 <span class="glyphicon glyphicon-globe"></span></a></li>
                         <li><a href="#deliverablesManager" data-toggle="tab">Deliverables
                                 <span class="glyphicon glyphicon-info-sign"></span></a></li>
-                        <li><a href="#semesterManage" data-toggle="tab">Semesters
-                                <span class="glyphicon glyphicon-education"></span></a></li>
+
                     </ul>
 
                     <div class="tab-content">
@@ -175,85 +178,7 @@ $semesters = $query->fetchAll();
                             <button type="button" id="createNewDeliverable" class="btn btn-primary">New Deliverable
                             </button>
                         </div>
-                        <div class="tab-pane fade" id="semesterManage">
-                            <h4>Semesters</h4>
 
-
-                            <div class="row">
-                                <div class="col-lg-4">
-
-
-                                    <form role="form" id="newSemesterForm">
-
-
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading">
-                                            New Semester
-                                        </div>
-                                        <div class="panel-body">
-
-
-
-                                            <table class="table" width="100%">
-                                                <thead>
-                                                <tr>
-                                                    <td>Start date:</td>
-                                                    <td>
-                                                        <div class="form-group has-feedback">
-                                                            <input id="newSemesterStartDate" name="newSemesterStartDate"
-                                                                class="form-control"
-                                                                placeholder="Enter semester end date">
-                                                            <span class="help-block"></span>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>End date:</td>
-                                                    <td>
-                                                        <div class="form-group has-feedback">
-                                                            <input id="newSemesterEndDate" name="newSemesterEndDate"
-                                                                class="form-control"
-                                                                placeholder="Enter semester end date">
-                                                            <span class="help-block"></span>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                </thead>
-                                            </table>
-
-                                        </div>
-                                        <div class="panel-footer">
-                                            <button id="createSemester" type="submit"
-                                                class="btn btn-primary btn-lg btn-block">Create
-                                            </button>
-                                            <br>
-                                            <div id="createSemesterAjaxResponse" style="display: none;"></div>
-                                        </div>
-                                    </div>
-
-
-                                    </form>
-
-
-                                </div>
-
-
-                                <div class="col-lg-4">
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading">
-                                            Semester History
-                                        </div>
-                                        <div class="panel-body">
-
-
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-
-                        </div>
 
                     </div>
 
@@ -386,8 +311,8 @@ $semesters = $query->fetchAll();
                             <td>Group Name:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <input id="newGroupName" name="newGroupName" class="form-control"
-                                        placeholder="Enter group name"> <span class="help-block"></span>
+                                    <input id="newGroupName" name="newGroupName" class="form-control" placeholder="Enter group name">
+                                    <span class="help-block"></span>
                                 </div>
                             </td>
                         </tr>
@@ -395,8 +320,7 @@ $semesters = $query->fetchAll();
                             <td>Maximum Bandwidth:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <input id="groupBandwidth" name="groupBandwidth" class="form-control"
-                                        placeholder="Enter group file bandwidth (MB)"> <span class="help-block"></span>
+                                    <input id="groupBandwidth" name="groupBandwidth" class="form-control" placeholder="Enter group file bandwidth (MB)"> <span class="help-block"></span>
                                 </div>
                             </td>
                         </tr>
@@ -404,6 +328,7 @@ $semesters = $query->fetchAll();
                             <td>Select Section:</td>
                             <td>
 
+                                <div class="form-group">
                                 <select class="form-control" id="sectionSelect" name="sectionSelect">
                                     <option value="all">All sections</option>
                                     <?php
@@ -422,6 +347,7 @@ $semesters = $query->fetchAll();
                                     ?>
 
                                 </select>
+                                    </div>
 
 
                             </td>
@@ -486,11 +412,11 @@ $semesters = $query->fetchAll();
         <div id="editGroupModal" style="display: none;">
 
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#editGroupGeneral" data-toggle="tab">General</a></li>
-                <li><a href="#editGroupMembers" data-toggle="tab">Members</a></li>
-                <li><a href="#editGroupDeliverables" data-toggle="tab">Deliverables</a></li>
-                <li><a href="#editGroupFiles" data-toggle="tab">Files</a></li>
-                <li><a href="#editGroupStats" data-toggle="tab">Statistics</a></li>
+                <li class="active"><a href="#editGroupGeneral" data-toggle="tab">General <span class="glyphicon glyphicon-star"></span></a></li>
+                <li><a href="#editGroupMembers" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a></li>
+                <li><a href="#editGroupDeliverables" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
+                <li><a href="#editGroupFiles" data-toggle="tab">Files <span class="glyphicon glyphicon-th-list"></span></a></li>
+                <li><a href="#editGroupStats" data-toggle="tab">Statistics <span class="glyphicon glyphicon-stats"></span></a></li>
             </ul>
             <div class="tab-content">
 
@@ -670,6 +596,7 @@ $semesters = $query->fetchAll();
                             <th>Latest Revision</th>
                             <th>Revisions</th>
                             <th>Size</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -762,10 +689,11 @@ $semesters = $query->fetchAll();
                     {
                         'render' : function (data, type, row)
                         {
-                            var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-square btn-sm"><i class="fa fa-pencil-square"></i></button>&nbsp';
+                            var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-square btn-sm"><i class="fa fa-pencil"></i></button>&nbsp';
                             var deleteB = '<button data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i> </button>';
                             return edit + deleteB;
-                        }
+                        },
+                        className : "dt-center"
                     }
                 ],
                 columnDefs : [{
@@ -783,6 +711,7 @@ $semesters = $query->fetchAll();
                     show : "fade",
                     width : 800,
                     height : 700,
+                    hide: 'fade',
                     resizable : false,
                     buttons : {
                         "Create" : function ()
@@ -841,6 +770,7 @@ $semesters = $query->fetchAll();
                     modal : true,
                     title : "Delete " + gName + "?",
                     show : "fade",
+                    hide: 'fade',
                     "buttons" : {
                         "Delete Group" : function ()
                         {
@@ -975,6 +905,10 @@ $semesters = $query->fetchAll();
                     semesterSelect : {
                         required : true
                     },
+                    sectionSelect :
+                    {
+                        required: false
+                    },
                     groupBandwidth : {
                         required : true,
                         number : true,
@@ -1012,6 +946,8 @@ $semesters = $query->fetchAll();
                         modal : true,
                         width : 300,
                         height : 200,
+                        show : 'fade',
+                        hide: 'fade',
                         draggable : false,
                         resizable : false
                     });
@@ -1215,6 +1151,7 @@ $semesters = $query->fetchAll();
                         modal : true,
                         width : 300,
                         show : 'fade',
+                        hide: 'fade',
                         height : 200,
                         draggable : false,
                         resizable : false
@@ -1246,6 +1183,7 @@ $semesters = $query->fetchAll();
                     modal : true,
                     resizable : false,
                     show : 'fade',
+                    hide: 'fade',
                     title : 'New Deliverable',
                     buttons : {
                         "Create" : function ()
@@ -1413,6 +1351,10 @@ $semesters = $query->fetchAll();
                     destroy : true,
                     "displayLength" : 10,
                     dom : 'Bfrtip',
+                    select : {
+                        style : "os",
+                        selector : "td:not(:has(:button))" // a row can be selected that doesn't have a button on it
+                    },
                     buttons : [
 
                         {
@@ -1437,9 +1379,23 @@ $semesters = $query->fetchAll();
                         {"data" : "filename"},
                         {"data" : "ldate"},
                         {"data" : "revisions"},
-                        {"data" : "size"}
+                        {"data" : "size"},
+                        {
+                            'render' : function (data, type, row)
+                            {
+                                return '<button title="Download '+ row.filename +'" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
+
+                            },
+                            className : "dt-center"
+                        }
                     ],
                     'order' : [[2, "asc"]],
+                    "columnDefs" : [
+                        {
+                            orderable : false,
+                            targets : [6]
+                        }
+                    ],
                     "rowCallback" : function (nRow, aData)
                     {
                         $(nRow).addClass('selectable');
@@ -1503,7 +1459,8 @@ $semesters = $query->fetchAll();
 
 
                                 return deleteB + promote;
-                            }
+                            },
+                            className : "dt-center"
                         }
                     ],
                     'order' : [[1, "asc"]],
@@ -1545,7 +1502,8 @@ $semesters = $query->fetchAll();
                             {
                                 var deleteB = '<button data-gid="' + data.gid + '" id="deleteDeliverable" title="Delete deliverable" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i></button>&nbsp';
                                 return deleteB;
-                            }
+                            },
+                            className : "dt-center"
                         }
                     ],
                     'order' : [[1, "asc"]],
@@ -1558,10 +1516,12 @@ $semesters = $query->fetchAll();
 
                 $('#editGroupModal').dialog({
                     width : 900,
-                    height : 800,
+                    height : 700,
                     modal : true,
-                    title : data.gName,
+                    title : "Group " + data.gName,
                     show : 'fade',
+                    hide: 'fade',
+                    resizable : false,
                     close : function ()
                     {
                         $form = $('form#editGroupGeneralForm');
@@ -1685,6 +1645,7 @@ $semesters = $query->fetchAll();
                 $('#deleteMemberModal').dialog({
                     modal : true,
                     show : 'fade',
+                    hide: 'fade',
                     title : 'Delete ' + data.name,
                     buttons : {
                         "Delete" : function ()
@@ -1888,7 +1849,7 @@ $semesters = $query->fetchAll();
                     width : 400,
                     height : 250,
                     show : 'fade',
-                    resizabe : false,
+                    resizable : false,
                     draggable : false,
                     title : 'Delete Deliverable',
                     buttons : {
@@ -1899,7 +1860,9 @@ $semesters = $query->fetchAll();
                                 modal : true,
                                 width : 400,
                                 height : 200,
-                                resizabe : false,
+                                show: 'fdae',
+                                hide: 'fade',
+                                resizable : false,
                                 draggable : false,
                                 title : 'Delete Deliverable'
                             });
@@ -1932,7 +1895,15 @@ $semesters = $query->fetchAll();
 
 
 
+            /* when clicking on a file */
+            $(document).on('click', '#downloadButton', function (e)
+            {
+                var fileData = groupFiles.row($(this).closest('tr')).data();
 
+                e.preventDefault();
+
+                window.location.href = "view.php?vid=" + fileData.vid;
+            });
 
 
 

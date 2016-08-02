@@ -22,9 +22,17 @@ class UploadHandler
 
     protected $_allowed = array();
 
+    /**
+     * @type GroupFiles
+     */
     private $_GroupFiles;
 
+    /**
+     * @type Group
+     */
     private $_Group;
+
+
 
     private $_file = array(
         "save_as" => ""
@@ -59,7 +67,11 @@ class UploadHandler
         $this->_allowed = CoreConfig::settings()['uploads']['allowed_files'] + $this->_allowed;
 
         $this->_Group = new Group($this->_gid);
-        $this->_GroupFiles = new GroupFiles($this->_gid);
+        $this->_GroupFiles = $this->_Group->getGroupFiles();
+
+
+        // check to see if this file exists
+        $this->extractFileId();
     }
 
     /**
@@ -82,6 +94,7 @@ class UploadHandler
     {
         $this->_File = new File($file);
         $this->_file['save_as'] = $this->_File->getFileName();
+
     }
 
     /**
@@ -116,8 +129,32 @@ class UploadHandler
             $this->_errors[] = $er;
 
         }
+
     }
 
+
+
+    /**
+     * @return mixed returns null if no FID exists for certain file. This should be in its own class.
+     */
+    private function extractFileId()
+    {
+        $pdo = Registry::getConnection();
+        // does this file name already exist?
+        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType=:ftype AND fid NOT IN (SELECT fid FROM DeletedFiles) LIMIT 1");
+        $params = array(
+            ":did"   => $this->_did,
+            ":gid"   => $this->_gid,
+            ":name"  => $this->_File->getBaseName(),
+            ":ftype" => $this->_File->getFileExtension()
+        );
+
+        $query->execute($params);
+        $data  = $query->fetch();
+        $this->_fid = $data['fid'];
+
+        return $this->_fid;
+    }
 
     /**
      * @return File
@@ -212,72 +249,19 @@ class UploadHandler
         return $this->_errors;
     }
 
-    /**
-     * Inserts the record in the database
-     */
-    private function insert()
-    {
-        $this->validate();
 
-        if (!empty($this->getErrors()))
-        {
-            return false;
-        }
-        // if it's a revision, skip the rest
-        if ($this->isRevision())
-        {
-            return $this->insertRevision($this->_fid);
-        }
-        
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType, mime) VALUES (:gid, :did, :fName, :fType, :mime)");
-        $params = array(
-            ":gid"   => $this->_gid,
-            ":did"   => $this->_did,
-            ":fName" => $this->_File->getBaseName(),
-            ":fType" => $this->_File->getFileExtension(),
-            ":mime"  => $this->_File->getMime()
-        );
-        if ($query->execute($params))
-        {
-            $lastInsert = $pdo->lastInsertId();
-            return $this->insertRevision($lastInsert);
-        }
-
-        return false;
-    }
 
     /**
      * @return bool returns true if filename already exists for particular deliverable of group
      */
     private function isRevision()
     {
-        $this->_fid = $this->getFileId();
-        return $this->_fid  != NULL || $this->_fid  != "";
+
+        // if this file already exists and it's not permanently deleted, the user needs to recover that file before uploading revision
+        return $this->_fid  != NULL ;
     }
 
 
-    /**
-     * @return mixed returns null if no FID exists for certain file. This should be in its own class.
-     */
-    private function getFileId()
-    {
-        $pdo = Registry::getConnection();
-        // does this file name already exist?
-        $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType=:ftype AND fid NOT IN 
-              (SELECT fid FROM DeletedFiles) LIMIT 1");
-        $params = array(
-            ":did"   => $this->_did,
-            ":gid"   => $this->_gid,
-            ":name"  => $this->_File->getBaseName(),
-            ":ftype" => $this->_File->getFileExtension()
-        );
-
-        $query->execute($params);
-        $data = $query->fetch();
-
-        return $data['fid'];
-    }
 
 
     private function insertRevision($fid)
@@ -314,6 +298,48 @@ class UploadHandler
     }
 
 
+    public function getFileId()
+    {
+        return $this->_fid;
+    }
+
+
+
+    /**
+     * Inserts the record in the database
+     */
+    private function insert()
+    {
+        $this->validate();
+
+        if (!empty($this->getErrors()))
+        {
+            return false;
+        }
+        // if it's a revision, skip the rest
+        if ($this->isRevision())
+        {
+            return $this->insertRevision($this->getFileId());
+        }
+
+        $pdo = Registry::getConnection();
+        $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType, mime) VALUES (:gid, :did, :fName, :fType, :mime)");
+        $params = array(
+            ":gid"   => $this->_gid,
+            ":did"   => $this->_did,
+            ":fName" => $this->_File->getBaseName(),
+            ":fType" => $this->_File->getFileExtension(),
+            ":mime"  => $this->_File->getMime()
+        );
+        if ($query->execute($params))
+        {
+            $lastInsert = $pdo->lastInsertId();
+            return $this->insertRevision($lastInsert);
+        }
+
+        return false;
+    }
+
     /**
      * @return bool returns true if file successu'ly uploaded in directory
      */
@@ -322,19 +348,16 @@ class UploadHandler
         $this->validate();
         if (empty($this->_errors) && UPLOAD_ERR_OK === $this->_File->getFileError())
         {
-            // where is the file going to be located?
-            $uploadDirectory = $this->getBuildDirectory();
-            $this->createDirectory($uploadDirectory);
 
             // give a unique filename
             $this->makeUnique();
 
-
-
-            $fileMoveSuccess = true;
+            $fileMoveSuccess = true; // this is used to check if the temp directory move was successful
 
             if(!CoreConfig::settings()['uploads']['storageDB'])
             {
+                $uploadDirectory = $this->getBuildDirectory();
+                $this->createDirectory($uploadDirectory);
                 $fileMoveSuccess = move_uploaded_file($this->_File->getTempName(), $uploadDirectory . $this->getSavedAsName());
                 chmod($uploadDirectory . $this->getSavedAsName(), 0644);
             }

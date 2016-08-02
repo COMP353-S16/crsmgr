@@ -5,6 +5,14 @@ if(!isset($_REQUEST))
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
+
+if(!WebUser::getUser()->isProf())
+{
+    exit("<p class='text-danger text-center'>You do not have enough privileges to create a group</p>");
+}
+
+
+
 $gid = $_REQUEST['gid'];
 $did = $_REQUEST['did'];
 

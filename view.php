@@ -1,24 +1,30 @@
 <?php
 session_start();
-if(isset($_REQUEST['fid']) && !empty($_SESSION))
+if(isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
 {
 
 
     require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
     $pdo = Registry::getConnection();
-    $query = $pdo->prepare("SELECT * FROM Files WHERE fid=:fid LIMIT 1");
-    $query->execute(array(":fid" => $_REQUEST['fid']));
+    $query = $pdo->prepare("SELECT f.* FROM Versions v, Files f WHERE v.vid=:vid AND f.fid=v.fid LIMIT 1");
+    $query->execute(array(":vid" => $_REQUEST['vid']));
+
 
     if($query->rowCount()<=0)
     {
         exit("File not found");
 
     }
-    $data = $query->fetch();
-    $Files = new Files($data);
-    $file = $Files->getLatestVersion()->getBaseUrl();
-    $Download = new DownloadFile($Files->getLatestVersion(), WebUser::getUser());
+
+    $Files = new Files($query->fetch());
+    /**
+     * @var $Version Version
+     *
+     */
+    $Version = $Files->getVersionById($_REQUEST['vid']);
+    $file = $Version->getBaseUrl();
+    $Download = new DownloadFile($Version, WebUser::getUser());
 
     if($Download->download())
     {

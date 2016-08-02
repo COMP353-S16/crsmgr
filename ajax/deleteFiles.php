@@ -24,19 +24,24 @@ if($DeleteFiles->delete())
             groupFiles.ajax.reload();
             deletedFilesTable.ajax.reload(function(json){
                 // add the close button
-                $('#deleteProgress').dialog({
-                    buttons : {
-                        "Close" : function()
-                        {
-                            $(this).dialog("destroy");
-                        }
-                    }
-                });
+
 
                 loadFileSummary();
 
-                $('#responseMessage').show();
+
             },false);
+
+
+            $('#deleteProgress').dialog({
+                buttons : {
+                    "Close" : function()
+                    {
+                        $(this).dialog("destroy");
+                    }
+                }
+            });
+
+            $('#responseMessage').show();
 
 
         });

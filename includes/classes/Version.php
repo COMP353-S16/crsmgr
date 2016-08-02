@@ -107,4 +107,9 @@ class Version
     }
 
 
+    public function getIp()
+    {
+        return $this->_version['ip'];
+    }
+
 }

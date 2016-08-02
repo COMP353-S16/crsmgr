@@ -50,7 +50,7 @@ else
 
         <div class="alert alert-success alert-dismissable">
             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            Successfully uploaded file <?php echo $UploadHandler->getFile()->getBaseName().'.'.$UploadHandler->getFile()->getFileExtension();?>!
+            Successfully uploaded file <strong><?php echo $UploadHandler->getFile()->getBaseName().'.'.$UploadHandler->getFile()->getFileExtension();?></strong>!
         </div>
 
         <script>
@@ -58,6 +58,9 @@ else
                 $('.progress-bar').removeClass('progress-bar-warning').addClass('progress-bar-success');
                 groupFiles.ajax.reload();
                 loadFileSummary();
+
+                $('#fileUpload').prop("disabled", false);
+
 
             });
         </script>
