@@ -70,11 +70,23 @@ class CreateDeliverable
         return $d && $d->format('Y-m-d') === $date;
     }
 
+    private function isValidName()
+    {
+        return Files::isValidFileName($this->_name);
+    }
+
     private function validate()
     {
         if($this->_name=="" || $this->_name == null)
         {
             $this->_errors[] = "A deliverable name is required";
+        }
+        else
+        {
+            if(!$this->isValidName())
+            {
+                $this->_errors[] = "Invalid name for deliverable. Cannot contain special characters \\ / : * ? \" < > |";
+            }
         }
         if(!$this->isValidDate($this->getEndDate()) || !$this->isValidDate($this->getStartDate()))
         {

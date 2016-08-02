@@ -20,7 +20,7 @@ class Version
      */
     public function __construct(array $versionsData, $id)
     {
-        if(empty($versionsData) || $id=="")
+        if(empty($versionsData) || $id==null)
             throw new Exception("Version data is required");
 
         $this->_data = $versionsData;
@@ -78,10 +78,32 @@ class Version
         return $this->_version['vid'];
     }
 
+    public function getUploadDir()
+    {
+        return $this->_version['upload_dir'];
+    }
+
     public function getData()
     {
 
         return $this->_version['data'];
+    }
+
+    /**
+     * @return string returns the location of the file. This returns the latest file.
+     */
+    public function getBaseUrl()
+    {
+        return $_SERVER['DOCUMENT_ROOT']. '/fileuploads/' . $this->getUploadDir() . $this->getSavedName();
+    }
+
+    /**
+     * @return string returns the location of the file relative to the webroot. This returns the latest file.
+     */
+    public function getUrl()
+    {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        return $protocol . $_SERVER['HTTP_HOST']. '/fileuploads/' . $this->getUploadDir() .  $this->getSavedName();
     }
 
 

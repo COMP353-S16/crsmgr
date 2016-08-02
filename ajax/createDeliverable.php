@@ -3,7 +3,7 @@ session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
-if(!WebUser::getUser()->isProf())
+if(!WebUser::getUser()->isProf() )
 {
     exit("<p class='text-danger text-center'>You do not have enough privileges to create deliverables</p>");
 }

@@ -37,6 +37,9 @@ class Student extends User
 
     }
 
+    /**
+     *
+     */
     private function extractSemesters()
     {
         $pdo = Registry::getConnection();
