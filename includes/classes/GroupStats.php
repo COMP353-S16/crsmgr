@@ -25,6 +25,7 @@ class GroupStats
             "numberOfPermanentlyDeletedFiles" => 0,
             "numberOfUploads" => 0,
             "numberOfDownloads" => 0,
+            "files" => array()
         );
     }
 
@@ -36,7 +37,7 @@ class GroupStats
 
         $files = $GroupFiles->getFiles();
 
-        $fileArray = array();
+        $fileArray = &$this->_GroupStats["files"];
         /**
          * @var $Files Files
          */
@@ -66,19 +67,24 @@ class GroupStats
                     "date" => $Version->getUploadDate(),
                 );
                 $versionShortcut = &$fileArray[$i]["versions"][$v];
-                $fileArray[$i]["numberOfVersions"]++;
 
-                if ($fileArray[$i]["isPermanentlyDeleted"] == false) {
+                // if a file has been permanently deleted, it should not count towards active stats
+                if ($fileArray[$i]["isPermanentlyDeleted"] == false)
+                {
+                    $fileArray[$i]["numberOfVersions"]++;
                     $fileArray[$i]["totalFileSize"] += $versionShortcut["size"];
                 }
             }
-
-
+            if ($fileArray[$i]["isPermanentlyDeleted"] == false) {
+                $this->_GroupStats["numberOfFiles"]++;
+            }
+            $this->_GroupStats["numberOfUploads"] += $fileArray[$i]["numberOfVersions"];
+            $this->_GroupStats["usedBandwidth"] += $fileArray[$i]["totalFileSize"];
 
 
         }
 
-        return $fileArray;
+        return $this->_GroupStats;
     }
 
 }
