@@ -29,21 +29,21 @@ class Group
      * @param $gid group id
      */
 
-
     public function __construct($gid)
     {
         $this->_gid = $gid;
         $this->fetchGroupInfo();
         $this->populateGroupMembers();
     }
-    
-    private function fetchGroupInfo() {
+
+    private function fetchGroupInfo()
+    {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT * FROM Groups WHERE gid=:gid");
         $query->bindValue(":gid", $this->_gid);
         $query->execute();
         $group = $query->fetch();
-        
+
 
         $this->_leaderId = $group['leaderId'];
         $this->_creatorId = $group['creatorId'];
@@ -61,7 +61,6 @@ class Group
     {
         return $this->_gid;
     }
-
 
 
     /**
@@ -88,7 +87,8 @@ class Group
         return $this->_leaderId;
     }
 
-    public function isLeader($uid) {
+    public function isLeader($uid)
+    {
         return $this->_leaderId == $uid;
     }
 
@@ -124,9 +124,8 @@ class Group
 
     public function isInGroup($uid)
     {
-        foreach ($this->_groupStudents as $student)
-        {
-            if($student['uid'] == $uid) {
+        foreach ($this->_groupStudents as $student) {
+            if ($student['uid'] == $uid) {
                 return true;
             }
         }
@@ -134,11 +133,35 @@ class Group
         return false;
     }
 
+    /**
+     * @return GroupFiles returns an instance of GroupFiles
+     */
     public function getGroupFiles()
     {
         return new GroupFiles($this->_gid);
     }
 
+
+    /**
+     * @return array returns an array of Student objects
+     */
+    public function getMembers()
+    {
+        $students = array();
+        foreach($this->_groupStudents as $i=> $student)
+        {
+            $students[] = new Student($student['uid']);
+        }
+        return $students;
+    }
+
+    /**
+     * @return GroupStats
+     */
+    public function getGroupStats()
+    {
+        return new GroupStats(this);
+    }
 
     /**
      * @return int returns semester id

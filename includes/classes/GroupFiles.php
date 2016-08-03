@@ -137,7 +137,7 @@ class GroupFiles
     }
 
     /**
-     * @param $fid filed id
+     * @param $fid file id
      *
      * @return bool returns true if the file is permanently deleted: passed expiry date.
      */
