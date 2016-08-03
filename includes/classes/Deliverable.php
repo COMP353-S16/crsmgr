@@ -9,7 +9,7 @@
 class Deliverable
 {
     protected $_did;
-    protected $_cid;
+
     protected $_dName;
     protected $_startDate;
     protected $_endDate;
@@ -31,7 +31,7 @@ class Deliverable
         $query->execute();
         $deliverable = $query->fetch();
 
-        $this->_cid = $deliverable['cid'];
+       // $this->_cid = $deliverable['cid'];
         $this->_dName = $deliverable['dName'];
         $this->_startDate = $deliverable['startDate'];
         $this->_endDate = $deliverable['endDate'];
@@ -52,13 +52,7 @@ class Deliverable
         return $this->_did;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getCid()
-    {
-        return $this->_cid;
-    }
+
 
     /**
      * @return string returns deliverable name

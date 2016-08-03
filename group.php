@@ -4,6 +4,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 //check if user is logged in
 WebUser::isLoggedIn(true);
 
+
+
 $Student = WebUser::getUser();
 if ($Student instanceof Student)
 {
@@ -28,6 +30,7 @@ else
 {
     exit ("Not a student");
 }
+
 
 ?>
 
@@ -495,7 +498,7 @@ else
             params : {
                 gid : "<?php echo $Group->getGid();?>",  // group id
             },
-            singleFileUploads : true,
+            singleFileUploads : false,
 
             rules : {
                 //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
@@ -581,6 +584,7 @@ else
         groupFiles = $('#groupfiles').DataTable({
             "processing" : true,
             "serverSide" : false,
+            "destroy" : true,
             "displayLength" : 10,
             dom : 'Bfrtip',
             select : {
@@ -766,6 +770,7 @@ else
                                 vid : versionData.vid
                             },
                             url : "ajax/rollback.php",
+                            cache: false,
                             dataType : "html",
                             success : function (data)
                             {
@@ -804,6 +809,8 @@ else
         deletedFilesTable = $('#deletedFilesTable').DataTable({
             processing : true,
             dom : 'Bfrtip',
+            "serverSide" : false,
+            "destroy" : true,
             select : {
                 style : "os"
             },
@@ -933,6 +940,7 @@ else
                 data : {fids : ids},
                 type : 'POST',
                 dataType : 'html',
+                cache: false,
                 success : function (data)
                 {
                     $('#deleteProgress').html(data);
@@ -978,6 +986,7 @@ else
                 data : {fids : ids},
                 type : 'POST',
                 dataType : 'html',
+                cache: false,
                 success : function (data)
                 {
                     $('#recoverFilesContainer').html(data);
@@ -1027,6 +1036,7 @@ else
             },
             url : "ajax/filesSummary.php",
             dataType : "json",
+            cache: false,
             success : function (data)
             {
                 $('#totalFiles').text(data.totalFiles);

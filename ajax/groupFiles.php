@@ -7,13 +7,14 @@ $gid = $_REQUEST['gid'];/// should be sent via ajax
 $GroupFiles = new GroupFiles($gid);
 $files = $GroupFiles->getFiles();
 
+
+
 $info =array("data" => array());
 /**
  * @var $Files Files
  */
 foreach($files as $i => $Files)
 {
-
 
     $Deliverable = new Deliverable($Files->getDeliverableId());
 
@@ -33,6 +34,7 @@ foreach($files as $i => $Files)
 
         );
     }
+
 
 
 }

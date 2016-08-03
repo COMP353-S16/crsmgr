@@ -2,11 +2,6 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
+$GroupStats = new GroupStats(new Group(62));
 
-$Archive = new Archive(new Group(62));
-
-$Archive->archive();
-
-print_r($Archive->getErrors());
-exit;
-?>
+print_r($GroupStats->getStats());

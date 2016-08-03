@@ -12,19 +12,15 @@ Registry::setConfig(new MySqlConfig(DatabaseManager::dbUser, DatabaseManager::db
 CoreConfig::applySettings(require_once ('settings.php'));
 
 
-
-if(WebUser::isLoggedIn())
+if(!empty($_SESSION))
 {
-    $User = new User($_SESSION['uid']);
-    if($User->isStudent())
-    {
-        WebUser::setUser(new Student($User->getUid()));
-    }
-    else
-    {
-        WebUser::setUser($User);
-    }
+    $User = UserFactory::create($_SESSION['uid']);
+
+
+    WebUser::setUser($User);
+
 }
+
 
 date_default_timezone_set(CoreConfig::settings()['timezone']); // register timezone
 

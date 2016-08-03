@@ -27,9 +27,25 @@ class GroupStats
             "numberOfDownloads" => 0,
             "files" => array()
         );
+        $this->getFileStats();
     }
 
-    public function getFileStats()
+    public function getTotalDeletedFiles()
+    {
+        return $this->_GroupStats['numberOfDeletedFiles'];
+    }
+
+    public function getUsedBandwidth()
+    {
+        return $this->_GroupStats['usedBandwidth'];
+    }
+
+    public function getNbOfUploadedFiles()
+    {
+        return $this->_GroupStats['numberOfUploads'];
+    }
+
+    private function getFileStats()
     {
 
         $GroupFiles = $this->_group->getGroupFiles();
@@ -48,6 +64,7 @@ class GroupStats
                 "fileName" => $Files->getFileName(),
                 "totalFileSize" => 0,
                 "isPermanentlyDeleted" => $this->_group->getGroupFiles()->isPermanentDeleted($Files->getId()),
+                "isDeleted" => $this->_group->getGroupFiles()->isDeleted($Files->getId()),
                 "versions" => array(),
             );
 
@@ -75,16 +92,30 @@ class GroupStats
                     $fileArray[$i]["totalFileSize"] += $versionShortcut["size"];
                 }
             }
-            if ($fileArray[$i]["isPermanentlyDeleted"] == false) {
+
+            if ($fileArray[$i]["isPermanentlyDeleted"] == false)
+            {
                 $this->_GroupStats["numberOfFiles"]++;
             }
+
+            if($fileArray[$i]["isDeleted"])
+            {
+                $this->_GroupStats['numberOfDeletedFiles']++;
+            }
+
+
             $this->_GroupStats["numberOfUploads"] += $fileArray[$i]["numberOfVersions"];
             $this->_GroupStats["usedBandwidth"] += $fileArray[$i]["totalFileSize"];
 
 
         }
 
-        return $this->_GroupStats;
+
     }
 
+
+    public function getStats()
+    {
+        return $this->_GroupStats;
+    }
 }

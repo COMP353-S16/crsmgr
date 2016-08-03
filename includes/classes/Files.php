@@ -30,6 +30,8 @@ class Files
         $this->_file = $file;
         $this->_fid = $this->_file['fid'];
 
+
+
         $this->getFileVersions();
     }
 
@@ -43,6 +45,7 @@ class Files
         $query = $pdo->prepare("SELECT * FROM Versions WHERE fid = :fid");
         $query->execute(array(":fid" => $this->_fid));
         $this->_versions = $query->fetchAll();
+
 
     }
 
@@ -93,6 +96,7 @@ class Files
     public function getVersions()
     {
         $a = array();
+
         foreach($this->_versions as $i => $d)
         {
             $vid = $this->_versions[$i]['vid'];
@@ -123,6 +127,7 @@ class Files
     public function getEarliestVersionId()
     {
         $vids = array();
+
         foreach($this->_versions as $i => $d)
         {
             $vids[] = $this->_versions[$i]['vid'];
@@ -178,8 +183,12 @@ class Files
         $vids = array();
         foreach($this->_versions as $i => $d)
         {
-            $vids[] = $this->_versions[$i]['vid'];
+
+            //echo $d['vid'] . '  ' . $this->_fid .'<br>';
+            $vids[] = $d['vid'];
         }
+
+
 
         return max($vids);
     }
@@ -187,8 +196,7 @@ class Files
 
     public static function isValidFileName($name)
     {
-        //TODO FIX THIS!
-        return true;
+        return (strpbrk($name, "\\/?%*:|\"<>") === FALSE);
     }
 
     /**
