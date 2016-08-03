@@ -25,9 +25,15 @@ class GroupStats
             "numberOfPermanentlyDeletedFiles" => 0,
             "numberOfUploads" => 0,
             "numberOfDownloads" => 0,
-            "files" => array()
+            "files" => array(),
+            "members" => array()
         );
+
+        $this->getMembers();
+
+
         $this->getFileStats();
+
     }
 
     public function getTotalDeletedFiles()
@@ -78,12 +84,29 @@ class GroupStats
             foreach ($versions as $v => $Version)
             {
 
+                $vid = $Version->getVersionId();
+
                 $fileArray[$i]["versions"][$v] = array (
+                    "vid" => $vid,
                     "size" => $Version->getSize(),
                     "uploader" => $Version->getUploaderId(),
                     "date" => $Version->getUploadDate(),
+                    "downloads" => array()
                 );
+
+
                 $versionShortcut = &$fileArray[$i]["versions"][$v];
+
+
+                // add version downloads
+                $versionShortcut['downloads'] = $this->getVersionDownloads($vid);
+
+
+                // retrieve member stats for this particular version
+                $this->getMemberVersion($versionShortcut);
+
+
+                $this->_GroupStats['numberOfDownloads'] += count($versionShortcut['downloads']);
 
                 // if a file has been permanently deleted, it should not count towards active stats
                 if ($fileArray[$i]["isPermanentlyDeleted"] == false)
@@ -112,6 +135,86 @@ class GroupStats
 
 
     }
+
+    private function getVersionDownloads($vid)
+    {
+        $pdo = Registry::getConnection();
+        $query = $pdo->prepare("SELECT uid, downloadDate FROM Downloads WHERE vid=:vid");
+        $query->bindValue(":vid", $vid);
+        $query->execute();
+        $downloads = array();
+
+        while($data = $query->fetch())
+        {
+            $downloads[] = array (
+                "uid" => $data['uid'],
+                "downloadDate" => $data['downloadDate']
+
+            );
+        }
+
+
+
+        return $downloads;
+
+    }
+
+    private function getMembers()
+    {
+        $members = $this->_group->getMembers();
+        /**
+         * @var $Student Student
+         */
+        foreach($members as $k => $Student)
+        {
+            $uid = $Student->getUid();
+            $this->_GroupStats['members'][] = array(
+                "uid" => $uid,
+                "name" => $Student->getFullName(),
+                "totalUploadsSize" => 0,
+                "totalDownloadsSize" =>0,
+                "numberOfUploads" => 0,
+                "numberOfDownloads"=> 0,
+                "versionsDownloaded" => array(),
+                "versionsUploaded" => array()
+            );
+        }
+    }
+
+    private function getMemberVersion(&$version)
+    {
+
+        foreach($this->_GroupStats['members'] as $k => $memberData)
+        {
+
+            $uid = $memberData['uid'];
+
+            foreach($version['downloads'] as $downloadData)
+            {
+               // echo $downloadData['uid'];
+
+                if($downloadData['uid'] == $uid)
+                {
+                    $this->_GroupStats['members'][$k]['numberOfDownloads']++;
+                    $this->_GroupStats['members'][$k]['versionsDownloaded'][] = $version['vid'];
+
+
+                    $this->_GroupStats['members'][$k]['totalDownloadsSize']+= $version['size'];
+
+                }
+            }
+
+
+            if($version['uploader'] == $uid)
+            {
+                $this->_GroupStats['members'][$k]['numberOfUploads']++;
+                $this->_GroupStats['members'][$k]['versionsUploaded'][] = $version['vid'];
+                $this->_GroupStats['members'][$k]['totalUploadsSize']+= $version['size'];
+            }
+
+        }
+    }
+
 
 
     public function getStats()
