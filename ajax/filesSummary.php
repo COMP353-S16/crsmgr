@@ -1,33 +1,46 @@
 <?php
-session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
+//header("Content-type: text/json");
+$k = array();
 
-$gid = $_REQUEST['gid'];/// should be sent via ajax
+$Group = new Group($_REQUEST['gid']);
+$GroupStats = new GroupStats($Group);
+$stats = $GroupStats->getStats();
+
+
+
+$usedBandwith = $GroupStats->getUsedBandwidth();
+$allowedBandwidth = $Group->getMaxUploadSize();
+
+
+$used = ($usedBandwith / $allowedBandwidth) * 100;
+$free = 100 - $used;
+
+
 
 $data = array(
-  "totalFiles" => 0,
-  "totalDeletedFiles" => 0,
-  "bandwidth" => 0,
-  "usedBandwidth" => 0,
-  "uploads" => 0
+  "used" => $used,
+  "free" => $free,
+  "total" => $allowedBandwidth,
+  "_totalFiles" =>$GroupStats->getTotalFiles(),
+  "_totalUploadedFiles" => $GroupStats->getNbOfUploadedFiles(),
+  "_totalDownloadedFiles" =>$GroupStats->getNumberOfDownloads(),
+  "_totalDeletedFiles" => $GroupStats->getTotalDeletedFiles(),
+  "_totalPermanentDeletedFiles" => $GroupStats->getTotalPermanentDelete()
 );
 
-
-
-
-$Group = new Group($gid);
-$GroupFiles = $Group->getGroupFiles();
-
-
-
-$usedPer = ($Group->getMaxUploadSize()>0 ?  $GroupFiles->getUsedBandwidth() / $Group->getMaxUploadSize() : 0);
-
-
-$data["totalFiles"] = $GroupFiles->getNumberOfFiles();
-$data["bandwidth"] = number_format($GroupFiles->getUsedBandwidth(),2)  . " / " . number_format($Group->getMaxUploadSize(),2) .  "MB (".number_format($usedPer,1)."%)";
-$data["usedBandwidth"] = number_format($GroupFiles->getUsedBandwidth() ,2) . "MB";
-$data["totalDeletedFiles"] = $GroupFiles->getTotalDeletedFiles();
-$data["uploads"] = $GroupFiles->getNbOfUploadedFiles();
-
-
 echo json_encode($data);
+
+exit;
+
+?>
+
+
+
+
+
+
+
+
+
+    

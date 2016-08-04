@@ -27,9 +27,10 @@ class RecoverFiles
 
             foreach($this->_fids as $fid)
             {
-                $query = $pdo->prepare("SELECT * FROM Files WHERE fid=:fid");
+                $query = $pdo->prepare("SELECT f.* FROM Files f, DeletedFiles d WHERE f.fid=d.fid AND f.fid = :fid AND d.expiresOn > :d");
                 $query->execute(array(
-                    ":fid" => $fid
+                    ":fid" => $fid,
+                    ":d" => date("Y-m-d H:i:s")
                 ));
 
                 $this->moveFile($query->fetch());
@@ -41,7 +42,7 @@ class RecoverFiles
         }
         catch(Exception $e)
         {
-            $this->_errors = $e->getMessage();
+            $this->_errors[] = $e->getMessage();
         }
         return false;
     }

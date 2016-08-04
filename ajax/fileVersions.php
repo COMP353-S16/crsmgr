@@ -25,12 +25,13 @@ $versions = $Files->getVersions();
  */
 foreach($versions as $Version) {
 
+    $User = new User($Version->getUploaderId());
     $info['data'][] = array(
         "vid" => $Version->getVersionId(),
-        "user" => $Version->getUploaderId(),
+        "user" => $User->getFullName(),
         "date" => $Version->getUploadDate(),
         "filename" => $Version->getSavedName(),
-        "size" => round($Version->getSize(),2) . " KB",
+        "size" => round($Version->getSize(),2) . " MB",
 
     );
 }

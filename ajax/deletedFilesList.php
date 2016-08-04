@@ -31,7 +31,7 @@ foreach($files as $i => $Files)
             "filename" => $Files->getFileName() . '.' . $Files->getFileExtension(),
             "deliverable" => $Deliverable->getDName(),
             "revisions" => $Files->getNumberOfRevisions(),
-            "size" => round($Files->getSize(), 2) . " KB",
+            "size" => round($Files->getSize(), 2) . " MB",
             "expires" => date_format(date_create($DeletedFiles->getExpiryDate()), 'M d, Y H:i:s')
 
         );

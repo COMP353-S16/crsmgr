@@ -42,7 +42,7 @@ if($RecoverFiles->recover())
 }
 else
 {
-    $errors = $RecoverFiles->getErrors();;
+    $errors = $RecoverFiles->getErrors();
     ?>
 
     <div class="alert alert-danger alert-dismissable">
