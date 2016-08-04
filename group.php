@@ -124,7 +124,7 @@ else
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Group
-                        <strong><?php echo $Group->getGName() ?><?php echo($isGroupClosed ? "<i>[CLOSED]</i>" : ""); ?></strong>
+                        <strong><?php echo $Group->getGName() ?>  <?php echo($isGroupClosed ? "[CLOSED]" : ""); ?></strong>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -148,7 +148,7 @@ else
                         </li>
                         <li><a href="#members" data-toggle="tab">Members
                                 <span class="glyphicon glyphicon-user"></span></a></li>
-                        <li><a href="#deliverables" data-toggle="tab">Deliverables
+                        <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>"><a href="#deliverables" data-toggle="tab">Deliverables
                                 <span class="glyphicon glyphicon-info-sign"></span></a></li>
                         <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>">
                             <a href="#files" data-toggle="tab">All Files
@@ -360,7 +360,7 @@ else
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu pull-right" role="menu">
-                                            <li><a href="#" id="refreshStats">Refresh data <i class="fa fa-refresh fa-fw"></i></a></li>
+                                            <li><a href="#" id="refreshStats"><i class="fa fa-refresh fa-fw"></i> Refresh data</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -1082,7 +1082,7 @@ else
 
             e.preventDefault();
 
-            window.location.href = "view.php?vid=" + fileData.vid;
+            window.location.href = "view.php?vid=" + fileData.vid + "&gid=" + fileData.gid;
             var dls = parseInt($('#_totalDownloadedFiles').text());
             $('#_totalDownloadedFiles').text(++dls);
 

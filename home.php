@@ -6,7 +6,7 @@ WebUser::isLoggedIn(true);
 
 
 $Student = WebUser::getUser();
-if(!$Student instanceof Student)
+if(!WebUser::getUser()->isStudent())
 {
     exit("You are not a student.");
 }
