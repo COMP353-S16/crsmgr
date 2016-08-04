@@ -23,6 +23,7 @@ foreach($files as $i => $Files)
     {
         $info['data'][] = array(
             "fid" => $Files->getId(),
+            "gid" => $Files->getGroupId(),
             "vid" => $Files->getLatestVersionId(),
             "filename" => $Files->getFileName() . '.' . $Files->getFileExtension(),
             "ldate" => $Files->getLatestVersion()->getUploadDate(),

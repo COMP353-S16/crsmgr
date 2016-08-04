@@ -452,6 +452,8 @@ else
 </div>
 <!-- /#wrapper -->
 
+
+
 <!-- jQuery -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 
@@ -467,7 +469,7 @@ else
 <script src="dist/js/sb-admin-2.js"></script>
 
 <!-- File Uploader -->
-<script src="bower_components/fileuploader/liteuploader.js"></script>
+<script src="bower_components/fileuploader/liteuploader.min.js"></script>
 
 <!-- DataTables JavaScript -->
 <script src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
@@ -1082,6 +1084,7 @@ else
 
             e.preventDefault();
 
+
             window.location.href = "view.php?vid=" + fileData.vid + "&gid=" + fileData.gid;
             var dls = parseInt($('#_totalDownloadedFiles').text());
             $('#_totalDownloadedFiles').text(++dls);
@@ -1149,6 +1152,10 @@ else
 
         /*refresh stats */
         $(document).on('click','#refreshStats',loadFileSummary);
+
+
+
+        loadFileSummary();
 
     });
 
@@ -1238,7 +1245,7 @@ else
         });
     }
 
-    loadFileSummary();
+
 
 
 </script>

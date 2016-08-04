@@ -23,8 +23,29 @@ class Semesters
      */
     public function getSemesters()
     {
-        return $this->_semesters;
+        $t = array();
+        foreach($this->_semesters as $data)
+        {
+            $t[] = new Semester($data);
+        }
+        return $t;
     }
+
+    public function getSemesterById($sid)
+    {
+        $semesters =$this->getSemesters();
+        /**
+         * @var $Semester Semester
+         */
+        foreach($semesters as $Semester)
+        {
+            if($Semester->getId() == $sid)
+                return $Semester;
+
+        }
+        return null;
+    }
+
 
     /**
      * @return bool if semester actually exist
@@ -55,7 +76,7 @@ class Semesters
         }
 
 
-        $sid = $this->getLastSemesterId();
+        //$sid = $this->getLastSemesterId();
 
         return $sid;
     }
