@@ -5,7 +5,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 WebUser::isLoggedIn(true);
 
 
-
 $Student = WebUser::getUser();
 if ($Student instanceof Student)
 {
@@ -14,7 +13,7 @@ if ($Student instanceof Student)
 
 
     $gid = null;
-    if($Student->getSemesters()->isRegisteredForSemester($sid) && $Student->isInGroupFromSid($sid))
+    if ($Student->getSemesters()->isRegisteredForSemester($sid) && $Student->isInGroupFromSid($sid))
     {
         $gid = $Student->getGroupIdFromSid($sid);
         $Group = new Group($gid);
@@ -94,7 +93,10 @@ else
 
             cursor: pointer;
         }
-        th.dt-center, td.dt-center { text-align: center; }
+
+        th.dt-center, td.dt-center {
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -239,11 +241,11 @@ else
                         </div>
 
                         <div class="tab-pane fade" id="filesubmission">
-                            <h4>File Submission <button id="refreshDeliverablesList" type="button" class="btn btn-outline btn-primary btn-xs">Refresh</button></h4>
+                            <h4>File Submission
+                                <button id="refreshDeliverablesList" type="button" class="btn btn-outline btn-primary btn-xs">Refresh</button>
+                            </h4>
 
                             <div id="groupDeliverablesListSubmission">
-
-
 
 
                             </div>
@@ -299,8 +301,6 @@ else
                 </div>
 
             </div>
-
-
 
 
             <!-- /.row -->
@@ -428,7 +428,7 @@ else
                     'render' : function (data, type, row)
                     {
 
-                        if(row.open)
+                        if (row.open)
                         {
                             return "<p class='text-success'>OPEN</p>";
                         }
@@ -452,7 +452,7 @@ else
 
             rules : {
                 //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
-                maxSize : '<?php echo CoreConfig::settings()['uploads']['maxupload'] ; ?>'
+                maxSize : '<?php echo CoreConfig::settings()['uploads']['maxupload']; ?>'
             },
             beforeRequest : function (files, formData)
             {
@@ -464,9 +464,9 @@ else
         {
             $('.progress').fadeIn();
             $('.progress-bar').fadeIn().attr('aria-valuenow', 0)
-                .removeClass('progress-bar-danger progress-bar-success')
-                .width(0 + "%")
-                .text(0 + '%');
+                              .removeClass('progress-bar-danger progress-bar-success')
+                              .width(0 + "%")
+                              .text(0 + '%');
             $('#uploadResult').html("");
 
             $('#fileUpload').prop("disabled", true);
@@ -496,7 +496,7 @@ else
                               .text(percentage + '%');
 
             $('#progress').html(percentage + "%");
-            if(percentage == 100)
+            if (percentage == 100)
             {
 
                 $('#uploadResult').html("Your file is being processed... please wait");
@@ -505,17 +505,17 @@ else
         }).on("lu:errors", function (e, errors)
         {
             $('.progress-bar').removeClass('progress-bar-success progress-bar-warning').addClass('progress-bar-danger');
-            var output =  '<div class="alert alert-danger alert-dismissable">';
+            var output = '<div class="alert alert-danger alert-dismissable">';
             output += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
             output += '<ul>';
             for (var i = 0; i < errors.length; i++)
             {
                 if (errors[i].type = "size")
                 {
-                    output += '<li>File size exceeded limit of <strong>'+'<?php echo number_format(CoreConfig::settings()['uploads']['maxupload'] / 1024 / 1024); ?>MB</strong>'+'</li>';
+                    output += '<li>File size exceeded limit of <strong>' + '<?php echo number_format(CoreConfig::settings()['uploads']['maxupload'] / 1024 / 1024); ?>MB</strong>' + '</li>';
                 }
             }
-            output +='</ul>';
+            output += '</ul>';
             output += '</div>';
             $('#uploadResult').html(output);
             $('#fileUpload').prop("disabled", false);
@@ -524,7 +524,7 @@ else
             $(this).data("liteUploader").startUpload();
         });
 
-        $(document).on('click', "#cancelUpload",function ()
+        $(document).on('click', "#cancelUpload", function ()
         {
             $("#fileUpload").data("liteUploader").cancelUpload();
         });
@@ -587,7 +587,7 @@ else
                 {
                     'render' : function (data, type, row)
                     {
-                        return '<button title="Download '+ row.filename +'" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
+                        return '<button title="Download ' + row.filename + '" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
 
                     },
                     className : "dt-center"
@@ -682,7 +682,7 @@ else
                         'render' : function (data, type, row)
                         {
 
-                            return '<button title="Download file version '+ row.filename +'" id="downloadVersionButton" name="downloadVersionButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
+                            return '<button title="Download file version ' + row.filename + '" id="downloadVersionButton" name="downloadVersionButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
 
                         },
                         className : "dt-center"
@@ -720,7 +720,7 @@ else
                                 vid : versionData.vid
                             },
                             url : "ajax/rollback.php",
-                            cache: false,
+                            cache : false,
                             dataType : "html",
                             success : function (data)
                             {
@@ -784,12 +784,10 @@ else
                 }
 
             ],
-            "ajax" :
-            {
+            "ajax" : {
                 "url" : "ajax/deletedFilesList.php",
                 "type" : "POST",
-                "data" :
-                {
+                "data" : {
                     "gid" : "<?php echo $Group->getGid(); ?>"
                 }
             },
@@ -890,7 +888,7 @@ else
                 data : {fids : ids},
                 type : 'POST',
                 dataType : 'html',
-                cache: false,
+                cache : false,
                 success : function (data)
                 {
                     $('#deleteProgress').html(data);
@@ -936,7 +934,7 @@ else
                 data : {fids : ids},
                 type : 'POST',
                 dataType : 'html',
-                cache: false,
+                cache : false,
                 success : function (data)
                 {
                     $('#recoverFilesContainer').html(data);
@@ -974,13 +972,14 @@ else
 
 
         /* refresh deliverable list for file submission */
-        $(document).on('click','#refreshDeliverablesList', function(){
+        $(document).on('click', '#refreshDeliverablesList', function ()
+        {
             $button = $(this);
             var text = $button.text();
-            $button.text("Refreshing...").prop("disabled",true);
+            $button.text("Refreshing...").prop("disabled", true);
 
             loadDeliverablesList();
-            $button.text(text).prop("disabled",false);
+            $button.text(text).prop("disabled", false);
         });
 
         /* load assigned deliverables */
@@ -992,8 +991,9 @@ else
     function loadDeliverablesList()
     {
         $('#groupDeliverablesListSubmission').html("loading...please wait");
-        $.post( "ajax/assignedDeliverablesList.php", { gid: "John"  })
-         .done(function( data ) {
+        $.post("ajax/assignedDeliverablesList.php", {gid : "<?php echo $Group->getGid(); ?>"})
+         .done(function (data)
+         {
              $('#groupDeliverablesListSubmission').html(data);
          });
     }
@@ -1008,7 +1008,7 @@ else
             },
             url : "ajax/filesSummary.php",
             dataType : "json",
-            cache: false,
+            cache : false,
             success : function (data)
             {
                 $('#totalFiles').text(data.totalFiles);
