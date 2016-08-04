@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: dimitri
- * Date: 2016-07-21
- * Time: 9:52 PM
- */
 class CreateDeliverable
 {
     private $_name;
@@ -83,6 +77,7 @@ class CreateDeliverable
         }
         else
         {
+            // this needs to be done so that there won't be any archiving problems when putting all this into a zip file
             if(!$this->isValidName())
             {
                 $this->_errors[] = "Invalid name for deliverable. Cannot contain special characters \\ / : * ? \" < > |";
@@ -99,6 +94,10 @@ class CreateDeliverable
         else if($this->_sid ==null || $this->_sid == "")
         {
             $this->_errors[] = "A semester is required";
+        }
+        else if(  (strtotime($this->getEndDate()) - strtotime($this->getStartDate())) < 86400)
+        {
+            $this->_errors[] = "Deliverable must be at least 24 hours";
         }
         else
         {

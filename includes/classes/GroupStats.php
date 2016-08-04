@@ -32,13 +32,27 @@ class GroupStats
         $this->getMembers();
 
 
+        // get general file stats
         $this->getFileStats();
 
+        //get each member's file interaction
+        $this->getMemberVersion();
+
+    }
+
+    public function getTotalPermanentDelete()
+    {
+        return $this->_GroupStats['numberOfPermanentlyDeletedFiles'];
     }
 
     public function getTotalDeletedFiles()
     {
         return $this->_GroupStats['numberOfDeletedFiles'];
+    }
+
+    public function getTotalFiles()
+    {
+        return $this->_GroupStats['numberOfFiles'];
     }
 
     public function getUsedBandwidth()
@@ -49,6 +63,11 @@ class GroupStats
     public function getNbOfUploadedFiles()
     {
         return $this->_GroupStats['numberOfUploads'];
+    }
+
+    public function getNumberOfDownloads()
+    {
+        return $this->_GroupStats['numberOfDownloads'];
     }
 
     private function getFileStats()
@@ -95,6 +114,7 @@ class GroupStats
                 );
 
 
+                // create reference pointer
                 $versionShortcut = &$fileArray[$i]["versions"][$v];
 
 
@@ -103,7 +123,7 @@ class GroupStats
 
 
                 // retrieve member stats for this particular version
-                $this->getMemberVersion($versionShortcut);
+                //$this->getMemberVersion($versionShortcut);
 
 
                 $this->_GroupStats['numberOfDownloads'] += count($versionShortcut['downloads']);
@@ -113,12 +133,18 @@ class GroupStats
                 {
                     $fileArray[$i]["numberOfVersions"]++;
                     $fileArray[$i]["totalFileSize"] += $versionShortcut["size"];
+
                 }
             }
 
             if ($fileArray[$i]["isPermanentlyDeleted"] == false)
             {
                 $this->_GroupStats["numberOfFiles"]++;
+
+            }
+            else
+            {
+                $this->_GroupStats['numberOfPermanentlyDeletedFiles']++;
             }
 
             if($fileArray[$i]["isDeleted"])
@@ -136,6 +162,11 @@ class GroupStats
 
     }
 
+    /**
+     * @param $vid
+     *
+     * @return array calculates  information on download for a specific version
+     */
     private function getVersionDownloads($vid)
     {
         $pdo = Registry::getConnection();
@@ -151,6 +182,8 @@ class GroupStats
                 "downloadDate" => $data['downloadDate']
 
             );
+
+            $this->_GroupStats['numberOfDownloads']++;
         }
 
 
@@ -159,6 +192,9 @@ class GroupStats
 
     }
 
+    /**
+     * retrieves members and sets up template
+     */
     private function getMembers()
     {
         $members = $this->_group->getMembers();
@@ -181,42 +217,60 @@ class GroupStats
         }
     }
 
-    private function getMemberVersion(&$version)
+
+    /**
+     * @param $version interaction of each member on a particular version
+     */
+    private function getMemberVersion()
     {
+
 
         foreach($this->_GroupStats['members'] as $k => $memberData)
         {
 
             $uid = $memberData['uid'];
 
-            foreach($version['downloads'] as $downloadData)
+            foreach($this->_GroupStats['files'] as $i => $filedData)
             {
-               // echo $downloadData['uid'];
-
-                if($downloadData['uid'] == $uid)
+                foreach($filedData['versions'] as $j => $version )
                 {
-                    $this->_GroupStats['members'][$k]['numberOfDownloads']++;
-                    $this->_GroupStats['members'][$k]['versionsDownloaded'][] = $version['vid'];
+                    foreach($version['downloads'] as $downloadData)
+                    {
+                        // echo $downloadData['uid'];
+
+                        // was this person the one who downloaded it?
+                        if($downloadData['uid'] == $uid)
+                        {
+                            $this->_GroupStats['members'][$k]['numberOfDownloads']++;
+                            $this->_GroupStats['members'][$k]['versionsDownloaded'][] = $version['vid'];
 
 
-                    $this->_GroupStats['members'][$k]['totalDownloadsSize']+= $version['size'];
+                            $this->_GroupStats['members'][$k]['totalDownloadsSize']+= $version['size'];
 
+                        }
+                    }
+
+
+                    // was this person the uploader?
+                    if($version['uploader'] == $uid)
+                    {
+                        $this->_GroupStats['members'][$k]['numberOfUploads']++;
+                        $this->_GroupStats['members'][$k]['versionsUploaded'][] = $version['vid'];
+                        $this->_GroupStats['members'][$k]['totalUploadsSize']+= $version['size'];
+                    }
                 }
+
             }
 
 
-            if($version['uploader'] == $uid)
-            {
-                $this->_GroupStats['members'][$k]['numberOfUploads']++;
-                $this->_GroupStats['members'][$k]['versionsUploaded'][] = $version['vid'];
-                $this->_GroupStats['members'][$k]['totalUploadsSize']+= $version['size'];
-            }
 
         }
     }
 
 
-
+    /**
+     * @return array returns all stats array
+     */
     public function getStats()
     {
         return $this->_GroupStats;

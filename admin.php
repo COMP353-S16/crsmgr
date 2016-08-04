@@ -75,6 +75,68 @@ $semesters = $query->fetchAll();
         }
 
         th.dt-center, td.dt-center { text-align: center; }
+
+        .sk-cube-grid {
+            width: 100px;
+            height: 100px;
+            margin: 160px auto;
+        }
+
+        .sk-cube-grid .sk-cube {
+            width: 33%;
+            height: 33%;
+            background-color: #333;
+            float: left;
+            -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+            animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+        }
+        .sk-cube-grid .sk-cube1 {
+            -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s; }
+        .sk-cube-grid .sk-cube2 {
+            -webkit-animation-delay: 0.3s;
+            animation-delay: 0.3s; }
+        .sk-cube-grid .sk-cube3 {
+            -webkit-animation-delay: 0.4s;
+            animation-delay: 0.4s; }
+        .sk-cube-grid .sk-cube4 {
+            -webkit-animation-delay: 0.1s;
+            animation-delay: 0.1s; }
+        .sk-cube-grid .sk-cube5 {
+            -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s; }
+        .sk-cube-grid .sk-cube6 {
+            -webkit-animation-delay: 0.3s;
+            animation-delay: 0.3s; }
+        .sk-cube-grid .sk-cube7 {
+            -webkit-animation-delay: 0s;
+            animation-delay: 0s; }
+        .sk-cube-grid .sk-cube8 {
+            -webkit-animation-delay: 0.1s;
+            animation-delay: 0.1s; }
+        .sk-cube-grid .sk-cube9 {
+            -webkit-animation-delay: 0.2s;
+            animation-delay: 0.2s; }
+
+        @-webkit-keyframes sk-cubeGridScaleDelay {
+            0%, 70%, 100% {
+                -webkit-transform: scale3D(1, 1, 1);
+                transform: scale3D(1, 1, 1);
+            } 35% {
+                  -webkit-transform: scale3D(0, 0, 1);
+                  transform: scale3D(0, 0, 1);
+              }
+        }
+
+        @keyframes sk-cubeGridScaleDelay {
+            0%, 70%, 100% {
+                -webkit-transform: scale3D(1, 1, 1);
+                transform: scale3D(1, 1, 1);
+            } 35% {
+                  -webkit-transform: scale3D(0, 0, 1);
+                  transform: scale3D(0, 0, 1);
+              }
+        }
     </style>
 
 </head>
@@ -169,6 +231,7 @@ $semesters = $query->fetchAll();
                                     <th>Semester</th>
                                     <th>Start Date</th>
                                     <th>End Date</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -608,6 +671,25 @@ $semesters = $query->fetchAll();
 
                 <div class="tab-pan fade" id="editGroupStats">
                     <h4>Statistics</h4>
+
+                    <button type="button" id="retrieveStats" class="btn btn-primary btn-lg btn-block">Retrieve</button>
+                    <br>
+
+                    <p id="loaderStats" class="text-center" >
+                    <div class="sk-cube-grid" style="display: none;">
+                        <div class="sk-cube sk-cube1"></div>
+                        <div class="sk-cube sk-cube2"></div>
+                        <div class="sk-cube sk-cube3"></div>
+                        <div class="sk-cube sk-cube4"></div>
+                        <div class="sk-cube sk-cube5"></div>
+                        <div class="sk-cube sk-cube6"></div>
+                        <div class="sk-cube sk-cube7"></div>
+                        <div class="sk-cube sk-cube8"></div>
+                        <div class="sk-cube sk-cube9"></div>
+                    </div>
+                    </p>
+                    <div id="groupCharts">
+                    </div>
                 </div>
             </div>
 
@@ -622,8 +704,25 @@ $semesters = $query->fetchAll();
             </p>
         </div>
 
+
+        <!-- Delete Deliverable Confirmation -->
+        <div id="deleteDeliverableContainer" style="display: none;">
+            <p>
+                <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
+
+                <span id="deleteDeliverableConfirmation"></span>
+            </p>
+        </div>
+
+
+
+
         <!-- Delete Group Deliverable Ajax Response -->
         <div id="deleteGroupDeliverableAjaxResponse" style="display: none;"></div>
+
+
+        <!-- Delete Deliverable Ajax Response -->
+        <div id="deleteDeliverableAjaxResponse" style="display: none;"></div>
 
 
         <!-- STUDENT POOL -->
@@ -661,6 +760,8 @@ $semesters = $query->fetchAll();
 
     <!-- Validator -->
     <script src="bower_components/validator/dist/jquery.validate.min.js"></script>
+
+    <script src="bower_components/highcharts/js/highcharts.js"></script>
 
 
     <!-- CRS -->
@@ -1065,8 +1166,22 @@ $semesters = $query->fetchAll();
                     {"data" : "name"},
                     {"data" : "sid"},
                     {"data" : "startDate"},
-                    {"data" : "endDate"}
-                ]
+                    {"data" : "endDate"},
+                    {
+                        'render' : function (colValue, type, row)
+                        {
+
+                            return '<button id="deleteGeneralDeliverable" title="Delete deliverable" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i></button>&nbsp';
+
+
+                        },
+                        className : "dt-center"
+                    }
+                ],
+                columnDefs : [{
+                    orderable : false,
+                    targets : [5]
+                }],
             });
 
 
@@ -1544,6 +1659,11 @@ $semesters = $query->fetchAll();
                 });
 
 
+
+
+
+
+
             });
 
 
@@ -1705,6 +1825,8 @@ $semesters = $query->fetchAll();
                     $button = $('#saveGeneralInformation');
                     var buttonText = $button.text();
                     var serialized = $(form).serialize();
+                    $('#editGroupGeneralAjax').html("");
+                    $button.text("Saving...").prop("disabled", true);
                     $.ajax({
                         url : "ajax/editGroup.php",
                         type : "POST",
@@ -1715,14 +1837,21 @@ $semesters = $query->fetchAll();
                         },
                         success : function (data)
                         {
-                            $button.text(buttonText);
+                            $button.text(buttonText).prop("disabled", false);
                             $('#editGroupGeneralAjax').fadeIn().html(data);
+
+                        },
+                        error : function()
+                        {
+                            $button.text(buttonText).prop("disabled", false);
                         }
                     });
 
 
                 }
             });
+
+
 
 
             // ASSIGN DELIVERABLES
@@ -1860,7 +1989,7 @@ $semesters = $query->fetchAll();
                                 modal : true,
                                 width : 400,
                                 height : 200,
-                                show: 'fdae',
+                                show: 'fade',
                                 hide: 'fade',
                                 resizable : false,
                                 draggable : false,
@@ -1905,6 +2034,86 @@ $semesters = $query->fetchAll();
                 window.location.href = "view.php?vid=" + fileData.vid;
             });
 
+
+            /* when clicking on retrieve stats button */
+            $(document).on('click', '#retrieveStats',function(){
+                $button = $(this);
+                var text = $button.text();
+                $('#groupCharts').html('');
+                $button.text("Loading data...").prop("disabled", true);
+                $('.sk-cube-grid').fadeIn();
+                $.ajax({
+                    url: 'ajax/gStats.php',
+                    cache: false,
+                    success: function(data)
+                    {
+                        $('#groupCharts').html(data);
+                        $button.text(text).prop("disabled", false);
+                        $('.sk-cube-grid').hide();
+                    },
+                    error: function()
+                    {
+                        $button.text(text).prop("disabled", false);
+                    }
+                });
+            });
+
+
+            $(document).on('click', '#deleteGeneralDeliverable', function(){
+                var data = deliverablesTable.row($(this).closest('tr')).data();
+                console.log(data);
+
+                var did = data.did;
+
+
+                var message = "Are you sure you want to delete deliverable <strong>" + data.name + "</strong>?<p></p>";
+                message += "<p class='text-danger'>Please note that this action cannot be undone and all related groups files for this deliverable will be permanently deleted.</p>";
+                $('#deleteDeliverableConfirmation').html(message);
+
+                $('#deleteDeliverableContainer').dialog({
+                    modal : true,
+                    width : 400,
+                    height : 250,
+                    show : 'fade',
+                    hide: 'fade',
+                    resizable : false,
+                    draggable : false,
+                    title : 'Delete Deliverable',
+                    buttons : {
+                        "Delete" : function ()
+                        {
+                            $('#deleteDeliverableContainer').dialog("close");
+                            $('#deleteDeliverableAjaxResponse').html("Please wait...").dialog({
+                                modal : true,
+                                width : 400,
+                                height : 200,
+                                show: 'fade',
+                                hide: 'fade',
+                                resizable : false,
+                                draggable : false,
+                                title : 'Delete Deliverable'
+                            });
+
+                            $.post("ajax/deleteDeliverable.php", {
+                                did : did
+                            }).done(function (data)
+                            {
+                                $('#deleteDeliverableAjaxResponse').html(data);
+                            });
+
+                        },
+                        "Cancel" : function ()
+                        {
+                            $(this).dialog("close");
+                        }
+                    },
+                    close : function ()
+                    {
+                        $(this).dialog("destroy");
+                    }
+                });
+
+            });
 
 
         });

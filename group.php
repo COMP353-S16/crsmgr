@@ -239,64 +239,14 @@ else
                         </div>
 
                         <div class="tab-pane fade" id="filesubmission">
-                            <h4>File Submission</h4>
+                            <h4>File Submission <button id="refreshDeliverablesList" type="button" class="btn btn-outline btn-primary btn-xs">Refresh</button></h4>
 
-                            <?php
-                            $pdo = Registry::getConnection();
-                            $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, Groups g 
-                        WHERE g.gid=:gid AND gd.gid = g.gid AND gd.did = d.did AND NOW() >= d.startDate AND NOW() <= d.endDate");
-                            $query->bindValue(":gid", $gid);
-                            $query->execute();
-                            if ($query->rowCount() > 0)
-                            {
-                                ?>
-                                <!-- File Uploader -->
-                                <form id="uploadForm">
-
-                                    <div class="form-group">
-                                        <label for="sel1">Select Deliverable</label>
-                                        <select class="form-control" id="deliverableSelect">
-                                            <?php
-
-                                            while ($del = $query->fetch())
-                                            {
-                                                $Deliverable = new Deliverable($del['did']);
-                                                ?>
-                                                <option value="<?php echo $del['did']; ?>"><?php echo $Deliverable->getDName(); ?>
-                                                    - Due on <?php echo $Deliverable->getEndDate(); ?></option>
-                                                <?php
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-
-                                    <label id="label-browser" class="btn btn-success btn-file" >
-                                        Browse
-                                        <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
-                                    </label>
+                            <div id="groupDeliverablesListSubmission">
 
 
-                                    <button class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
-                                    Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
-                                    <p>
-                                    <div class="progress" style="display: none;">
-                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="0"
-                                            aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
-                                    </div>
-                                    <div id="uploadResult"></div>
 
-                                </form>
-                                <!-- /File Uploader -->
 
-                                <?php
-                            }
-                            else
-                            {
-                                ?>
-                                <p class="text-warning">There are no assigned deliverables.</p>
-                                <?php
-                            }
-                            ?>
+                            </div>
 
                         </div>
                     </div>
@@ -659,7 +609,7 @@ else
                 var intVal = function (i)
                 {
                     return typeof i === 'string' ?
-                    i.replace(/[\{\sKB},]/g, '') * 1 :
+                    i.replace(/[\{\sMB},]/g, '') * 1 :
                         typeof i === 'number' ?
                             i : 0;
                 };
@@ -1023,8 +973,30 @@ else
         });
 
 
+        /* refresh deliverable list for file submission */
+        $(document).on('click','#refreshDeliverablesList', function(){
+            $button = $(this);
+            var text = $button.text();
+            $button.text("Refreshing...").prop("disabled",true);
+
+            loadDeliverablesList();
+            $button.text(text).prop("disabled",false);
+        });
+
+        /* load assigned deliverables */
+        loadDeliverablesList();
+
+
     });
 
+    function loadDeliverablesList()
+    {
+        $('#groupDeliverablesListSubmission').html("loading...please wait");
+        $.post( "ajax/assignedDeliverablesList.php", { gid: "John"  })
+         .done(function( data ) {
+             $('#groupDeliverablesListSubmission').html(data);
+         });
+    }
 
     // must be put here to be used globally
     function loadFileSummary()

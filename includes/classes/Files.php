@@ -30,6 +30,7 @@ class Files
         $this->_file = $file;
         $this->_fid = $this->_file['fid'];
 
+        //echo $this->_fid;
 
 
         $this->getFileVersions();
@@ -43,7 +44,8 @@ class Files
     {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT * FROM Versions WHERE fid = :fid");
-        $query->execute(array(":fid" => $this->_fid));
+        $query->bindValue(":fid", $this->_fid);
+        $query->execute();
         $this->_versions = $query->fetchAll();
 
 
@@ -196,7 +198,7 @@ class Files
 
     public static function isValidFileName($name)
     {
-        return (strpbrk($name, "\\/?%*:|\"<>") === FALSE);
+        return (strpbrk($name, "\\/?*:|\"<>") === FALSE);
     }
 
     /**
