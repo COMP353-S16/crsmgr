@@ -51,6 +51,8 @@ if($EditGroup->edit())
 
             groups.draw();
         });
+
+
     </script>
     <?php
 

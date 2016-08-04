@@ -13,10 +13,12 @@ class Version
 
     private $_data;
 
+
     /**
-     * Versions constructor.
-     * @param array $versionsData this data comes from database. It is already fetched using fetchAll()
-     * @param $id is the id used to fetch row
+     * Version constructor.
+     * @param array $versionsData
+     * @param $id
+     * @throws Exception
      */
     public function __construct(array $versionsData, $id)
     {

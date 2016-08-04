@@ -3,11 +3,13 @@ session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 $gid = $_REQUEST['gid'];
+$info =array("data" => array());
+
 
 $GroupFiles = new GroupFiles($gid);
 $files = $GroupFiles->getFiles();
 
-$info =array("data" => array());
+
 /**
  * @var $Files Files
  */

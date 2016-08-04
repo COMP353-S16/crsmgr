@@ -19,23 +19,12 @@ class Student extends User
     {
         parent::__construct($uid);
 
-        $this->extract();
+       // $this->extract();
         $this->extractSemesters();
         $this->extractGroups();
     }
 
-    private function extract()
-    {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Students s WHERE  s.uid = :uid");
-        $query->bindValue(":uid", $this->_uid);
 
-        $query->execute();
-        $data = $query->fetch();
-
-        $this->_sectionName = $data['sectionName'];
-
-    }
 
     /**
      *
