@@ -761,6 +761,7 @@ $semesters = $query->fetchAll();
     <!-- Validator -->
     <script src="bower_components/validator/dist/jquery.validate.min.js"></script>
 
+    <!-- Highcharts -->
     <script src="bower_components/highcharts/js/highcharts.js"></script>
 
 

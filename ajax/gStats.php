@@ -109,6 +109,8 @@ $free = 100 - $used;
 <script>
 
         $('#ul_dl').highcharts({
+
+            credits: false,
             chart: {
                 type: 'column'
             },
@@ -212,6 +214,9 @@ $free = 100 - $used;
 
 
         $('#usedba').highcharts({
+            credits: {
+                enabled: false
+            },
             chart: {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,

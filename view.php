@@ -3,6 +3,7 @@ session_start();
 if(isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
 {
 
+    // TODO Make sure that this person is allowed to view this file!!!
 
     require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 

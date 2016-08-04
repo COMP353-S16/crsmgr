@@ -5,7 +5,6 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 WebUser::isLoggedIn(true);
 
 
-
 $Student = WebUser::getUser();
 if ($Student instanceof Student)
 {
@@ -14,7 +13,7 @@ if ($Student instanceof Student)
 
 
     $gid = null;
-    if($Student->getSemesters()->isRegisteredForSemester($sid) && $Student->isInGroupFromSid($sid))
+    if ($Student->getSemesters()->isRegisteredForSemester($sid) && $Student->isInGroupFromSid($sid))
     {
         $gid = $Student->getGroupIdFromSid($sid);
         $Group = new Group($gid);
@@ -94,7 +93,14 @@ else
 
             cursor: pointer;
         }
-        th.dt-center, td.dt-center { text-align: center; }
+
+        th.dt-center, td.dt-center {
+            text-align: center;
+        }
+
+        .statsLoader {
+            background: url('images/ajax.gif');
+        }
     </style>
 </head>
 
@@ -132,9 +138,15 @@ else
             }
             ?>
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#members" data-toggle="tab">Members
+                        <li class="active">
+                            <a href="#generalinfo" data-toggle="tab">
+                                General
+                                <span class="glyphicon glyphicon-globe"></span>
+                            </a>
+                        </li>
+                        <li><a href="#members" data-toggle="tab">Members
                                 <span class="glyphicon glyphicon-user"></span></a></li>
                         <li><a href="#deliverables" data-toggle="tab">Deliverables
                                 <span class="glyphicon glyphicon-info-sign"></span></a></li>
@@ -150,7 +162,41 @@ else
                                 <span class="glyphicon glyphicon-trash"></span> </a></li>
                     </ul>
                     <div class="tab-content">
-                        <div class="tab-pane fade in active" id="members">
+                        <div class="tab-pane fade  in active" id="generalinfo">
+                            <h4>General</h4>
+
+                            <table class="table">
+
+                                <tr>
+                                    <td>Group ID</td>
+                                    <td><?php echo $Group->getGid(); ?></td>
+                                </tr>
+                                <tr>
+
+                                    <td>Group name</td>
+                                    <td> <?php echo $Group->getGName(); ?></td>
+                                </tr>
+                                <tr>
+
+                                    <td>Group name</td>
+                                    <td><?php $group_leader = new User($Group->getLeaderId());
+                                        echo $group_leader->getFirstName() . ' ' . $group_leader->getLastName(); ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Semester start</td>
+                                    <td><?php echo $Group->getSemester()->getSemesterStartDate(); ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Semester end </td>
+                                    <td><?php echo $Group->getSemester()->getSemseterEndDate(); ?></td>
+                                </tr>
+                                <tr>
+                                    <td>Status</td>
+                                    <td><strong><?php echo(($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>"); ?></strong></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="tab-pane fade" id="members">
                             <h4>Members</h4>
                             <table width="100%" border="0" class="table table-bordered table-hover" id="memberstable">
                                 <thead>
@@ -177,6 +223,7 @@ else
                             <table width="100%" border="0" class="table table-bordered table-hover" id="deliverablestable">
                                 <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Name</th>
                                     <th>Date Posted</th>
                                     <th>Due Date</th>
@@ -195,7 +242,7 @@ else
 
                                 <tr>
 
-                                    <th>File ID</th>
+                                    <th>ID</th>
                                     <th>Deliverable Name</th>
                                     <th>File Name</th>
                                     <th>Latest Revision</th>
@@ -239,68 +286,127 @@ else
                         </div>
 
                         <div class="tab-pane fade" id="filesubmission">
-                            <h4>File Submission <button id="refreshDeliverablesList" type="button" class="btn btn-outline btn-primary btn-xs">Refresh</button></h4>
+                            <h4>File Submission
 
-                            <div id="groupDeliverablesListSubmission">
+
+                            </h4>
+                            <span id="refreshStatus"></span>
+                            <div id="groupDeliverablesListSubmission" >
+
+                                <!-- File Uploader -->
+                                <form id="uploadForm">
+
+                                    <div class="form-group input-group">
+
+
+
+                                        <select class="form-control" id="deliverableSelect">
+
+                                        </select>
+                                        <span class="input-group-btn">
+                                            <button id="refreshDeliverablesList" class="btn btn-primary" type="button">Refresh</button>
+                                        </span>
+
+
+
+                                    </div>
+
+                                    <label id="label-browser" class="btn btn-success btn-file" data-toggle="tooltip" data-placement="top" title="Browse Files">
+                                        Browse
+                                        <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
+                                    </label>
+
+
+                                    <button type="button" class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
+                                    Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
+                                    <p>
+                                    <div class="progress" style="display: none;">
+                                        <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="0"
+                                            aria-valuemin="0" aria-valuemax="100" style="width:0%"></div>
+                                    </div>
+                                    <div id="uploadResult"></div>
+
+                                </form>
+                                <!-- /File Uploader -->
 
 
 
 
                             </div>
 
+                            <p id="noAvailableDeliverables" style="display: none;" class="text-warning">There are no assigned deliverables.</p>
+
                         </div>
+
+
+
                     </div>
                 </div>
 
 
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="panel panel-info">
+                    <div class="col-md-4">
+                        <div class="panel panel-primary">
                             <div class="panel-heading">
-                                Group Info
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li>Group ID: <?php echo $Group->getGid(); ?></li>
-                                    <li>Group name: <?php echo $Group->getGName(); ?></li>
-                                    <li>Group leader: <?php $group_leader = new User($Group->getLeaderId());
-                                        echo $group_leader->getFirstName() . ' ' . $group_leader->getLastName(); ?></li>
-                                    <li>
-                                        Access:
-                                        <ul>
-                                            <li> Start: <?php echo $Group->getSemester()->getSemesterStartDate(); ?></li>
-                                            <li> End: <?php echo $Group->getSemester()->getSemseterEndDate(); ?></li>
-                                        </ul>
 
-                                    </li>
-                                </ul>
-                                <p class="text-center">Status</p>
-                                <?php echo(($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>"); ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="panel panel-info">
-                            <div class="panel-heading">
+                                <i class="fa fa-bar-chart-o fa-fw"></i>
+
                                 Group Files
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li>Bandwidth: <span id="bandwidth">-</span></li>
-                                    <li>Total Files: <span id="totalFiles">-</span></li>
-                                    <li>Deleted Files: <span id="totalDeletedFiles">-</span></li>
 
-                                    <li>Number of Uploaded Files: <span id="uploadedFiles">-</span></li>
-                                </ul>
+                                <div class="pull-right">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                                            Actions
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu pull-right" role="menu">
+                                            <li><a href="#" id="refreshStats">Refresh data <i class="fa fa-refresh fa-fw"></i></a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+
                             </div>
+
+
+                            <div class="panel-body">
+
+                                <div id="filesSummary">
+
+                                    <table class="table">
+                                        <tr>
+                                            <td>Total files</td>
+                                            <td id="_totalFiles">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total uploads</td>
+                                            <td id="_totalUploadedFiles">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total downloads (includes non-members)</td>
+                                            <td id="_totalDownloadedFiles">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total deleted files</td>
+                                            <td id="_totalDeletedFiles">-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total permanently deleted files</td>
+                                            <td id="_totalPermanentDeletedFiles">-</td>
+                                        </tr>
+                                    </table>
+
+
+                                </div>
+                                <div id="usedba"></div>
+                            </div>
+
                         </div>
                     </div>
 
                 </div>
 
             </div>
-
-
 
 
             <!-- /.row -->
@@ -349,6 +455,8 @@ else
 <!-- jQuery -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 
+
+
 <!-- Bootstrap Core JavaScript -->
 <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 
@@ -369,9 +477,12 @@ else
 <script src="bower_components/datatables/extensions/Buttons/js/buttons.bootstrap.min.js"></script>
 <script src="bower_components/datatables/extensions/Select/js/dataTables.select.min.js"></script>
 <script src="bower_components/datatables/extensions/Buttons/js/buttons.flash.js"></script>
+
 <!-- jQuery UI -->
 
 <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+<!-- Highcharts -->
+<script src="bower_components/highcharts/js/highcharts.js"></script>
 
 
 <script>
@@ -379,6 +490,10 @@ else
     $(function ()
     {
 
+        jQuery.fn.bstooltip = jQuery.fn.tooltip;
+        $(function () {
+            $('[data-toggle="tooltip"]').bstooltip()
+        })
 
         members = $('#memberstable').DataTable({
             "processing" : true,
@@ -421,6 +536,7 @@ else
                 }
             },
             "columns" : [
+                {"data" : "did"},
                 {"data" : "name"},
                 {"data" : "datePosted"},
                 {"data" : "dueDate"},
@@ -428,7 +544,7 @@ else
                     'render' : function (data, type, row)
                     {
 
-                        if(row.open)
+                        if (row.open)
                         {
                             return "<p class='text-success'>OPEN</p>";
                         }
@@ -452,7 +568,7 @@ else
 
             rules : {
                 //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
-                maxSize : '<?php echo CoreConfig::settings()['uploads']['maxupload'] ; ?>'
+                maxSize : '<?php echo CoreConfig::settings()['uploads']['maxupload']; ?>'
             },
             beforeRequest : function (files, formData)
             {
@@ -464,17 +580,25 @@ else
         {
             $('.progress').fadeIn();
             $('.progress-bar').fadeIn().attr('aria-valuenow', 0)
-                .removeClass('progress-bar-danger progress-bar-success')
-                .width(0 + "%")
-                .text(0 + '%');
+                              .removeClass('progress-bar-danger progress-bar-success')
+                              .width(0 + "%")
+                              .text(0 + '%');
             $('#uploadResult').html("");
 
             $('#fileUpload').prop("disabled", true);
         }).on("lu:before", function (e, files)
-        {
+            {
 
-        }).on("lu:cancel", function (e)
+        }).on("lu:cancelled", function (e)
         {
+            $('.progress').fadeOut();
+            $('.progress-bar').attr('aria-valuenow', 0)
+                              .attr("class", "")
+                              .width(0 + "%")
+                              .text(0 + '%');
+
+            $('#progress').html(0 + "%");
+            $('#uploadResult').html("Upload canceled.");
 
         }).on("lu:success", function (e, response)
         {
@@ -496,7 +620,7 @@ else
                               .text(percentage + '%');
 
             $('#progress').html(percentage + "%");
-            if(percentage == 100)
+            if (percentage == 100)
             {
 
                 $('#uploadResult').html("Your file is being processed... please wait");
@@ -505,17 +629,17 @@ else
         }).on("lu:errors", function (e, errors)
         {
             $('.progress-bar').removeClass('progress-bar-success progress-bar-warning').addClass('progress-bar-danger');
-            var output =  '<div class="alert alert-danger alert-dismissable">';
+            var output = '<div class="alert alert-danger alert-dismissable">';
             output += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
             output += '<ul>';
             for (var i = 0; i < errors.length; i++)
             {
                 if (errors[i].type = "size")
                 {
-                    output += '<li>File size exceeded limit of <strong>'+'<?php echo number_format(CoreConfig::settings()['uploads']['maxupload'] / 1024 / 1024); ?>MB</strong>'+'</li>';
+                    output += '<li>File size exceeded limit of <strong>' + '<?php echo number_format(CoreConfig::settings()['uploads']['maxupload'] / 1024 / 1024); ?>MB</strong>' + '</li>';
                 }
             }
-            output +='</ul>';
+            output += '</ul>';
             output += '</div>';
             $('#uploadResult').html(output);
             $('#fileUpload').prop("disabled", false);
@@ -524,7 +648,7 @@ else
             $(this).data("liteUploader").startUpload();
         });
 
-        $(document).on('click', "#cancelUpload",function ()
+        $(document).on('click', "#cancelUpload", function ()
         {
             $("#fileUpload").data("liteUploader").cancelUpload();
         });
@@ -587,7 +711,7 @@ else
                 {
                     'render' : function (data, type, row)
                     {
-                        return '<button title="Download '+ row.filename +'" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
+                        return '<button title="Download ' + row.filename + '" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
 
                     },
                     className : "dt-center"
@@ -682,7 +806,7 @@ else
                         'render' : function (data, type, row)
                         {
 
-                            return '<button title="Download file version '+ row.filename +'" id="downloadVersionButton" name="downloadVersionButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
+                            return '<button title="Download file version ' + row.filename + '" id="downloadVersionButton" name="downloadVersionButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
 
                         },
                         className : "dt-center"
@@ -720,7 +844,7 @@ else
                                 vid : versionData.vid
                             },
                             url : "ajax/rollback.php",
-                            cache: false,
+                            cache : false,
                             dataType : "html",
                             success : function (data)
                             {
@@ -752,7 +876,7 @@ else
         });
 
         // get files summary
-        loadFileSummary();
+        //loadFileSummary();
 
 
         /* deleted files table */
@@ -784,12 +908,10 @@ else
                 }
 
             ],
-            "ajax" :
-            {
+            "ajax" : {
                 "url" : "ajax/deletedFilesList.php",
                 "type" : "POST",
-                "data" :
-                {
+                "data" : {
                     "gid" : "<?php echo $Group->getGid(); ?>"
                 }
             },
@@ -890,7 +1012,7 @@ else
                 data : {fids : ids},
                 type : 'POST',
                 dataType : 'html',
-                cache: false,
+                cache : false,
                 success : function (data)
                 {
                     $('#deleteProgress').html(data);
@@ -936,7 +1058,7 @@ else
                 data : {fids : ids},
                 type : 'POST',
                 dataType : 'html',
-                cache: false,
+                cache : false,
                 success : function (data)
                 {
                     $('#recoverFilesContainer').html(data);
@@ -961,6 +1083,9 @@ else
             e.preventDefault();
 
             window.location.href = "view.php?vid=" + fileData.vid;
+            var dls = parseInt($('#_totalDownloadedFiles').text());
+            $('#_totalDownloadedFiles').text(++dls);
+
         });
 
         $(document).on('click', '#downloadVersionButton', function (e)
@@ -974,50 +1099,148 @@ else
 
 
         /* refresh deliverable list for file submission */
-        $(document).on('click','#refreshDeliverablesList', function(){
-            $button = $(this);
-            var text = $button.text();
-            $button.text("Refreshing...").prop("disabled",true);
-
-            loadDeliverablesList();
-            $button.text(text).prop("disabled",false);
-        });
+        $(document).on('click', '#refreshDeliverablesList', loadDeliverablesList);
 
         /* load assigned deliverables */
+
         loadDeliverablesList();
 
 
+
+
+        usedBand = new Highcharts.Chart({
+            chart :{
+                renderTo : 'usedba',
+                type : 'pie',
+            },
+            credits : false,
+            title: {
+                text: 'Storage',
+
+            },
+            tooltip: {
+                pointFormat: '<b>{point.percentage:.3f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.percentage:.3f} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+
+                colorByPoint: true,
+                data: [{
+                    name: 'Free',
+                    y: 0 ,
+                }, {
+                    name: 'Used',
+                    y : 0
+
+                }]
+            }]
+        });
+
+
+        /*refresh stats */
+        $(document).on('click','#refreshStats',loadFileSummary);
+
     });
+
 
     function loadDeliverablesList()
     {
-        $('#groupDeliverablesListSubmission').html("loading...please wait");
-        $.post( "ajax/assignedDeliverablesList.php", { gid: "John"  })
-         .done(function( data ) {
-             $('#groupDeliverablesListSubmission').html(data);
-         });
+        $button = $('#refreshDeliverablesList');
+        var buttonText = $button.text();
+        $button.prop("disabled",true).text("Loading...");
+
+        $('#noAvailableDeliverables').hide();
+        $.ajax({
+            url : "ajax/assignedDeliverablesList.php",
+            type : "POST",
+            dataType : "json",
+            cache: false,
+            data : {
+                gid : "<?php echo $Group->getGid();?>"
+            },
+            success : function (data)
+            {
+
+                $('#refreshStatus').html("");
+                $('#deliverableSelect').find('option').remove().end();
+                if(jQuery.isEmptyObject(data))
+                {
+                    $('#noAvailableDeliverables').fadeIn();
+                    $('#groupDeliverablesListSubmission').hide();
+                }
+                else
+                {
+                    $('#noAvailableDeliverables').hide();
+                    $('#groupDeliverablesListSubmission').show();
+                    $.each(data, function (index, value)
+                    {
+                        $('#deliverableSelect')
+                            .append($('<option/>', {
+                                value : value.did,
+                                text : value.name
+                            }).prop('selected', true));
+                    });
+                }
+
+                $button.prop("disabled",false).text(buttonText);
+
+
+            },
+            error : function()
+            {
+                $('#refreshStatus').html("<p class='text-danger'>An error occured: could not load deliverables list.</p>");
+                $button.prop("disabled",false).text(buttonText);
+
+            }
+        });
+
     }
 
     // must be put here to be used globally
     function loadFileSummary()
     {
-
+        $at = $("#filesSummary td[id^='_']")
+        $.each($at, function(key, value){
+            $(value).html('loading...');
+        });
         $.ajax({
             data : {
                 gid : "<?php echo $Group->getGid(); ?>"
             },
             url : "ajax/filesSummary.php",
             dataType : "json",
-            cache: false,
+            cache : false,
             success : function (data)
             {
-                $('#totalFiles').text(data.totalFiles);
-                $('#bandwidth').text(data.bandwidth);
-                $('#totalDeletedFiles').text(data.totalDeletedFiles);
-                $('#uploadedFiles').text(data.uploads);
+                usedBand.series[0].setData([{ y : data.free},{y :data.used}], true);
+                usedBand.setTitle({ text : "Storage" }, { text : "Total: <strong>" + data.total + "MB</strong>" });
+                usedBand.redraw(true);
+                // find the stats containers and give their values
+                $.each(data, function(key, value){
+                    if(key.toString().startsWith("_"))
+                    {
+                        $('#' + key).text(value);
+                    }
+
+                });
+
             }
         });
     }
+
+    loadFileSummary();
+
+
 </script>
 
 </body>
