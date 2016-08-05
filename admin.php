@@ -2253,6 +2253,9 @@ $semesters = $query->fetchAll();
                 $.ajax({
                     url: 'ajax/gStats.php',
                     cache: false,
+                    data : {
+                        gid : $('#editGroupGid').val()
+                    },
                     success: function(data)
                     {
                         $('#groupCharts').html(data);
