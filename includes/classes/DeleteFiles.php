@@ -40,7 +40,7 @@ class DeleteFiles
 
             foreach ($this->_fids as $fid)
             {
-                $query = $pdo->prepare("INSERT INTO DeletedFiles VALUES (:fid, :uid, NOW(), NOW() + INTERVAL 1 DAY)");
+                $query = $pdo->prepare("INSERT INTO DeletedFiles (fid, uid, dateDelete) VALUES (:fid, :uid, NOW())");
                 $query->execute(array(
                     ":fid" => $fid,
                     ":uid" => $this->_uid
