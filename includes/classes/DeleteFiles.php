@@ -17,6 +17,7 @@ class DeleteFiles
 
     /**
      * DeleteFiles constructor.
+     *
      * @param $uid user id deleting files
      */
     public function __construct($uid, array $fids)
@@ -37,7 +38,7 @@ class DeleteFiles
         {
             $pdo->beginTransaction();
 
-            foreach($this->_fids as $fid)
+            foreach ($this->_fids as $fid)
             {
                 $query = $pdo->prepare("INSERT INTO DeletedFiles VALUES (:fid, :uid, NOW(), NOW() + INTERVAL 1 DAY)");
                 $query->execute(array(
@@ -49,11 +50,12 @@ class DeleteFiles
 
             return $pdo->commit();
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
             $this->_errors[] = $e->getMessage();
             $pdo->rollBack();
         }
+
         return false;
     }
 

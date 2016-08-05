@@ -18,24 +18,26 @@ class AddMembers extends NewGroup
 
     public function validate()
     {
-        if(empty($this->getUids()))
+        if (empty($this->getUids()))
         {
-            $this->setError( "No new students found" );
+            $this->setError("No new students found");
         }
     }
 
     public function add()
     {
         $this->validate();
-        if(!empty($this->getErrors()))
+        if (!empty($this->getErrors()))
+        {
             return false;
+        }
 
         $pdo = Registry::getConnection();
         $uids = $this->getUids();
         try
         {
             $pdo->beginTransaction();
-            foreach($uids as $uid)
+            foreach ($uids as $uid)
             {
                 $query = $pdo->prepare("INSERT INTO GroupMembers (uid, gid, sid) VALUES (:uid, :gid, :sid)");
                 $query->bindValue(":uid", $uid);
@@ -43,9 +45,10 @@ class AddMembers extends NewGroup
                 $query->bindValue(":sid", $this->getSemesterId());
                 $query->execute();
             }
+
             return $pdo->commit();
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
             $pdo->rollBack();
             $this->setError($e->getMessage());

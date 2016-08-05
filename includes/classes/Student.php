@@ -19,11 +19,10 @@ class Student extends User
     {
         parent::__construct($uid);
 
-       // $this->extract();
+        // $this->extract();
         $this->extractSemesters();
         $this->extractGroups();
     }
-
 
 
     /**

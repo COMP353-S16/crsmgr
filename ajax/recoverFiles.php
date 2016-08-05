@@ -7,17 +7,17 @@ $fids = $_REQUEST["fids"];
 $RecoverFiles = new RecoverFiles($fids);
 
 
+if ($RecoverFiles->recover())
+{
+    ?>
 
-if($RecoverFiles->recover())
-{?>
 
-
-
-    <div class="alert alert-success alert-dismissable">
+    <div class="alert alert-success">
         You have successfully recovered your files!
     </div>
     <script>
-        $(function(){
+        $(function ()
+        {
 
             // refresh both tables
             groupFiles.ajax.reload();
@@ -29,7 +29,7 @@ if($RecoverFiles->recover())
 
             $('#recoverFilesContainer').dialog({
                 buttons : {
-                    "Close" : function()
+                    "Close" : function ()
                     {
                         $(this).dialog("destroy");
                     }

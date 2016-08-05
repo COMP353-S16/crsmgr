@@ -124,8 +124,10 @@ class Group
 
     public function isInGroup($uid)
     {
-        foreach ($this->_groupStudents as $student) {
-            if ($student['uid'] == $uid) {
+        foreach ($this->_groupStudents as $student)
+        {
+            if ($student['uid'] == $uid)
+            {
                 return true;
             }
         }
@@ -148,10 +150,11 @@ class Group
     public function getMembers()
     {
         $students = array();
-        foreach($this->_groupStudents as $i=> $student)
+        foreach ($this->_groupStudents as $i => $student)
         {
             $students[] = new Student($student['uid']);
         }
+
         return $students;
     }
 

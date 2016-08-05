@@ -26,7 +26,6 @@ abstract class NewGroup
     }
 
 
-
     public function setGroupName($name)
     {
         $this->_name = $name;

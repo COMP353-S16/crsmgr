@@ -1,15 +1,15 @@
 <?php
 session_start();
-if(isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
+if (isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
 {
 
     require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
-    if(WebUser::isLoggedIn() && WebUser::getUser()->isStudent() && isset($_REQUEST['gid']))
+    if (WebUser::isLoggedIn() && WebUser::getUser()->isStudent() && isset($_REQUEST['gid']))
     {
         $Group = new Group($_REQUEST['gid']);
-        if(!$Group->isInGroup(WebUser::getUser()->getUid()))
+        if (!$Group->isInGroup(WebUser::getUser()->getUid()))
         {
             exit("You cannot view this file");
         }
@@ -21,7 +21,7 @@ if(isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
     $query->execute(array(":vid" => $_REQUEST['vid']));
 
 
-    if($query->rowCount()<=0)
+    if ($query->rowCount() <= 0)
     {
         exit("File not found");
 
@@ -36,10 +36,10 @@ if(isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
     $file = $Version->getBaseUrl();
     $Download = new DownloadFile($Version, WebUser::getUser());
 
-    if($Download->download())
+    if ($Download->download())
     {
 
-        if(!CoreConfig::settings()['uploads']['storageDB'])
+        if (!CoreConfig::settings()['uploads']['storageDB'])
         {
 
             $fr = fopen($file, 'a+');
@@ -47,7 +47,7 @@ if(isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
 
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename='.basename($file));
+            header('Content-Disposition: attachment; filename=' . basename($file));
             header('Content-Transfer-Encoding: binary');
             header('Expires: 0');
             header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -62,7 +62,7 @@ if(isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
             $length = strlen($Files->getLatestVersion()->getData());
             //header('Content-Type: application/octet-stream');
             //header("Content-Transfer-Encoding: Binary");
-            header("Content-Length: ".$length);
+            header("Content-Length: " . $length);
             header("Content-disposition: attachment; filename=\"" . basename($file) . "\"");
             echo $Files->getLatestVersion()->getData();
         }

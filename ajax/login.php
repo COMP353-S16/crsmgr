@@ -10,11 +10,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 $Login = new Login($_POST);
 
-if($Login->login())
+if ($Login->login())
 {
     WebUser::setUser(new User($_SESSION['uid']));
     $student = WebUser::getUser()->isStudent();
-    if($student)
+    if ($student)
     {
         ?>
         <script>window.location.replace("home.php");</script>
@@ -35,7 +35,8 @@ else
     $errors = $Login->getErrors();
     ?>
     <script>
-        $(function () {
+        $(function ()
+        {
             $('#form').reset();
         });
     </script>

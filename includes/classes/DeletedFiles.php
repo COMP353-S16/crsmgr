@@ -8,7 +8,7 @@
  */
 class DeletedFiles
 {
-    
+
     private $_data;
 
     public function __construct($data)

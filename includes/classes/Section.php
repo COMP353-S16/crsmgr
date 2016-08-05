@@ -12,20 +12,21 @@ class Section
     protected $_sectionName;
     protected $_startDate;
     protected $_endDate;
-    
+
     public function __construct($sid)
     {
         $this->_sid = $sid;
         $this->fetchSectionInfo();
     }
-    
-    private function fetchSectionInfo() {
+
+    private function fetchSectionInfo()
+    {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT * FROM Sections WHERE sid=:sid");
         $query->bindValue(":sid", $this->_sid);
         $query->execute();
         $data = $query->fetch();
-        
+
         $this->_sectionName = $data['sName'];
         $this->_startDate = $data['startDate'];
         $this->_endDate = $data['endDate'];

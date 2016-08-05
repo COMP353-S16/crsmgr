@@ -10,20 +10,21 @@ $query = $pdo->prepare("SELECT d.did FROM Deliverables d, GroupDeliverables gd, 
 $query->bindValue(":gid", $gid);
 $query->execute();
 
-$info =array("data" => array());
+$info = array("data" => array());
 
-while($deliverable_data = $query->fetch()) {
+while ($deliverable_data = $query->fetch())
+{
 
     $deliverable = new Deliverable($deliverable_data['did']);
 
     $info['data'][] = array(
-        "name" => $deliverable->getDName(),
+        "name"       => $deliverable->getDName(),
         "datePosted" => $deliverable->getStartDate(),
-        "dueDate" => $deliverable->getEndDate(),
-        "did" => $deliverable->getDid(),
-        "gid" => (int)$gid,
-        "sid" => $deliverable->getSemesterId(),
-        "open" => $deliverable->isOpen()
+        "dueDate"    => $deliverable->getEndDate(),
+        "did"        => $deliverable->getDid(),
+        "gid"        => (int)$gid,
+        "sid"        => $deliverable->getSemesterId(),
+        "open"       => $deliverable->isOpen()
 
     );
 }

@@ -26,8 +26,8 @@ if ($query->rowCount() > 0)
     {
         $Deliverable = new Deliverable($del['did']);
         $deliv[] = array(
-          "name" => $Deliverable->getDName(),
-          "did" => $Deliverable->getDid()
+            "name" => $Deliverable->getDName(),
+            "did"  => $Deliverable->getDid()
         );
     }
 }

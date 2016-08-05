@@ -25,12 +25,12 @@ class RecoverFiles
         {
 
 
-            foreach($this->_fids as $fid)
+            foreach ($this->_fids as $fid)
             {
                 $query = $pdo->prepare("SELECT f.* FROM Files f, DeletedFiles d WHERE f.fid=d.fid AND f.fid = :fid AND d.expiresOn > :d");
                 $query->execute(array(
                     ":fid" => $fid,
-                    ":d" => date("Y-m-d H:i:s")
+                    ":d"   => date("Y-m-d H:i:s")
                 ));
 
                 $this->moveFile($query->fetch());
@@ -40,10 +40,11 @@ class RecoverFiles
 
             return true;
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
             $this->_errors[] = $e->getMessage();
         }
+
         return false;
     }
 
@@ -55,7 +56,7 @@ class RecoverFiles
         $fid = $Files->getId();
         $gid = $Files->getGroupId();
 
-        
+
         $pdo = Registry::getConnection();
         try
         {
@@ -68,7 +69,7 @@ class RecoverFiles
             $params = array(
                 ":did"   => $did,
                 ":gid"   => $gid,
-                ":fName"  => $Files->getFileName(),
+                ":fName" => $Files->getFileName(),
                 ":fType" => $Files->getFileExtension()
             );
 
@@ -76,16 +77,18 @@ class RecoverFiles
             $data = $query->fetch();
             $Nfid = $data['fid'];
 
-            if($Nfid==NULL)
+            if ($Nfid == NULL)
+            {
                 throw new Exception("Could not find last FID");
+            }
             //if it's the same one
-            if($Nfid != $fid)
+            if ($Nfid != $fid)
             {
                 $versions = $Files->getVersions();
                 /**
                  * @var $Version Version
                  */
-                foreach($versions as $Version)
+                foreach ($versions as $Version)
                 {
                     $query1 = $pdo->prepare("UPDATE Versions SET fid=:fid WHERE vid=:vid");
                     $query1->bindValue(":fid", $Nfid);
@@ -104,12 +107,12 @@ class RecoverFiles
 
             return $pdo->commit();
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
 
             $pdo->rollBack();
             $this->_errors[] = $e->getMessage();
-            
+
         }
 
     }

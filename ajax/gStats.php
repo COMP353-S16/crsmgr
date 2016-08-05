@@ -3,12 +3,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 //header("Content-type: text/json");
 $k = array();
 
-if(empty($_REQUEST) || !isset($_REQUEST['gid']))
+if (empty($_REQUEST) || !isset($_REQUEST['gid']))
+{
     exit("<p class='text-danger'>No statistics found. Missing information.</p>");
+}
 
 
 $Group = new Group($_REQUEST['gid']);
-$GroupStats = new GroupStats($Group );
+$GroupStats = new GroupStats($Group);
 $stats = $GroupStats->getStats();
 
 
@@ -18,13 +20,13 @@ $uploads = array();
 
 $downsize = array();
 $upsize = array();
-foreach($stats['members'] as $i => $memberData)
+foreach ($stats['members'] as $i => $memberData)
 {
     $cats[] = $memberData['name'];
     $downloads[] = $memberData['numberOfDownloads'];
     $uploads[] = $memberData["numberOfUploads"];
-    $downsize[] = round($memberData['totalDownloadsSize'],1);
-    $upsize[] = round($memberData['totalUploadsSize'],1);
+    $downsize[] = round($memberData['totalDownloadsSize'], 1);
+    $upsize[] = round($memberData['totalUploadsSize'], 1);
 }
 
 
@@ -32,7 +34,7 @@ $usedBandwith = $GroupStats->getUsedBandwidth();
 $allowedBandwidth = $Group->getMaxUploadSize();
 
 
-if($allowedBandwidth > 0 )
+if ($allowedBandwidth > 0)
 {
     $used = ($usedBandwith / $allowedBandwidth) * 100;
 }
@@ -44,8 +46,6 @@ else
 $free = 100 - $used;
 
 ?>
-
-
 
 
 <div class="row">
@@ -60,23 +60,23 @@ $free = 100 - $used;
                 <table class="table">
                     <tr>
                         <td>Total files</td>
-                        <td><?php echo number_format($GroupStats->getTotalFiles());?></td>
+                        <td><?php echo number_format($GroupStats->getTotalFiles()); ?></td>
                     </tr>
                     <tr>
                         <td>Total uploads</td>
-                        <td><?php echo number_format($GroupStats->getNbOfUploadedFiles());?></td>
+                        <td><?php echo number_format($GroupStats->getNbOfUploadedFiles()); ?></td>
                     </tr>
                     <tr>
                         <td>Total downloads (includes non-members)</td>
-                        <td><?php echo $GroupStats->getNumberOfDownloads();?></td>
+                        <td><?php echo $GroupStats->getNumberOfDownloads(); ?></td>
                     </tr>
                     <tr>
                         <td>Total deleted files</td>
-                        <td><?php echo number_format($GroupStats->getTotalDeletedFiles());?></td>
+                        <td><?php echo number_format($GroupStats->getTotalDeletedFiles()); ?></td>
                     </tr>
                     <tr>
                         <td>Total permanently deleted files</td>
-                        <td><?php echo number_format($GroupStats->getTotalPermanentDelete());?></td>
+                        <td><?php echo number_format($GroupStats->getTotalPermanentDelete()); ?></td>
                     </tr>
                 </table>
 
@@ -111,108 +111,102 @@ $free = 100 - $used;
 </div>
 
 
-
-
-
-
-
-
 <script>
 
-        $('#ul_dl').highcharts({
+    $('#ul_dl').highcharts({
 
-            credits: false,
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Downloads / Uploads'
-            },
-            xAxis: {
-                categories: <?php echo json_encode($cats);?>,
-                crosshair: true
-            },
-            /*
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Files'
-                }
-            },*/
-            yAxis: [{ // Primary yAxis
-                labels: {
-                    format: '{value}',
-                    style: {
-                        color: Highcharts.getOptions().colors[1]
-                    }
-                },
-                title: {
-                    text: 'Files',
-                    style: {
-                        color: Highcharts.getOptions().colors[1]
-                    }
-                }
-            }, { // Secondary yAxis
-                labels: {
-
-                    format: '{value}',
-                    style: {
-                        color: Highcharts.getOptions().colors[0]
-                    }
-                },
-                title: {
-                    text: 'Megabytes',
-                    style: {
-                        color: Highcharts.getOptions().colors[0]
-                    }
-                },
-
-                opposite: true
-            }],
-
-            tooltip: {
-
-                shared: true
-            },
-            plotOptions: {
-                column: {
-                    pointPadding: 0.2,
-                    borderWidth: 0
+        credits : false,
+        chart : {
+            type : 'column'
+        },
+        title : {
+            text : 'Downloads / Uploads'
+        },
+        xAxis : {
+            categories : <?php echo json_encode($cats);?>,
+            crosshair : true
+        },
+        /*
+         yAxis: {
+         min: 0,
+         title: {
+         text: 'Files'
+         }
+         },*/
+        yAxis : [{ // Primary yAxis
+            labels : {
+                format : '{value}',
+                style : {
+                    color : Highcharts.getOptions().colors[1]
                 }
             },
-            dataLabels: {
-                enabled: true,
-                rotation: -90,
-                color: '#FFFFFF',
-                align: 'right',
-                y: 10, // 10 pixels down from the top
-            },
-            series: [{
-                name: 'Downloads',
-                data: <?php echo json_encode($downloads);?>,
-                yAxis: 0,
+            title : {
+                text : 'Files',
+                style : {
+                    color : Highcharts.getOptions().colors[1]
+                }
+            }
+        }, { // Secondary yAxis
+            labels : {
 
-            }, {
-                name: 'Uploads',
-                data: <?php echo json_encode($uploads);?>,
-                yAxis: 0,
-
+                format : '{value}',
+                style : {
+                    color : Highcharts.getOptions().colors[0]
+                }
             },
+            title : {
+                text : 'Megabytes',
+                style : {
+                    color : Highcharts.getOptions().colors[0]
+                }
+            },
+
+            opposite : true
+        }],
+
+        tooltip : {
+
+            shared : true
+        },
+        plotOptions : {
+            column : {
+                pointPadding : 0.2,
+                borderWidth : 0
+            }
+        },
+        dataLabels : {
+            enabled : true,
+            rotation : -90,
+            color : '#FFFFFF',
+            align : 'right',
+            y : 10, // 10 pixels down from the top
+        },
+        series : [{
+            name : 'Downloads',
+            data : <?php echo json_encode($downloads);?>,
+            yAxis : 0,
+
+        }, {
+            name : 'Uploads',
+            data : <?php echo json_encode($uploads);?>,
+            yAxis : 0,
+
+        },
             {
-                name: 'Total Downloads Size',
-                type: 'column',
-                yAxis: 1,
-                data: <?php echo json_encode($downsize);?>,
+                name : 'Total Downloads Size',
+                type : 'column',
+                yAxis : 1,
+                data : <?php echo json_encode($downsize);?>,
                 tooltip : {
                     valueSuffix : ' MB'
                 }
 
             },
             {
-                name: 'Total Uploads Size',
-                type: 'column',
-                yAxis: 1,
-                data: <?php echo json_encode($upsize);?>,
+                name : 'Total Uploads Size',
+                type : 'column',
+                yAxis : 1,
+                data : <?php echo json_encode($upsize);?>,
                 tooltip : {
                     valueSuffix : ' MB'
                 }
@@ -220,52 +214,52 @@ $free = 100 - $used;
             }
 
 
-            ]
-        });
+        ]
+    });
 
 
-        $('#usedba').highcharts({
-            credits: {
-                enabled: false
-            },
-            chart: {
-                plotBackgroundColor: null,
-                plotBorderWidth: null,
-                plotShadow: false,
-                type: 'pie',
-            },
-            title: {
-                text: 'Storage'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.3f}%</b>'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.3f} % of ' + <?php echo $allowedBandwidth; ?>+"MB",
-                        style: {
-                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                        }
+    $('#usedba').highcharts({
+        credits : {
+            enabled : false
+        },
+        chart : {
+            plotBackgroundColor : null,
+            plotBorderWidth : null,
+            plotShadow : false,
+            type : 'pie',
+        },
+        title : {
+            text : 'Storage'
+        },
+        tooltip : {
+            pointFormat : '{series.name}: <b>{point.percentage:.3f}%</b>'
+        },
+        plotOptions : {
+            pie : {
+                allowPointSelect : true,
+                cursor : 'pointer',
+                dataLabels : {
+                    enabled : true,
+                    format : '<b>{point.name}</b>: {point.percentage:.3f} % of ' + <?php echo $allowedBandwidth; ?>+"MB",
+                    style : {
+                        color : (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                     }
                 }
-            },
-            series: [{
+            }
+        },
+        series : [{
 
-                colorByPoint: true,
-                data: [{
-                    name: 'Free',
-                    y: <?php echo $free;?>
-                }, {
-                    name: 'Used',
-                    y: <?php echo $used; ?>
+            colorByPoint : true,
+            data : [{
+                name : 'Free',
+                y : <?php echo $free;?>
+            }, {
+                name : 'Used',
+                y : <?php echo $used; ?>
 
-                }]
             }]
-        });
+        }]
+    });
 
 
 </script>

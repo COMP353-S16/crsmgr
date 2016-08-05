@@ -1,16 +1,17 @@
 <?php
-if(!isset($_REQUEST))
+if (!isset($_REQUEST))
+{
     exit;
+}
 
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
-if(!WebUser::getUser()->isProf())
+if (!WebUser::getUser()->isProf())
 {
     exit("<p class='text-danger text-center'>You do not have enough privileges to create a group</p>");
 }
-
 
 
 $gid = $_REQUEST['gid'];
@@ -20,13 +21,13 @@ $DeleteGroupDeliverable = new DeleteGroupDeliverable($gid);
 $DeleteGroupDeliverable->addDid($did);
 
 
-if($DeleteGroupDeliverable->delete())
+if ($DeleteGroupDeliverable->delete())
 {
     $dids = $DeleteGroupDeliverable->getDids();
 
     $dels = "<ul>";
 
-    foreach($dids as $did)
+    foreach ($dids as $did)
     {
         $Deliverable = new Deliverable($did);
         $dels .= "<li>" . $Deliverable->getDName() . "</li>";
@@ -42,14 +43,14 @@ if($DeleteGroupDeliverable->delete())
     </div>
 
     <script>
-        $(function(){
+        $(function ()
+        {
             groupDeliverables.ajax.reload();
             unassignedGroupDeliverables.ajax.reload();
             $('#deleteGroupDeliverableAjaxResponse').dialog({
-                height: 350,
-                buttons :
-                {
-                    "Close" : function()
+                height : 350,
+                buttons : {
+                    "Close" : function ()
                     {
                         $(this).dialog("close");
                     }

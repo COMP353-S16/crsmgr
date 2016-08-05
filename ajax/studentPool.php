@@ -1,6 +1,8 @@
 <?php
-if(!isset($_REQUEST) || empty($_REQUEST))
+if (!isset($_REQUEST) || empty($_REQUEST))
+{
     exit;
+}
 
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
@@ -19,31 +21,31 @@ $query->execute();
 $data = $query->fetchAll();
 $rows = $query->rowCount();
 
-if($rows<=0)
+if ($rows <= 0)
 {
     echo "NO DATA";
 }
 ?>
 
 
-<ol>
-    <?php
-    foreach($data as $studentData)
-    {
-
-        $Student = new Student($studentData['uid']);
-
-        if($Student->getSemesters()->isRegisteredForSemester($_REQUEST['sid']) && $Student->isStudent())
+    <ol>
+        <?php
+        foreach ($data as $studentData)
         {
 
+            $Student = new Student($studentData['uid']);
 
-            ?>
-            <li><?php echo $Student->getFirstName() . ' ' . $Student->getLastName() . ' - ID#' . $Student->getUid() . ' - Section ' . $Student->getSemesters()->getSectionName($_REQUEST['sid']); ?></li>
-            <?php
+            if ($Student->getSemesters()->isRegisteredForSemester($_REQUEST['sid']) && $Student->isStudent())
+            {
+
+
+                ?>
+                <li><?php echo $Student->getFirstName() . ' ' . $Student->getLastName() . ' - ID#' . $Student->getUid() . ' - Section ' . $Student->getSemesters()->getSectionName($_REQUEST['sid']); ?></li>
+                <?php
+            }
         }
-    }
-    ?>
+        ?>
 
-</ol>
+    </ol>
 
 <?php

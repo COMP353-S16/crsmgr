@@ -14,7 +14,7 @@ class Deliverable
     protected $_startDate;
     protected $_endDate;
     protected $_sid;
-    
+
     public function __construct($did)
     {
         $this->_did = $did;
@@ -24,20 +24,21 @@ class Deliverable
     /**
      * Extracts deliverable information
      */
-    private function extractDeliverableInfo() {
+    private function extractDeliverableInfo()
+    {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT * FROM Deliverables WHERE did=:did LIMIT 1");
         $query->bindValue("did", $this->_did);
         $query->execute();
         $deliverable = $query->fetch();
 
-       // $this->_cid = $deliverable['cid'];
+        // $this->_cid = $deliverable['cid'];
         $this->_dName = $deliverable['dName'];
         $this->_startDate = $deliverable['startDate'];
         $this->_endDate = $deliverable['endDate'];
         $this->_sid = $deliverable['sid'];
     }
-    
+
     public function getSemesterId()
     {
         return $this->_sid;
@@ -48,10 +49,9 @@ class Deliverable
      */
     public function getDid()
     {
-    
+
         return $this->_did;
     }
-
 
 
     /**

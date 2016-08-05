@@ -20,16 +20,17 @@ class WebUser
     /**
      * @param User $user
      */
-    public static function setUser(User $user) {
+    public static function setUser(User $user)
+    {
         self::$_User = $user;
     }
-
 
 
     /**
      * @return User
      */
-    public static function getUser() {
+    public static function getUser()
+    {
         return self::$_User;
     }
 
@@ -38,17 +39,18 @@ class WebUser
         $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';
 
         $loggegIn = (!empty($_SESSION) && isset($_SESSION['uid']));
-        if($loggegIn)
+        if ($loggegIn)
         {
             return true;
         }
         else
         {
-            if($redirect)
+            if ($redirect)
             {
                 header("location: " . $root . '?l=0&u=' . time());
 
             }
+
             return false;
         }
 

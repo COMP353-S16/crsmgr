@@ -16,23 +16,24 @@ $data = $query->fetch();
 
 $Files = new Files($data);
 
-$info =array("data" => array());
+$info = array("data" => array());
 
 $versions = $Files->getVersions();
 
 /**
  * @var $Version Version
  */
-foreach($versions as $Version) {
+foreach ($versions as $Version)
+{
 
     $User = new User($Version->getUploaderId());
     $info['data'][] = array(
-        "vid" => $Version->getVersionId(),
-        "gid" => $Files->getGroupId(),
-        "user" => $User->getFullName(),
-        "date" => $Version->getUploadDate(),
+        "vid"      => $Version->getVersionId(),
+        "gid"      => $Files->getGroupId(),
+        "user"     => $User->getFullName(),
+        "date"     => $Version->getUploadDate(),
         "filename" => $Version->getSavedName(),
-        "size" => round($Version->getSize(),2) . " MB",
+        "size"     => round($Version->getSize(), 2) . " MB",
 
     );
 }

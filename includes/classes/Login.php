@@ -20,7 +20,8 @@ class Login
             'password' => ''
         );
 
-        if ($credentials) {
+        if ($credentials)
+        {
             /* union of $credentials + $this->_credentials */
             $this->_credentials = $credentials + $this->_credentials;
         }
@@ -37,8 +38,10 @@ class Login
 
         $this->_user = new User($user['uid']);
 
-        if($query->rowCount() == 1)
+        if ($query->rowCount() == 1)
+        {
             return true;
+        }
 
         $this->_error_messages[] = "Username or password incorrect.";
 

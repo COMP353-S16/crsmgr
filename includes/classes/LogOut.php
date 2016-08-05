@@ -22,11 +22,10 @@ class LogOut
 
         header("location: ../../index.php");
 
-        exit ;
+        exit;
     }
 
 
-
-
 }
+
 ?>

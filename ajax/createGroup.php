@@ -1,13 +1,14 @@
 <?php
-if(!isset($_REQUEST))
+if (!isset($_REQUEST))
+{
     exit;
+}
 
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
-
-if(!WebUser::getUser()->isProf())
+if (!WebUser::getUser()->isProf())
 {
     exit("<p class='text-danger text-center'>You do not have enough privileges to create a group</p>");
 }
@@ -33,20 +34,22 @@ $CreateGroup->setLeaderId($leader);
 $CreateGroup->setCreatorId($_SESSION['uid']);
 $CreateGroup->setMaxBandwidth($_REQUEST['maxb']);
 
-if($CreateGroup->create())
+if ($CreateGroup->create())
 { ?>
     <div id="responseMessageCreate" class="alert alert-success alert-dismissable">
 
         You have successfully created group <strong><?php echo $CreateGroup->getGroupName(); ?></strong>!
     </div>
     <script>
-        $(function(){
-            groups.ajax.reload(function(json){
+        $(function ()
+        {
+            groups.ajax.reload(function (json)
+            {
                 // callback
 
                 $('#createGroupAjax').dialog({
                     buttons : {
-                        "Close" : function()
+                        "Close" : function ()
                         {
                             $(this).dialog("destroy");
 
@@ -62,7 +65,6 @@ if($CreateGroup->create())
             // reset form
 
 
-
             //
             selectedStudentsTable.clear().draw();
 
@@ -72,7 +74,7 @@ if($CreateGroup->create())
 
         });
     </script>
-<?php
+    <?php
 }
 else
 {

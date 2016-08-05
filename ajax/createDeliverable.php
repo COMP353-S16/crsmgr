@@ -3,11 +3,10 @@ session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
 
-if(!WebUser::getUser()->isProf() )
+if (!WebUser::getUser()->isProf())
 {
     exit("<p class='text-danger text-center'>You do not have enough privileges to create deliverables</p>");
 }
-
 
 
 $formData = array();
@@ -24,7 +23,7 @@ $CreateDeliverable->setSemester($formData['selectSemesterNewDeliverable']);
 $CreateDeliverable->setName($formData['newDeliverableName']);
 $CreateDeliverable->setGroupIds($gids);
 
-if($CreateDeliverable->create())
+if ($CreateDeliverable->create())
 {
     ?>
     <div id="responseMessageCreate" class="alert alert-success">
@@ -32,13 +31,14 @@ if($CreateDeliverable->create())
         You have successfully created deliverable <strong><?php echo $CreateDeliverable->getName(); ?></strong>!
     </div>
     <script>
-        $(function(){
+        $(function ()
+        {
 
             deliverablesTable.ajax.reload();
 
             $('#createDeliverableAjax').dialog({
                 buttons : {
-                    "Close" : function()
+                    "Close" : function ()
                     {
                         $(this).dialog("destroy");
 

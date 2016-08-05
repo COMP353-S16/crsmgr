@@ -155,6 +155,7 @@ class GroupStats
 
             );
         }
+
         return $downloads;
     }
 

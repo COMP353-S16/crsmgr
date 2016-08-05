@@ -15,6 +15,7 @@ class Rollback
 
     /**
      * Rollback constructor.
+     *
      * @param $fid file id
      * @param $vid to version id
      */
@@ -30,6 +31,7 @@ class Rollback
         $query = $pdo->prepare("DELETE FROM Versions WHERE fid =:fid AND vid > :vid");
         $query->bindValue(":fid", $this->_fid);
         $query->bindValue(":vid", $this->_vid);
+
         return $query->execute();
 
 

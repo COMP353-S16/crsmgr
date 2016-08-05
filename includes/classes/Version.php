@@ -16,20 +16,24 @@ class Version
 
     /**
      * Version constructor.
+     *
      * @param array $versionsData
      * @param $id
+     *
      * @throws Exception
      */
     public function __construct(array $versionsData, $id)
     {
-        if(empty($versionsData) || $id==null)
+        if (empty($versionsData) || $id == null)
+        {
             throw new Exception("Version data is required");
+        }
 
         $this->_data = $versionsData;
 
-        foreach($this->_data as $i => $d)
+        foreach ($this->_data as $i => $d)
         {
-            if($this->_data[$i]['vid'] == $id)
+            if ($this->_data[$i]['vid'] == $id)
             {
                 $this->_version = $this->_data[$i];
                 break;
@@ -96,7 +100,7 @@ class Version
      */
     public function getBaseUrl()
     {
-        return $_SERVER['DOCUMENT_ROOT']. '/fileuploads/' . $this->getUploadDir() . $this->getSavedName();
+        return $_SERVER['DOCUMENT_ROOT'] . '/fileuploads/' . $this->getUploadDir() . $this->getSavedName();
     }
 
     /**
@@ -105,7 +109,8 @@ class Version
     public function getUrl()
     {
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        return $protocol . $_SERVER['HTTP_HOST']. '/fileuploads/' . $this->getUploadDir() .  $this->getSavedName();
+
+        return $protocol . $_SERVER['HTTP_HOST'] . '/fileuploads/' . $this->getUploadDir() . $this->getSavedName();
     }
 
 

@@ -2,7 +2,7 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
-if(!WebUser::getUser()->isProf())
+if (!WebUser::getUser()->isProf())
 {
     exit("<p class='text-danger text-center'>You do not have enough privileges to delete a deliverable</p>");
 }
@@ -12,7 +12,7 @@ $DeleteDeliverable = new DeleteDeliverable();
 $DeleteDeliverable->addDid($_REQUEST['did']);
 
 
-if($DeleteDeliverable->delete())
+if ($DeleteDeliverable->delete())
 {
     ?>
 
@@ -21,14 +21,14 @@ if($DeleteDeliverable->delete())
     </div>
 
     <script>
-        $(function(){
+        $(function ()
+        {
             deliverablesTable.ajax.reload();
 
             $('#deleteDeliverableAjaxResponse').dialog({
-                height: 200,
-                buttons :
-                {
-                    "Close" : function()
+                height : 200,
+                buttons : {
+                    "Close" : function ()
                     {
                         $(this).dialog("close");
                     }

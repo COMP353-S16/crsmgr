@@ -46,7 +46,7 @@ else
 
     <title><?php echo CoreConfig::settings()['appname']; ?></title>
 
-    <link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
 
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -75,11 +75,9 @@ else
     <link href="bower_components/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// --><!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script><![endif]-->
 
 
     <style>
@@ -124,7 +122,7 @@ else
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Group
-                        <strong><?php echo $Group->getGName() ?>  <?php echo($isGroupClosed ? "[CLOSED]" : ""); ?></strong>
+                        <strong><?php echo $Group->getGName() ?><?php echo($isGroupClosed ? "[CLOSED]" : ""); ?></strong>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -141,14 +139,13 @@ else
                 <div class="col-md-8">
                     <ul class="nav nav-tabs">
                         <li class="active">
-                            <a href="#generalinfo" data-toggle="tab">
-                                General
-                                <span class="glyphicon glyphicon-globe"></span>
-                            </a>
+                            <a href="#generalinfo" data-toggle="tab"> General
+                                <span class="glyphicon glyphicon-globe"></span> </a>
                         </li>
-                        <li><a href="#members" data-toggle="tab">Members
-                                <span class="glyphicon glyphicon-user"></span></a></li>
-                        <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>"><a href="#deliverables" data-toggle="tab">Deliverables
+                        <li><a href="#members" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a>
+                        </li>
+                        <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>">
+                            <a href="#deliverables" data-toggle="tab">Deliverables
                                 <span class="glyphicon glyphicon-info-sign"></span></a></li>
                         <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>">
                             <a href="#files" data-toggle="tab">All Files
@@ -187,12 +184,14 @@ else
                                     <td><?php echo $Group->getSemester()->getSemesterStartDate(); ?></td>
                                 </tr>
                                 <tr>
-                                    <td>Semester end </td>
+                                    <td>Semester end</td>
                                     <td><?php echo $Group->getSemester()->getSemseterEndDate(); ?></td>
                                 </tr>
                                 <tr>
                                     <td>Status</td>
-                                    <td><strong><?php echo(($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>"); ?></strong></td>
+                                    <td>
+                                        <strong><?php echo(($isGroupClosed) ? "<p class='text-danger'>Closed</p>" : "<p class='text-success'>Open</p>"); ?></strong>
+                                    </td>
                                 </tr>
                             </table>
                         </div>
@@ -264,7 +263,8 @@ else
                         </div>
                         <div class="tab-pane fade" id="deletedfiles">
                             <h4>Deleted Files</h4>
-                            Below is a list of deleted files. Files may only be recovered within 24 hours of their deletion.
+                            Below is a list of deleted files. Files may only be recovered within 24 hours of their
+                            deletion.
 
                             <table width="100%" border="0" class="table table-bordered table-hover" id="deletedFilesTable">
                                 <thead>
@@ -293,13 +293,12 @@ else
 
                             </h4>
                             <span id="refreshStatus"></span>
-                            <div id="groupDeliverablesListSubmission" >
+                            <div id="groupDeliverablesListSubmission">
 
                                 <!-- File Uploader -->
                                 <form id="uploadForm">
 
                                     <div class="form-group input-group">
-
 
 
                                         <select class="form-control" id="deliverableSelect">
@@ -310,17 +309,19 @@ else
                                         </span>
 
 
-
                                     </div>
 
                                     <label id="label-browser" class="btn btn-success btn-file" data-toggle="tooltip" data-placement="top" title="Browse Files">
                                         Browse
-                                        <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple/>
+                                        <input type="file" name="fileUpload" id="fileUpload" class="fileUpload" style="display: none;" multiple />
                                     </label>
 
 
-                                    <button type="button" class="btn btn-warning btn-file" id="cancelUpload">Cancel</button>
-                                    Max upload size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>M
+                                    <button type="button" class="btn btn-warning btn-file" id="cancelUpload">Cancel
+                                    </button>
+                                    Max upload
+                                    size: <?php echo $max_upload = min((int)ini_get('post_max_size'), (int)(ini_get('upload_max_filesize'))); ?>
+                                    M
                                     <p>
                                     <div class="progress" style="display: none;">
                                         <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="0"
@@ -332,14 +333,12 @@ else
                                 <!-- /File Uploader -->
 
 
-
-
                             </div>
 
-                            <p id="noAvailableDeliverables" style="display: none;" class="text-warning">There are no assigned deliverables.</p>
+                            <p id="noAvailableDeliverables" style="display: none;" class="text-warning">There are no
+                                assigned deliverables.</p>
 
                         </div>
-
 
 
                     </div>
@@ -358,11 +357,11 @@ else
                                 <div class="pull-right">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
-                                            Actions
-                                            <span class="caret"></span>
+                                            Actions <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu pull-right" role="menu">
-                                            <li><a href="#" id="refreshStats"><i class="fa fa-refresh fa-fw"></i> Refresh data</a></li>
+                                            <li><a href="#" id="refreshStats"><i class="fa fa-refresh fa-fw"></i>
+                                                    Refresh data</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -455,10 +454,8 @@ else
 <!-- /#wrapper -->
 
 
-
 <!-- jQuery -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
-
 
 
 <!-- Bootstrap Core JavaScript -->
@@ -495,7 +492,8 @@ else
     {
 
         jQuery.fn.bstooltip = jQuery.fn.tooltip;
-        $(function () {
+        $(function ()
+        {
             $('[data-toggle="tooltip"]').bstooltip()
         })
 
@@ -591,7 +589,7 @@ else
 
             $('#fileUpload').prop("disabled", true);
         }).on("lu:before", function (e, files)
-            {
+        {
 
         }).on("lu:cancelled", function (e)
         {
@@ -1119,40 +1117,38 @@ else
         loadDeliverablesList();
 
 
-
-
         usedBand = new Highcharts.Chart({
-            chart :{
+            chart : {
                 renderTo : 'usedba',
                 type : 'pie',
             },
             credits : false,
-            title: {
-                text: 'Storage',
+            title : {
+                text : 'Storage',
 
             },
-            tooltip: {
-                pointFormat: '<b>{point.percentage:.3f}%</b>'
+            tooltip : {
+                pointFormat : '<b>{point.percentage:.3f}%</b>'
             },
-            plotOptions: {
-                pie: {
-                    dataLabels: {
-                        enabled: true,
-                        format: '<b>{point.name}</b>: {point.percentage:.3f} %',
-                        style: {
-                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+            plotOptions : {
+                pie : {
+                    dataLabels : {
+                        enabled : true,
+                        format : '<b>{point.name}</b>: {point.percentage:.3f} %',
+                        style : {
+                            color : (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                         }
                     }
                 }
             },
-            series: [{
+            series : [{
 
-                colorByPoint: true,
-                data: [{
-                    name: 'Free',
-                    y: 0 ,
+                colorByPoint : true,
+                data : [{
+                    name : 'Free',
+                    y : 0,
                 }, {
-                    name: 'Used',
+                    name : 'Used',
                     y : 0
 
                 }]
@@ -1161,8 +1157,7 @@ else
 
 
         /*refresh stats */
-        $(document).on('click','#refreshStats',loadFileSummary);
-
+        $(document).on('click', '#refreshStats', loadFileSummary);
 
 
         loadFileSummary();
@@ -1174,14 +1169,14 @@ else
     {
         $button = $('#refreshDeliverablesList');
         var buttonText = $button.text();
-        $button.prop("disabled",true).text("Loading...");
+        $button.prop("disabled", true).text("Loading...");
         $('#fileUpload').prop("disabled", true);
         $('#noAvailableDeliverables').hide();
         $.ajax({
             url : "ajax/assignedDeliverablesList.php",
             type : "POST",
             dataType : "json",
-            cache: false,
+            cache : false,
             data : {
                 gid : "<?php echo $Group->getGid();?>"
             },
@@ -1190,7 +1185,7 @@ else
 
                 $('#refreshStatus').html("");
                 $('#deliverableSelect').find('option').remove().end();
-                if(jQuery.isEmptyObject(data))
+                if (jQuery.isEmptyObject(data))
                 {
                     $('#noAvailableDeliverables').fadeIn();
                     $('#groupDeliverablesListSubmission').hide();
@@ -1210,14 +1205,14 @@ else
                     });
                 }
 
-                $button.prop("disabled",false).text(buttonText);
+                $button.prop("disabled", false).text(buttonText);
 
 
             },
-            error : function()
+            error : function ()
             {
                 $('#refreshStatus').html("<p class='text-danger'>An error occured: could not load deliverables list.</p>");
-                $button.prop("disabled",false).text(buttonText);
+                $button.prop("disabled", false).text(buttonText);
 
 
             }
@@ -1229,7 +1224,8 @@ else
     function loadFileSummary()
     {
         $at = $("#filesSummary td[id^='_']")
-        $.each($at, function(key, value){
+        $.each($at, function (key, value)
+        {
             $(value).html('loading...');
         });
         $.ajax({
@@ -1241,12 +1237,13 @@ else
             cache : false,
             success : function (data)
             {
-                usedBand.series[0].setData([{ y : data.free},{y :data.used}], true);
-                usedBand.setTitle({ text : "Storage" }, { text : "Total: <strong>" + data.total + "MB</strong>" });
+                usedBand.series[0].setData([{y : data.free}, {y : data.used}], true);
+                usedBand.setTitle({text : "Storage"}, {text : "Total: <strong>" + data.total + "MB</strong>"});
                 usedBand.redraw(true);
                 // find the stats containers and give their values
-                $.each(data, function(key, value){
-                    if(key.toString().startsWith("_"))
+                $.each(data, function (key, value)
+                {
+                    if (key.toString().startsWith("_"))
                     {
                         $('#' + key).text(value);
                     }
@@ -1256,8 +1253,6 @@ else
             }
         });
     }
-
-
 
 
 </script>

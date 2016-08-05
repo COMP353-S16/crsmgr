@@ -22,9 +22,9 @@ class CreateSemester
     private function getSemesters()
     {
         $pdo = Registry::getConnection();
-        $query= $pdo->prepare("SELECT sid FROM Semester");
+        $query = $pdo->prepare("SELECT sid FROM Semester");
         $query->execute();
-        while($data = $query->fetch())
+        while ($data = $query->fetch())
         {
             $this->_Semester[] = new Semester($data['sid']);
         }
@@ -33,17 +33,18 @@ class CreateSemester
     private function isValidDate($date)
     {
         $d = DateTime::createFromFormat('Y-m-d', $date);
+
         return $d && $d->format('Y-m-d') === $date;
     }
 
     //TODO Must add some validation here since we need to check whether the semester start and end dates conflict with others
     private function validate()
     {
-        if(!$this->isValidDate($this->_end) || !$this->isValidDate($this->_start))
+        if (!$this->isValidDate($this->_end) || !$this->isValidDate($this->_start))
         {
             $this->_errors[] = "Please enter a valid start date and end date. Format: YYYY-MM-DD";
         }
-        else if( strtotime($this->_start)  > strtotime($this->_end) ||  strtotime($this->_end)  < strtotime($this->_start) )
+        else if (strtotime($this->_start) > strtotime($this->_end) || strtotime($this->_end) < strtotime($this->_start))
         {
             $this->_errors[] = "Start date must be before end date";
 
@@ -70,7 +71,7 @@ class CreateSemester
         /**
          * @var $Semester Semester
          */
-        foreach($this->_Semester as $Semester)
+        foreach ($this->_Semester as $Semester)
         {
 
             $conflict = sprintf($msg,
@@ -78,7 +79,6 @@ class CreateSemester
                 $Semester->getId(),
                 date("Y-m-d H:i:s a", strtotime($Semester->getSemesterStartDate())),
                 date("Y-m-d H:i:s a", strtotime($Semester->getSemseterEndDate())));
-
 
 
             if ($this->_start >= $Semester->getSemesterStartDate() && $this->_start <= $Semester->getSemseterEndDate())
@@ -111,8 +111,10 @@ class CreateSemester
     {
 
         $this->validate();
-        if(!empty($this->_errors))
+        if (!empty($this->_errors))
+        {
             return false;
+        }
 
 
         $pdo = Registry::getConnection();
@@ -120,11 +122,13 @@ class CreateSemester
         $query->bindValue(":start", $this->_start);
         $query->bindValue(":end", $this->_end);
 
-        if($query->execute())
+        if ($query->execute())
         {
             $this->_newId = $pdo->lastInsertId();
+
             return true;
         }
+
         return false;
 
     }

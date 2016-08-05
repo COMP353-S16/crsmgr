@@ -5,6 +5,7 @@ class DeleteDeliverable
 
     private $_dids = array();
     private $_errors = array();
+
     public function __construct($did = array())
     {
         $this->s = $did;
@@ -22,7 +23,7 @@ class DeleteDeliverable
 
     private function validate()
     {
-        if(empty($this->_dids))
+        if (empty($this->_dids))
         {
             $this->_errors[] = "Nothing to delete";
         }
@@ -41,7 +42,7 @@ class DeleteDeliverable
         {
 
             $pdo->beginTransaction();
-            foreach($this->_dids as $did)
+            foreach ($this->_dids as $did)
             {
                 $query = $pdo->prepare("DELETE FROM Deliverables WHERE did=:did");
                 $query->bindValue(":did", $did);
@@ -51,7 +52,7 @@ class DeleteDeliverable
             return $pdo->commit();
 
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
             $this->_errors[] = $e->getMessage();
             $pdo->rollBack();

@@ -7,11 +7,9 @@ $fids = $_REQUEST["fids"];
 $DeleteFiles = new DeleteFiles($_SESSION['uid'], $fids);
 
 
-
-if($DeleteFiles->delete())
+if ($DeleteFiles->delete())
 {
     ?>
-
 
 
     <div id="responseMessage" class="alert alert-success">
@@ -20,21 +18,23 @@ if($DeleteFiles->delete())
 
 
     <script>
-        $(function(){
+        $(function ()
+        {
             groupFiles.ajax.reload();
-            deletedFilesTable.ajax.reload(function(json){
+            deletedFilesTable.ajax.reload(function (json)
+            {
                 // add the close button
 
 
                 loadFileSummary();
 
 
-            },false);
+            }, false);
 
 
             $('#deleteProgress').dialog({
                 buttons : {
-                    "Close" : function()
+                    "Close" : function ()
                     {
                         $(this).dialog("destroy");
                     }
@@ -46,7 +46,7 @@ if($DeleteFiles->delete())
 
         });
     </script>
-<?php
+    <?php
 
 }
 else
@@ -54,11 +54,12 @@ else
     $errors = $DeleteFiles->getErrors();;
     ?>
     <script>
-        $(function(){
+        $(function ()
+        {
 
             $('#deleteProgress').dialog({
                 buttons : {
-                    "Close" : function()
+                    "Close" : function ()
                     {
                         $(this).dialog("destroy");
                     }
@@ -80,6 +81,6 @@ else
         echo $msg;
         ?>
     </div>
-<?php
+    <?php
 
 }

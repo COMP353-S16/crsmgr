@@ -59,7 +59,7 @@ class Archive
 
     private function validate()
     {
-        if($this->_GroupFiles->getNumberOfFiles() == 0)
+        if ($this->_GroupFiles->getNumberOfFiles() == 0)
         {
             $this->_errors[] = "No files to archive";
         }
@@ -68,7 +68,7 @@ class Archive
     private function getZipName()
     {
         // can add a microtime at the end of this to make it unique every time we archive, though that wastes some space.
-        return   "group_" . $this->_Group->getGid() . '_' . $this->_unique;
+        return "group_" . $this->_Group->getGid() . '_' . $this->_unique;
     }
 
     private function createArchive()
@@ -79,7 +79,7 @@ class Archive
         /**
          * @var $Files Files
          */
-        foreach($this->_GroupFiles->getFiles() as $Files)
+        foreach ($this->_GroupFiles->getFiles() as $Files)
         {
             $versions = $Files->getVersions();
 
@@ -91,21 +91,21 @@ class Archive
             /**
              * @var $Version Version
              */
-            foreach($versions as $Version)
+            foreach ($versions as $Version)
             {
                 $fileName = $Version->getSavedName();
                 $fileData = null;
                 // here, we check if the file was upload directly into DB or in the File system. In any case, it grabs all of the file whether or not in db or in fs.
-                if($Version->getData() == null)
+                if ($Version->getData() == null)
                 {
-                    if(file_exists($Version->getBaseUrl()))
+                    if (file_exists($Version->getBaseUrl()))
                     {
                         $fileData = file_get_contents($Version->getBaseUrl());
                     }
                     else
                     {
                         // the file was uploaded but not found in the directory. The file essentially doesn't exist.
-                        $this->_notices[] = "Could not find file " . $Version->getSavedName()  . " in directory";
+                        $this->_notices[] = "Could not find file " . $Version->getSavedName() . " in directory";
                     }
                 }
                 else
@@ -115,9 +115,9 @@ class Archive
 
 
                 // if file contents exist, add to zip folder.
-                if($fileData!=null)
+                if ($fileData != null)
                 {
-                    $this->_ZipArchive->addFromString($path . '/'. $fileName, $fileData);
+                    $this->_ZipArchive->addFromString($path . '/' . $fileName, $fileData);
                     $totalArchive++;
                 }
                 else
@@ -146,31 +146,35 @@ class Archive
 
     public function getZipLocation()
     {
-        return $this->getUploadDirectory(). $this->getZipName() . '.zip';
+        return $this->getUploadDirectory() . $this->getZipName() . '.zip';
     }
 
     private function addNotices()
     {
         // add notices
-        $this->_ZipArchive->addFromString("notices.txt", implode( $this->_notices, "\r\n" ));
+        $this->_ZipArchive->addFromString("notices.txt", implode($this->_notices, "\r\n"));
     }
 
     public function archive()
     {
         $this->validate();
-        if(!empty($this->_errors))
+        if (!empty($this->_errors))
+        {
             return false;
+        }
         try
         {
 
             //echo $_SERVER['DOCUMENT_ROOT']. '/'. $this->getZipLocation();
             // give where the folder will be store and what the zip file will be called.
 
-            $location  = $_SERVER['DOCUMENT_ROOT']. '/'.$this->getZipLocation();
+            $location = $_SERVER['DOCUMENT_ROOT'] . '/' . $this->getZipLocation();
 
-            $res = $this->_ZipArchive->open($location , ZipArchive::CREATE);
-            if($res !== TRUE)
+            $res = $this->_ZipArchive->open($location, ZipArchive::CREATE);
+            if ($res !== TRUE)
+            {
                 throw new Exception("Could not archive");
+            }
 
             $this->createArchive();
 
@@ -178,16 +182,19 @@ class Archive
 
             $this->_ZipArchive->close();
 
-            if(!file_exists($location))
+            if (!file_exists($location))
+            {
                 throw new Exception("File does not exist or could not write to destination. Check folder permissions.");
+            }
 
             return true;
 
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
             $this->_errors[] = $e->getMessage();
         }
+
         return false;
     }
 
@@ -197,7 +204,7 @@ class Archive
      */
     public function getZipBaseUrl()
     {
-        return $_SERVER['DOCUMENT_ROOT']. '/'. $this->getZipLocation();
+        return $_SERVER['DOCUMENT_ROOT'] . '/' . $this->getZipLocation();
     }
 
     /**
@@ -206,6 +213,7 @@ class Archive
     public function getZipUrl()
     {
         $protocol = CoreConfig::settings()['protocol'];
-        return $protocol . $_SERVER['HTTP_HOST']. '/'. $this->getZipLocation();
+
+        return $protocol . $_SERVER['HTTP_HOST'] . '/' . $this->getZipLocation();
     }
 }

@@ -38,7 +38,6 @@ class User
     }
 
 
-
     public function getUsername()
     {
         return $this->_username;

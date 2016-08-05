@@ -16,6 +16,7 @@ class MySqlConfig implements PDOConfig
 
     /**
      * MySqlConfig constructor.
+     *
      * @param $username
      * @param $password
      * @param $db

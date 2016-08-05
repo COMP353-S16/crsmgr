@@ -19,7 +19,8 @@ class Course
         $this->fetchCourseInfo();
     }
 
-    private function fetchCourseInfo() {
+    private function fetchCourseInfo()
+    {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT * FROM Courses WHERE cid=:cid");
         $query->bindValue(":cid", $this->cid);
@@ -31,19 +32,23 @@ class Course
         $this->_startDate = $course['endDate'];
     }
 
-    public function getCourseId() {
+    public function getCourseId()
+    {
         return $this->cid;
     }
 
-    public function getCourseName() {
+    public function getCourseName()
+    {
         return $this->_cName;
     }
 
-    public function getStartDate() {
+    public function getStartDate()
+    {
         return $this->_startDate;
     }
 
-    public function getEndDate() {
+    public function getEndDate()
+    {
         return $this->_endDate;
     }
 }

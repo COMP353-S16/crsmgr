@@ -17,27 +17,27 @@ class CreateGroup extends NewGroup
 
     public function validate()
     {
-        if($this->getSemesterId()==null)
+        if ($this->getSemesterId() == null)
         {
             $this->setError("Semester must be set");
         }
-        if(empty($this->getGroupName()))
+        if (empty($this->getGroupName()))
         {
             $this->setError("Group must have a name!");
         }
-        if(empty($this->getUids()))
+        if (empty($this->getUids()))
         {
-            $this->setError( "Group must contain at least one student" );
+            $this->setError("Group must contain at least one student");
         }
-        if($this->getLeaderId() == null || $this->getErrors() == "")
+        if ($this->getLeaderId() == null || $this->getErrors() == "")
         {
-            $this->setError( "Must provide a leader" );
+            $this->setError("Must provide a leader");
         }
-        if(!is_numeric($this->getMaxBandwidth()) || $this->getMaxBandwidth() == null)
+        if (!is_numeric($this->getMaxBandwidth()) || $this->getMaxBandwidth() == null)
         {
             $this->setError("Please enter a valid bandwidth number");
         }
-        else if($this->getMaxBandwidth() < 1)
+        else if ($this->getMaxBandwidth() < 1)
         {
             $this->setError("Bandwidth should be at least 1 MB");
         }
@@ -49,13 +49,14 @@ class CreateGroup extends NewGroup
     }
 
 
-
     public function create()
     {
         $pdo = Registry::getConnection();
         $this->validate();
-        if(!empty($this->getErrors()))
+        if (!empty($this->getErrors()))
+        {
             return false;
+        }
         try
         {
             $pdo->beginTransaction();
@@ -71,7 +72,7 @@ class CreateGroup extends NewGroup
             $lastInsert = $pdo->lastInsertId();
 
             $students = $this->getUids();
-            foreach($students as $uid)
+            foreach ($students as $uid)
             {
                 $query2 = $pdo->prepare("INSERT INTO GroupMembers (uid, gid, sid) VALUES (:uid, :gid, :sid)");
                 $query2->bindValue(":uid", $uid);
@@ -86,7 +87,7 @@ class CreateGroup extends NewGroup
         {
 
             $pdo->rollBack();
-            $this->setError($e->getMessage() . ' in file ' . $e->getFile() . ' line ' .$e->getLine());
+            $this->setError($e->getMessage() . ' in file ' . $e->getFile() . ' line ' . $e->getLine());
         }
     }
 }

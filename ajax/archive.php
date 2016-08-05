@@ -2,7 +2,7 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
-if(!WebUser::getUser()->isSysAdmin())
+if (!WebUser::getUser()->isSysAdmin())
 {
     exit("<p class='text-danger text-center'>You do not have enough privileges to archive group files</p>");
 }
@@ -18,7 +18,7 @@ if ($Archive->archive())
 
     <div id="responseMessage" class="alert alert-success">
 
-        Archive Success!  <a href="<?php echo $Archive->getZipUrl(); ?>" class="alert-link">View Archive</a>
+        Archive Success! <a href="<?php echo $Archive->getZipUrl(); ?>" class="alert-link">View Archive</a>
     </div>
 
 

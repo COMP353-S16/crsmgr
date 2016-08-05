@@ -33,7 +33,6 @@ class UploadHandler
     private $_Group;
 
 
-
     private $_file = array(
         "save_as" => ""
     );
@@ -103,22 +102,24 @@ class UploadHandler
     protected function validate()
     {
         $usedBandwidth = $this->_GroupFiles->getUsedBandwidth();
-        
+
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // conver to MB
 
         $postUploadSize = $usedBandwidth + $fileSize;
 
-        if(is_null($this->_did) || $this->_did == "" || !is_numeric($this->_did))
+        if (is_null($this->_did) || $this->_did == "" || !is_numeric($this->_did))
         {
             $this->_errors[] = "No deliverable found";
+
             return;
         }
-        if(is_null($this->_gid) || $this->_gid =="" || !is_numeric($this->_gid))
+        if (is_null($this->_gid) || $this->_gid == "" || !is_numeric($this->_gid))
         {
             $this->_errors[] = "No group found";
+
             return;
         }
-        if(!Files::isValidFileName($this->_File->getFileName()))
+        if (!Files::isValidFileName($this->_File->getFileName()))
         {
             $this->_errors[] = "Filename invalid. Cannot contain special characters \\ / : * ? \" < > |";
         }
@@ -126,7 +127,7 @@ class UploadHandler
         {
             $this->_errors[] = "File type not allowed. Allow files: " . implode(", ", $this->_allowed);
         }
-        
+
         if ($postUploadSize > $this->_Group->getMaxUploadSize())
         {
             $er = "Maximum bandwidth allotted exceeded.";
@@ -141,7 +142,6 @@ class UploadHandler
         }
 
     }
-
 
 
     /**
@@ -160,7 +160,7 @@ class UploadHandler
         );
 
         $query->execute($params);
-        $data  = $query->fetch();
+        $data = $query->fetch();
         $this->_fid = $data['fid'];
 
         return $this->_fid;
@@ -225,7 +225,7 @@ class UploadHandler
     {
 
 
-        $unique = time(). '_' . mt_rand();
+        $unique = time() . '_' . mt_rand();
 
         $this->_file['save_as'] = self::makeSafe($this->_File->getBaseName()) . "_" . $unique . '.' . $this->_File->getFileExtension();
     }
@@ -260,7 +260,6 @@ class UploadHandler
     }
 
 
-
     /**
      * @return bool returns true if filename already exists for particular deliverable of group
      */
@@ -268,10 +267,8 @@ class UploadHandler
     {
 
         // if this file already exists and it's not permanently deleted, the user needs to recover that file before uploading revision
-        return $this->_fid  != NULL ;
+        return $this->_fid != NULL;
     }
-
-
 
 
     private function insertRevision($fid)
@@ -281,7 +278,7 @@ class UploadHandler
         $fileSize = ($this->_File->getFileSize() / 1024 / 1024); // in KB
         // file data. this is only activated based on application settings
         $blob = null;
-        if(CoreConfig::settings()['uploads']['storageDB'])
+        if (CoreConfig::settings()['uploads']['storageDB'])
         {
             $blob = $this->_File->getBlob();
         }
@@ -314,7 +311,6 @@ class UploadHandler
     }
 
 
-
     /**
      * Inserts the record in the database
      */
@@ -341,13 +337,14 @@ class UploadHandler
             if ($query->execute($params))
             {
                 $lastInsert = $pdo->lastInsertId();
+
                 return $this->insertRevision($lastInsert);
             }
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
 
-            $this->_errors[] =$e->getMessage();
+            $this->_errors[] = $e->getMessage();
         }
 
 
@@ -368,7 +365,7 @@ class UploadHandler
 
             $fileMoveSuccess = true; // this is used to check if the temp directory move was successful
 
-            if(!CoreConfig::settings()['uploads']['storageDB'])
+            if (!CoreConfig::settings()['uploads']['storageDB'])
             {
                 $uploadDirectory = $this->getBuildDirectory();
                 $this->createDirectory($uploadDirectory, 0755);

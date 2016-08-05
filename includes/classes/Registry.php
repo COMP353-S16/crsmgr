@@ -4,7 +4,6 @@
  * Class Registry
  * This is a singleton pattern class which returns database connection
  */
-
 class Registry
 {
     /**
@@ -42,7 +41,7 @@ class Registry
             {
                 self::$connection = new PDO(self::$config->getDSN(), self::$config->getUsername(), self::$config->getPassword(), self::$config->getDriverOptions());
             }
-            catch(PDOException $e)
+            catch (PDOException $e)
             {
                 echo $e->getMessage();
             }

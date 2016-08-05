@@ -22,32 +22,35 @@ class StudentSemester
      */
     public function getSectionName($sid)
     {
-        foreach($this->_data as $semesterData)
+        foreach ($this->_data as $semesterData)
         {
-            if($semesterData['sid'] == $sid)
+            if ($semesterData['sid'] == $sid)
             {
                 return $semesterData['sectionName'];
             }
         }
+
         return "";
     }
 
     /**
      * @param $sid semester id
+     *
      * @return bool returns true if the student is registered for given semester
      */
     public function isRegisteredForSemester($sid)
     {
 
-        foreach($this->_data as $i => $semester)
+        foreach ($this->_data as $i => $semester)
         {
 
-            if($semester['sid'] == $sid)
+            if ($semester['sid'] == $sid)
             {
 
                 return true;
             }
         }
+
         return false;
     }
 }

@@ -13,30 +13,30 @@ class File
 
     private $_blob;
 
-    private $_fileData = array (
-        "name" => "",
-        "basename" => "",
-        "type" => "",
-        "tmp_name" => "",
-        "error" => "",
-        "size" => "",
+    private $_fileData = array(
+        "name"      => "",
+        "basename"  => "",
+        "type"      => "",
+        "tmp_name"  => "",
+        "error"     => "",
+        "size"      => "",
         "extension" => ""
     );
 
     public function __construct($file)
     {
-   
+
         $this->_file = $file;
         $this->extract();
     }
 
     private function extract()
     {
-        $name     = $this->_file['name'];
-        $type     = $this->_file['type'];
+        $name = $this->_file['name'];
+        $type = $this->_file['type'];
         $tmp_name = $this->_file['tmp_name'];
-        $error    = $this->_file['error'];
-        $size     = $this->_file['size'];
+        $error = $this->_file['error'];
+        $size = $this->_file['size'];
 
         $parts = pathinfo($name);
 
@@ -101,9 +101,11 @@ class File
     public function getMime()
     {
 
-        if(!function_exists('mime_content_type')) {
+        if (!function_exists('mime_content_type'))
+        {
             return self::mime_content_type($this->getFileExtension());
         }
+
         return "";
 
     }
@@ -114,60 +116,59 @@ class File
 
         $mime_types = array(
 
-            'txt' => 'text/plain',
-            'htm' => 'text/html',
+            'txt'  => 'text/plain',
+            'htm'  => 'text/html',
             'html' => 'text/html',
-            'php' => 'text/html',
-            'css' => 'text/css',
-            'js' => 'application/javascript',
+            'php'  => 'text/html',
+            'css'  => 'text/css',
+            'js'   => 'application/javascript',
             'json' => 'application/json',
-            'xml' => 'application/xml',
-            'swf' => 'application/x-shockwave-flash',
-            'flv' => 'video/x-flv',
+            'xml'  => 'application/xml',
+            'swf'  => 'application/x-shockwave-flash',
+            'flv'  => 'video/x-flv',
 
             // images
-            'png' => 'image/png',
-            'jpe' => 'image/jpeg',
+            'png'  => 'image/png',
+            'jpe'  => 'image/jpeg',
             'jpeg' => 'image/jpeg',
-            'jpg' => 'image/jpeg',
-            'gif' => 'image/gif',
-            'bmp' => 'image/bmp',
-            'ico' => 'image/vnd.microsoft.icon',
+            'jpg'  => 'image/jpeg',
+            'gif'  => 'image/gif',
+            'bmp'  => 'image/bmp',
+            'ico'  => 'image/vnd.microsoft.icon',
             'tiff' => 'image/tiff',
-            'tif' => 'image/tiff',
-            'svg' => 'image/svg+xml',
+            'tif'  => 'image/tiff',
+            'svg'  => 'image/svg+xml',
             'svgz' => 'image/svg+xml',
 
             // archives
-            'zip' => 'application/zip',
-            'rar' => 'application/x-rar-compressed',
-            'exe' => 'application/x-msdownload',
-            'msi' => 'application/x-msdownload',
-            'cab' => 'application/vnd.ms-cab-compressed',
+            'zip'  => 'application/zip',
+            'rar'  => 'application/x-rar-compressed',
+            'exe'  => 'application/x-msdownload',
+            'msi'  => 'application/x-msdownload',
+            'cab'  => 'application/vnd.ms-cab-compressed',
 
             // audio/video
-            'mp3' => 'audio/mpeg',
-            'qt' => 'video/quicktime',
-            'mov' => 'video/quicktime',
+            'mp3'  => 'audio/mpeg',
+            'qt'   => 'video/quicktime',
+            'mov'  => 'video/quicktime',
 
             // adobe
-            'pdf' => 'application/pdf',
-            'psd' => 'image/vnd.adobe.photoshop',
-            'ai' => 'application/postscript',
-            'eps' => 'application/postscript',
-            'ps' => 'application/postscript',
+            'pdf'  => 'application/pdf',
+            'psd'  => 'image/vnd.adobe.photoshop',
+            'ai'   => 'application/postscript',
+            'eps'  => 'application/postscript',
+            'ps'   => 'application/postscript',
 
             // ms office
-            'doc' => 'application/msword',
-            'rtf' => 'application/rtf',
-            'xls' => 'application/vnd.ms-excel',
-            'ppt' => 'application/vnd.ms-powerpoint',
+            'doc'  => 'application/msword',
+            'rtf'  => 'application/rtf',
+            'xls'  => 'application/vnd.ms-excel',
+            'ppt'  => 'application/vnd.ms-powerpoint',
 
             // open office
-            'odt' => 'application/vnd.oasis.opendocument.text',
-            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+            'odt'  => 'application/vnd.oasis.opendocument.text',
+            'ods'  => 'application/vnd.oasis.opendocument.spreadsheet',
         );
-
 
 
         return $mime_types[$extension];

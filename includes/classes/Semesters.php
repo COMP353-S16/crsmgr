@@ -24,24 +24,25 @@ class Semesters
     public function getSemesters()
     {
         $t = array();
-        foreach($this->_semesters as $data)
+        foreach ($this->_semesters as $data)
         {
             $t[] = new Semester($data);
         }
+
         return $t;
     }
 
     public function getSemesterById($sid)
     {
-        $semesters =$this->getSemesters();
+        $semesters = $this->getSemesters();
 
         /**
          * @var $Semester Semester
          */
-        foreach($semesters as $Semester)
+        foreach ($semesters as $Semester)
         {
 
-            if($Semester->getId() == $sid)
+            if ($Semester->getId() == $sid)
             {
 
                 return $Semester;
@@ -49,6 +50,7 @@ class Semesters
 
 
         }
+
         return null;
     }
 
@@ -82,11 +84,12 @@ class Semesters
         }
 
 
-        if($sid == null)
+        if ($sid == null)
         {
 
             $sid = $this->getLastSemesterId();
         }
+
         //
 
         return $sid;
@@ -100,6 +103,7 @@ class Semesters
             $last = $Semester['sid'];
 
         }
+
         return $last;
     }
 

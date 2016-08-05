@@ -2,7 +2,7 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
-if(!WebUser::getUser()->isProf())
+if (!WebUser::getUser()->isProf())
 {
     exit("<p class='text-danger text-center'>You do not have enough privileges to modify group information</p>");
 }
@@ -16,8 +16,7 @@ $EditGroup->setGroupName($formData['groupNameEdit']);
 $EditGroup->setMaxBandwidth($formData['groupBandwidthEdit']);
 
 
-
-if($EditGroup->edit())
+if ($EditGroup->edit())
 {
     ?>
     <br>
@@ -26,7 +25,8 @@ if($EditGroup->edit())
         Saved!
     </div>
     <script>
-        $(function(){
+        $(function ()
+        {
 
             var newName = '<?php echo $EditGroup->getGroupName(); ?>';
             var newBand = '<?php echo $formData['groupBandwidthEdit']; ?>';
@@ -36,12 +36,12 @@ if($EditGroup->edit())
             });
 
 
-
             var gid = '<?php echo $_REQUEST['gid'];?>';
-            groups.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+            groups.rows().every(function (rowIdx, tableLoop, rowLoop)
+            {
                 var data = this.data();
 
-                if(data.gid == gid)
+                if (data.gid == gid)
                 {
 
                     data.gName = newName;

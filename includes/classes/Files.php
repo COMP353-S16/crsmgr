@@ -23,6 +23,7 @@ class Files
 
     /**
      * FFiles constructor.
+     *
      * @param $file
      */
     public function __construct($file)
@@ -52,6 +53,7 @@ class Files
     {
         return $this->_file['fid'];
     }
+
     /**
      * @return string returns tbe original file name
      */
@@ -91,11 +93,12 @@ class Files
     {
         $a = array();
 
-        foreach($this->_versions as $i => $d)
+        foreach ($this->_versions as $i => $d)
         {
             $vid = $this->_versions[$i]['vid'];
             $a[] = new Version($this->_versions, $vid);
         }
+
         return $a;
     }
 
@@ -109,6 +112,7 @@ class Files
 
     /**
      * @param $id
+     *
      * @return Version returns a Version object based on the version id given
      */
     public function getVersionById($id)
@@ -123,7 +127,7 @@ class Files
     {
         $vids = array();
 
-        foreach($this->_versions as $i => $d)
+        foreach ($this->_versions as $i => $d)
         {
             $vids[] = $this->_versions[$i]['vid'];
         }
@@ -151,7 +155,7 @@ class Files
         /**
          * @var $Version Version
          */
-        foreach($versions as $Version)
+        foreach ($versions as $Version)
         {
 
             $size += $Version->getSize();
@@ -176,13 +180,12 @@ class Files
     {
 
         $vids = array();
-        foreach($this->_versions as $i => $d)
+        foreach ($this->_versions as $i => $d)
         {
 
             //echo $d['vid'] . '  ' . $this->_fid .'<br>';
             $vids[] = $d['vid'];
         }
-
 
 
         return max($vids);

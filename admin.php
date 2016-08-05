@@ -28,7 +28,7 @@ $semesters = $query->fetchAll();
 
     <title><?php echo CoreConfig::settings()['appname']; ?></title>
 
-    <link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
 
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -74,7 +74,9 @@ $semesters = $query->fetchAll();
             background: url('images/ajax.gif') no-repeat right center
         }
 
-        th.dt-center, td.dt-center { text-align: center; }
+        th.dt-center, td.dt-center {
+            text-align: center;
+        }
 
         .sk-cube-grid {
             width: 100px;
@@ -90,52 +92,72 @@ $semesters = $query->fetchAll();
             -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
             animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
         }
+
         .sk-cube-grid .sk-cube1 {
             -webkit-animation-delay: 0.2s;
-            animation-delay: 0.2s; }
+            animation-delay: 0.2s;
+        }
+
         .sk-cube-grid .sk-cube2 {
             -webkit-animation-delay: 0.3s;
-            animation-delay: 0.3s; }
+            animation-delay: 0.3s;
+        }
+
         .sk-cube-grid .sk-cube3 {
             -webkit-animation-delay: 0.4s;
-            animation-delay: 0.4s; }
+            animation-delay: 0.4s;
+        }
+
         .sk-cube-grid .sk-cube4 {
             -webkit-animation-delay: 0.1s;
-            animation-delay: 0.1s; }
+            animation-delay: 0.1s;
+        }
+
         .sk-cube-grid .sk-cube5 {
             -webkit-animation-delay: 0.2s;
-            animation-delay: 0.2s; }
+            animation-delay: 0.2s;
+        }
+
         .sk-cube-grid .sk-cube6 {
             -webkit-animation-delay: 0.3s;
-            animation-delay: 0.3s; }
+            animation-delay: 0.3s;
+        }
+
         .sk-cube-grid .sk-cube7 {
             -webkit-animation-delay: 0s;
-            animation-delay: 0s; }
+            animation-delay: 0s;
+        }
+
         .sk-cube-grid .sk-cube8 {
             -webkit-animation-delay: 0.1s;
-            animation-delay: 0.1s; }
+            animation-delay: 0.1s;
+        }
+
         .sk-cube-grid .sk-cube9 {
             -webkit-animation-delay: 0.2s;
-            animation-delay: 0.2s; }
+            animation-delay: 0.2s;
+        }
 
         @-webkit-keyframes sk-cubeGridScaleDelay {
             0%, 70%, 100% {
                 -webkit-transform: scale3D(1, 1, 1);
                 transform: scale3D(1, 1, 1);
-            } 35% {
-                  -webkit-transform: scale3D(0, 0, 1);
-                  transform: scale3D(0, 0, 1);
-              }
+            }
+            35% {
+                -webkit-transform: scale3D(0, 0, 1);
+                transform: scale3D(0, 0, 1);
+            }
         }
 
         @keyframes sk-cubeGridScaleDelay {
             0%, 70%, 100% {
                 -webkit-transform: scale3D(1, 1, 1);
                 transform: scale3D(1, 1, 1);
-            } 35% {
-                  -webkit-transform: scale3D(0, 0, 1);
-                  transform: scale3D(0, 0, 1);
-              }
+            }
+            35% {
+                -webkit-transform: scale3D(0, 0, 1);
+                transform: scale3D(0, 0, 1);
+            }
         }
     </style>
 
@@ -259,7 +281,8 @@ $semesters = $query->fetchAll();
         <!-- delete confirmation -->
         <div id="deleteGroupModal" style="display:none">
             <p>
-                <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>The group will be deleted. Are you sure?
+                <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>The group will
+                be deleted. Are you sure?
             </p>
         </div>
 
@@ -383,7 +406,8 @@ $semesters = $query->fetchAll();
                             <td>Maximum Bandwidth:</td>
                             <td>
                                 <div class="form-group has-feedback">
-                                    <input id="groupBandwidth" name="groupBandwidth" class="form-control" placeholder="Enter group file bandwidth (MB)"> <span class="help-block"></span>
+                                    <input id="groupBandwidth" name="groupBandwidth" class="form-control" placeholder="Enter group file bandwidth (MB)">
+                                    <span class="help-block"></span>
                                 </div>
                             </td>
                         </tr>
@@ -392,25 +416,25 @@ $semesters = $query->fetchAll();
                             <td>
 
                                 <div class="form-group">
-                                <select class="form-control" id="sectionSelect" name="sectionSelect">
-                                    <option value="all">All sections</option>
-                                    <?php
-                                    $pdo = Registry::getConnection();
-                                    $query = $pdo->prepare("SELECT DISTINCT sectionName FROM StudentSemester");
-                                    $query->execute();
-                                    while ($sec = $query->fetch())
-                                    {
-
-
-                                        $sName = $sec['sectionName'];
-                                        ?>
-                                        <option value="<?php echo $sName; ?>"><?php echo $sName; ?></option>
+                                    <select class="form-control" id="sectionSelect" name="sectionSelect">
+                                        <option value="all">All sections</option>
                                         <?php
-                                    }
-                                    ?>
+                                        $pdo = Registry::getConnection();
+                                        $query = $pdo->prepare("SELECT DISTINCT sectionName FROM StudentSemester");
+                                        $query->execute();
+                                        while ($sec = $query->fetch())
+                                        {
 
-                                </select>
-                                    </div>
+
+                                            $sName = $sec['sectionName'];
+                                            ?>
+                                            <option value="<?php echo $sName; ?>"><?php echo $sName; ?></option>
+                                            <?php
+                                        }
+                                        ?>
+
+                                    </select>
+                                </div>
 
 
                             </td>
@@ -475,11 +499,16 @@ $semesters = $query->fetchAll();
         <div id="editGroupModal" style="display: none;">
 
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#editGroupGeneral" data-toggle="tab">General <span class="glyphicon glyphicon-star"></span></a></li>
-                <li><a href="#editGroupMembers" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a></li>
-                <li><a href="#editGroupDeliverables" data-toggle="tab">Deliverables <span class="glyphicon glyphicon-info-sign"></span></a></li>
-                <li><a href="#editGroupFiles" data-toggle="tab">Files <span class="glyphicon glyphicon-th-list"></span></a></li>
-                <li><a href="#editGroupStats" data-toggle="tab">Statistics <span class="glyphicon glyphicon-stats"></span></a></li>
+                <li class="active"><a href="#editGroupGeneral" data-toggle="tab">General
+                        <span class="glyphicon glyphicon-star"></span></a></li>
+                <li><a href="#editGroupMembers" data-toggle="tab">Members <span class="glyphicon glyphicon-user"></span></a>
+                </li>
+                <li><a href="#editGroupDeliverables" data-toggle="tab">Deliverables
+                        <span class="glyphicon glyphicon-info-sign"></span></a></li>
+                <li><a href="#editGroupFiles" data-toggle="tab">Files <span class="glyphicon glyphicon-th-list"></span></a>
+                </li>
+                <li><a href="#editGroupStats" data-toggle="tab">Statistics
+                        <span class="glyphicon glyphicon-stats"></span></a></li>
             </ul>
             <div class="tab-content">
 
@@ -649,28 +678,16 @@ $semesters = $query->fetchAll();
                     <h4>Files</h4>
 
 
-
-
-
-
-
-
-
                     <div class="panel-group" id="accordion">
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#allFilesCollapse">All Files</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#allFilesCollapse">All
+                                        Files</a>
                                 </h4>
                             </div>
                             <div id="allFilesCollapse" class="panel-collapse collapse in">
                                 <div class="panel-body">
-
-
-
-
-
-
 
 
                                     <table width="100%" border="0" class="table table-bordered table-hover" id="groupFiles">
@@ -692,19 +709,14 @@ $semesters = $query->fetchAll();
                                     </table>
 
 
-
-
-
-
-
-
                                 </div>
                             </div>
                         </div>
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#deletedFilesCollapse">Deleted Files</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#deletedFilesCollapse">Deleted
+                                        Files</a>
                                 </h4>
                             </div>
                             <div id="deletedFilesCollapse" class="panel-collapse collapse">
@@ -731,14 +743,14 @@ $semesters = $query->fetchAll();
                                     </table>
 
 
-
                                 </div>
                             </div>
                         </div>
                         <div class="panel panel-default">
                             <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#pDeletedFiles">Permanently Deleted Files</a>
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#pDeletedFiles">Permanently
+                                        Deleted Files</a>
                                 </h4>
                             </div>
                             <div id="pDeletedFiles" class="panel-collapse collapse">
@@ -768,13 +780,6 @@ $semesters = $query->fetchAll();
                     </div>
 
 
-
-
-
-
-
-
-
                 </div>
 
                 <div class="tab-pan fade" id="editGroupStats">
@@ -783,7 +788,7 @@ $semesters = $query->fetchAll();
                     <button type="button" id="retrieveStats" class="btn btn-primary btn-lg btn-block">Retrieve</button>
                     <br>
 
-                    <p id="loaderStats" class="text-center" >
+                    <p id="loaderStats" class="text-center">
                     <div class="sk-cube-grid" style="display: none;">
                         <div class="sk-cube sk-cube1"></div>
                         <div class="sk-cube sk-cube2"></div>
@@ -821,8 +826,6 @@ $semesters = $query->fetchAll();
                 <span id="deleteDeliverableConfirmation"></span>
             </p>
         </div>
-
-
 
 
         <!-- Delete Group Deliverable Ajax Response -->
@@ -935,7 +938,7 @@ $semesters = $query->fetchAll();
                     show : "fade",
                     width : 800,
                     height : 700,
-                    hide: 'fade',
+                    hide : 'fade',
                     resizable : false,
                     buttons : {
                         "Create" : function ()
@@ -994,7 +997,7 @@ $semesters = $query->fetchAll();
                     modal : true,
                     title : "Delete " + gName + "?",
                     show : "fade",
-                    hide: 'fade',
+                    hide : 'fade',
                     "buttons" : {
                         "Delete Group" : function ()
                         {
@@ -1129,15 +1132,14 @@ $semesters = $query->fetchAll();
                     semesterSelect : {
                         required : true
                     },
-                    sectionSelect :
-                    {
-                        required: false
+                    sectionSelect : {
+                        required : false
                     },
                     groupBandwidth : {
                         required : true,
                         number : true,
                         min : 1,
-                        max : <?php echo CoreConfig::settings()['maxGroupQuota'] ; ?>  //TODO These values should be given through some PHP setting
+                        max : <?php echo CoreConfig::settings()['maxGroupQuota']; ?>  //TODO These values should be given through some PHP setting
                     }
                 },
                 messages : {
@@ -1163,12 +1165,12 @@ $semesters = $query->fetchAll();
                     if (added.length == 0)
                     {
                         $('#studentsRequired').html("<p class='text-danger text-center'>Please choose from the list of students you've selected.<p>")
-                            .dialog({
-                                modal : true,
-                                resizable: false,
-                                draggable: false,
-                                title : 'Error'
-                            });
+                                              .dialog({
+                                                  modal : true,
+                                                  resizable : false,
+                                                  draggable : false,
+                                                  title : 'Error'
+                                              });
                         return false;
                     }
                     // send data to server to check for credentials
@@ -1178,7 +1180,7 @@ $semesters = $query->fetchAll();
                         width : 300,
                         height : 200,
                         show : 'fade',
-                        hide: 'fade',
+                        hide : 'fade',
                         draggable : false,
                         resizable : false
                     });
@@ -1396,7 +1398,7 @@ $semesters = $query->fetchAll();
                         modal : true,
                         width : 300,
                         show : 'fade',
-                        hide: 'fade',
+                        hide : 'fade',
                         height : 200,
                         draggable : false,
                         resizable : false
@@ -1428,7 +1430,7 @@ $semesters = $query->fetchAll();
                     modal : true,
                     resizable : false,
                     show : 'fade',
-                    hide: 'fade',
+                    hide : 'fade',
                     title : 'New Deliverable',
                     buttons : {
                         "Create" : function ()
@@ -1592,7 +1594,7 @@ $semesters = $query->fetchAll();
                         {
                             'render' : function (data, type, row)
                             {
-                                return '<button title="Download '+ row.filename +'" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
+                                return '<button title="Download ' + row.filename + '" id="downloadButton" name="downloadButton" type="button" class="btn btn-outline btn-primary btn-square btn-sm"> <i class="fa fa-download"></i></button>';
 
                             },
                             className : "dt-center"
@@ -1682,7 +1684,6 @@ $semesters = $query->fetchAll();
                 // INITIALIZE GROUP DELIVERABLES
 
 
-
                 /* open the modal window */
                 $('#editGroupModal').dialog({
                     width : 900,
@@ -1690,7 +1691,7 @@ $semesters = $query->fetchAll();
                     modal : true,
                     title : "Group " + data.gName,
                     show : 'fade',
-                    hide: 'fade',
+                    hide : 'fade',
                     resizable : false,
                     close : function ()
                     {
@@ -1712,9 +1713,6 @@ $semesters = $query->fetchAll();
                         });
                     }
                 });
-
-
-
 
 
                 /* group deliverables table */
@@ -1821,12 +1819,10 @@ $semesters = $query->fetchAll();
                         }
 
                     ],
-                    "ajax" :
-                    {
+                    "ajax" : {
                         "url" : "ajax/deletedFilesList.php",
                         "type" : "POST",
-                        "data" :
-                        {
+                        "data" : {
                             "gid" : gid
                         }
                     },
@@ -1843,7 +1839,6 @@ $semesters = $query->fetchAll();
                     ],
                     'order' : [[2, "asc"]]
                 });
-
 
 
                 /* permanently deleted files table */
@@ -1867,12 +1862,10 @@ $semesters = $query->fetchAll();
                         }
 
                     ],
-                    "ajax" :
-                    {
+                    "ajax" : {
                         "url" : "ajax/pdeletedFilesList.php",
                         "type" : "POST",
-                        "data" :
-                        {
+                        "data" : {
                             "gid" : gid
                         }
                     },
@@ -1892,7 +1885,6 @@ $semesters = $query->fetchAll();
 
 
             });
-
 
 
             $("input#studentNameEdit").autocomplete({
@@ -1993,7 +1985,7 @@ $semesters = $query->fetchAll();
                 $('#deleteMemberModal').dialog({
                     modal : true,
                     show : 'fade',
-                    hide: 'fade',
+                    hide : 'fade',
                     title : 'Delete ' + data.name,
                     buttons : {
                         "Delete" : function ()
@@ -2069,7 +2061,7 @@ $semesters = $query->fetchAll();
                             $('#editGroupGeneralAjax').fadeIn().html(data);
 
                         },
-                        error : function()
+                        error : function ()
                         {
                             $button.text(buttonText).prop("disabled", false);
                         }
@@ -2097,12 +2089,12 @@ $semesters = $query->fetchAll();
                 if (added.length == 0)
                 {
                     $('#noSelectedDeliverables').html("<p class='text-danger text-center'>Please choose from the list of deliverables you've selected.<p>")
-                        .dialog({
-                            modal : true,
-                            resizable: false,
-                            draggable: false,
-                            title : 'Error'
-                        });
+                                                .dialog({
+                                                    modal : true,
+                                                    resizable : false,
+                                                    draggable : false,
+                                                    title : 'Error'
+                                                });
                     return false;
                 }
 
@@ -2149,12 +2141,12 @@ $semesters = $query->fetchAll();
                 if (added.length == 0)
                 {
                     $('#studentsRequired').html("<p class='text-danger text-center'>Please choose from the list of students you've selected.<p>")
-                        .dialog({
-                            modal : true,
-                            resizable: false,
-                            draggable: false,
-                            title : 'Error'
-                        });
+                                          .dialog({
+                                              modal : true,
+                                              resizable : false,
+                                              draggable : false,
+                                              title : 'Error'
+                                          });
                     return false;
 
                 }
@@ -2229,8 +2221,8 @@ $semesters = $query->fetchAll();
                                 modal : true,
                                 width : 400,
                                 height : 200,
-                                show: 'fade',
-                                hide: 'fade',
+                                show : 'fade',
+                                hide : 'fade',
                                 resizable : false,
                                 draggable : false,
                                 title : 'Delete Deliverable'
@@ -2263,7 +2255,6 @@ $semesters = $query->fetchAll();
             });
 
 
-
             /* when clicking on a file */
             $(document).on('click', '#downloadButton', function (e)
             {
@@ -2276,25 +2267,26 @@ $semesters = $query->fetchAll();
 
 
             /* when clicking on retrieve stats button */
-            $(document).on('click', '#retrieveStats',function(){
+            $(document).on('click', '#retrieveStats', function ()
+            {
                 $button = $(this);
                 var text = $button.text();
                 $('#groupCharts').html('');
                 $button.text("Loading data...").prop("disabled", true);
                 $('.sk-cube-grid').fadeIn();
                 $.ajax({
-                    url: 'ajax/gStats.php',
-                    cache: false,
+                    url : 'ajax/gStats.php',
+                    cache : false,
                     data : {
                         gid : $('#editGroupGid').val()
                     },
-                    success: function(data)
+                    success : function (data)
                     {
                         $('#groupCharts').html(data);
                         $button.text(text).prop("disabled", false);
                         $('.sk-cube-grid').hide();
                     },
-                    error: function()
+                    error : function ()
                     {
                         $button.text(text).prop("disabled", false);
                     }
@@ -2302,7 +2294,8 @@ $semesters = $query->fetchAll();
             });
 
 
-            $(document).on('click', '#deleteGeneralDeliverable', function(){
+            $(document).on('click', '#deleteGeneralDeliverable', function ()
+            {
                 var data = deliverablesTable.row($(this).closest('tr')).data();
                 console.log(data);
 
@@ -2318,7 +2311,7 @@ $semesters = $query->fetchAll();
                     width : 400,
                     height : 250,
                     show : 'fade',
-                    hide: 'fade',
+                    hide : 'fade',
                     resizable : false,
                     draggable : false,
                     title : 'Delete Deliverable',
@@ -2330,8 +2323,8 @@ $semesters = $query->fetchAll();
                                 modal : true,
                                 width : 400,
                                 height : 200,
-                                show: 'fade',
-                                hide: 'fade',
+                                show : 'fade',
+                                hide : 'fade',
                                 resizable : false,
                                 draggable : false,
                                 title : 'Delete Deliverable'

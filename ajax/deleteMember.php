@@ -2,7 +2,7 @@
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
-if(!WebUser::getUser()->isProf())
+if (!WebUser::getUser()->isProf())
 {
     exit("<p class='text-danger text-center'>You do not have enough privileges to delete a member from a group</p>");
 }
@@ -10,7 +10,7 @@ if(!WebUser::getUser()->isProf())
 
 $DeleteMember = new DeleteMember($_REQUEST['uid'], $_REQUEST['gid']);
 
-if($DeleteMember->delete())
+if ($DeleteMember->delete())
 {
     ?>
 
@@ -19,13 +19,13 @@ if($DeleteMember->delete())
     </div>
 
     <script>
-        $(function(){
+        $(function ()
+        {
             groupMembers.ajax.reload();
 
             $('#deleteUserAjax').dialog({
-                buttons :
-                {
-                    "Close" : function()
+                buttons : {
+                    "Close" : function ()
                     {
                         $(this).dialog("close");
                     }
@@ -36,9 +36,10 @@ if($DeleteMember->delete())
 
         // update table
         var gid = '<?php echo $_REQUEST['gid']; ?>';
-        groups.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+        groups.rows().every(function (rowIdx, tableLoop, rowLoop)
+        {
             var data = this.data();
-            if(data.gid == gid)
+            if (data.gid == gid)
             {
 
                 data.totalMembers--;
@@ -66,5 +67,5 @@ else
         echo $msg;
         ?>
     </div>
-<?php
+    <?php
 }

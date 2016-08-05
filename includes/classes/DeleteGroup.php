@@ -29,15 +29,15 @@ class DeleteGroup
             $query->execute();
 
 
-
             return $pdo->commit();
         }
-        catch(Exception $e)
+        catch (Exception $e)
         {
             echo $e->getMessage();
             $this->_errors[] = $e->getCode();
             $pdo->rollBack();
         }
+
         return false;
     }
 

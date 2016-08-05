@@ -24,7 +24,7 @@ if (WebUser::getUser()->isStudent())
 
     <title><?php echo CoreConfig::settings()['appname']; ?></title>
 
-    <link rel="shortcut icon" type="image/png" href="images/favicon.png"/>
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
 
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -234,8 +234,8 @@ if (WebUser::getUser()->isStudent())
             <p>
                 <span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>
 
-                Archiving takes some time when there are a lot of files. Once this process executes, it cannot be stopped until it is fully executed.
-                Do you want to proceed?
+                Archiving takes some time when there are a lot of files. Once this process executes, it cannot be
+                stopped until it is fully executed. Do you want to proceed?
             </p>
 
         </div>
@@ -343,7 +343,7 @@ if (WebUser::getUser()->isStudent())
                     {"data" : "sid"},
                     {"data" : "startDate"},
                     {"data" : "endDate"}
-                    ]
+                ]
             });
 
 
@@ -376,8 +376,6 @@ if (WebUser::getUser()->isStudent())
                     targets : [6]
                 }],
             });
-
-
 
 
             $(document).on('click', '#groupArchive', function ()
@@ -419,7 +417,7 @@ if (WebUser::getUser()->isStudent())
                                     $('#archiveAjaxResponse').html(data);
 
                                 },
-                                error: function()
+                                error : function ()
                                 {
                                     clearTimeout(stimer);
                                 }
@@ -462,7 +460,7 @@ if (WebUser::getUser()->isStudent())
                 timeDiff = Math.floor(timeDiff / 60);
 
                 // get hours
-                var hours =  Math.round(timeDiff % 24) ;
+                var hours = Math.round(timeDiff % 24);
 
                 // remove hours from the date
                 timeDiff = Math.floor(timeDiff / 24);
@@ -471,13 +469,18 @@ if (WebUser::getUser()->isStudent())
                 var days = timeDiff;
 
 
-               $('#archiveTimer').html('<p class="' + (parseInt(minutes) <= 0 ?  'text-success' : 'text-danger' )  + '">Elapsed time: ' + hours + " hours " + minutes + " minutes " + seconds + " seconds" + "</p>");
+                $('#archiveTimer').html('<p class="' + (parseInt(minutes) <= 0 ? 'text-success' : 'text-danger' ) + '">Elapsed time: ' + hours + " hours " + minutes + " minutes " + seconds + " seconds" + "</p>");
 
 
                 setTimeout(stimer, 1000);
             }
-            function padToFour(number) {
-                if (number<=9999) { number = ("0"+number).slice(-2); }
+
+            function padToFour(number)
+            {
+                if (number <= 9999)
+                {
+                    number = ("0" + number).slice(-2);
+                }
                 return number;
             }
         })

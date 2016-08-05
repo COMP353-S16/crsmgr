@@ -12,7 +12,7 @@ class GroupFiles
     private $_gid;
 
     private $_files;
-    
+
     private $_deletedFiles;
 
     public function __construct($gid)
@@ -44,16 +44,17 @@ class GroupFiles
 
     public function getFileById($fid)
     {
-        foreach($this->_files as $i => $file)
+        foreach ($this->_files as $i => $file)
         {
 
-            if($fid == $file['fid'])
+            if ($fid == $file['fid'])
             {
 
                 return new Files($file);
 
             }
         }
+
         return null;
 
 
@@ -62,15 +63,17 @@ class GroupFiles
 
     /**
      * @param $fid file id
+     *
      * @return DeletedFiles returns a DeletedFiles object based on fid
      */
     public function getDeletedFileById($fid)
     {
-        foreach($this->_deletedFiles as $i => $fileData)
+        foreach ($this->_deletedFiles as $i => $fileData)
         {
-            if($fileData['fid'] == $fid)
+            if ($fileData['fid'] == $fid)
             {
                 $DeletedFiles = new DeletedFiles($fileData);
+
                 return $DeletedFiles;
             }
         }
@@ -80,53 +83,60 @@ class GroupFiles
     public function getFiles()
     {
         $files = array();
-        foreach($this->_files as $i => $file)
+        foreach ($this->_files as $i => $file)
         {
             $files[] = new Files($file);
         }
+
         return $files;
     }
 
     public function getFileIds()
     {
         $fids = array();
-        foreach($this->_files as $i => $file)
+        foreach ($this->_files as $i => $file)
         {
 
 
             $fids[] = $file['fid'];
         }
+
         return $fids;
     }
 
     public function getDeletedFileIds()
     {
         $fids = array();
-        foreach($this->_deletedFiles as $i => $file)
+        foreach ($this->_deletedFiles as $i => $file)
         {
 
             $fids[] = $file['fid'];
         }
+
         return $fids;
     }
 
     public function getDeletedFiles()
     {
         $files = array();
-        foreach($this->_deletedFiles as $i => $file)
+        foreach ($this->_deletedFiles as $i => $file)
         {
             $files[] = new DeletedFiles($file);
         }
+
         return $files;
     }
 
     public function isDeleted($fid)
     {
-        foreach($this->_deletedFiles as $i => $fileData)
+        foreach ($this->_deletedFiles as $i => $fileData)
         {
-            if($fileData['fid'] == $fid)
+            if ($fileData['fid'] == $fid)
+            {
                 return true;
+            }
         }
+
         return false;
     }
 
@@ -146,14 +156,16 @@ class GroupFiles
     public function isPermanentDeleted($fid)
     {
 
-        foreach($this->_deletedFiles as $i => $fileData)
+        foreach ($this->_deletedFiles as $i => $fileData)
         {
-            if($fileData['fid'] == $fid)
+            if ($fileData['fid'] == $fid)
             {
                 $DeletedFiles = new DeletedFiles($fileData);
+
                 return $DeletedFiles->isExpired();
             }
         }
+
         return false;
     }
 
@@ -169,13 +181,15 @@ class GroupFiles
     /**
      * @return int returns the number of uploaded files, including versions.
      */
-    public function getNbOfUploadedFiles() {
+    public function getNbOfUploadedFiles()
+    {
         $total = 0;
         $files = $this->getFiles();
         /**
          * @var $Files Files
          */
-        foreach ($files as $Files) {
+        foreach ($files as $Files)
+        {
             $total += $Files->getNbOfVersions();
         }
 
@@ -193,9 +207,9 @@ class GroupFiles
         /**
          * @var $Files Files
          */
-        foreach($files as $Files)
+        foreach ($files as $Files)
         {
-            if(!$this->isPermanentDeleted($Files->getId()))
+            if (!$this->isPermanentDeleted($Files->getId()))
             {
                 $b += $Files->getGlobalSize();
             }

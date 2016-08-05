@@ -15,7 +15,8 @@ class StudentInfo extends Student
         parent::__construct($uid);
     }
 
-    public function getNbOfFilesUploaded() {
+    public function getNbOfFilesUploaded()
+    {
         $pdo = Registry::getConnection();
         $query = $pdo->prepare("SELECT COUNT(*) AS TOTAL FROM Versions WHERE uploaderId=:uid");
         $query->bindValue(":uid", $this->_uid);
@@ -35,7 +36,7 @@ class StudentInfo extends Student
 
         return $data["TOTAL"];
     }
-    
+
     public function getLastUploadedFile()
     {
         $pdo = Registry::getConnection();
@@ -44,17 +45,19 @@ class StudentInfo extends Student
         $query->bindValue(":uid", $this->_uid);
         $query->execute();
 
-        if($query->rowCount()<=0)
+        if ($query->rowCount() <= 0)
+        {
             return "";
+        }
 
         $data = $query->fetch();
 
-        
+
         $File = new Files($data);
         $uploadDate = $File->getLatestVersion()->getUploadDate();
         $fileName = $File->getFileName();
         $fileExtension = $File->getFileExtension();
 
-        return $fileName.'.'.$fileExtension.' ('.$uploadDate.')';
+        return $fileName . '.' . $fileExtension . ' (' . $uploadDate . ')';
     }
 }

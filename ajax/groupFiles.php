@@ -8,34 +8,32 @@ $GroupFiles = new GroupFiles($gid);
 $files = $GroupFiles->getFiles();
 
 
-
-$info =array("data" => array());
+$info = array("data" => array());
 /**
  * @var $Files Files
  */
-foreach($files as $i => $Files)
+foreach ($files as $i => $Files)
 {
 
     $Deliverable = new Deliverable($Files->getDeliverableId());
 
 
-    if(!$GroupFiles->isDeleted($Files->getId()))
+    if (!$GroupFiles->isDeleted($Files->getId()))
     {
         $info['data'][] = array(
-            "fid" => $Files->getId(),
-            "gid" => $Files->getGroupId(),
-            "vid" => $Files->getLatestVersionId(),
-            "filename" => $Files->getFileName() . '.' . $Files->getFileExtension(),
-            "ldate" => $Files->getLatestVersion()->getUploadDate(),
+            "fid"         => $Files->getId(),
+            "gid"         => $Files->getGroupId(),
+            "vid"         => $Files->getLatestVersionId(),
+            "filename"    => $Files->getFileName() . '.' . $Files->getFileExtension(),
+            "ldate"       => $Files->getLatestVersion()->getUploadDate(),
             "deliverable" => $Deliverable->getDName(),
-            "revisions" => $Files->getNumberOfRevisions(),
-            "size" => round($Files->getSize(),2) . " MB",
-            "isDeleted" => $GroupFiles->isDeleted($Files->getId()),
-            "url" => $Files->getLatestVersion()->getUrl()
+            "revisions"   => $Files->getNumberOfRevisions(),
+            "size"        => round($Files->getSize(), 2) . " MB",
+            "isDeleted"   => $GroupFiles->isDeleted($Files->getId()),
+            "url"         => $Files->getLatestVersion()->getUrl()
 
         );
     }
-
 
 
 }

@@ -29,6 +29,7 @@ class DownloadFile
         $query = $pdo->prepare("INSERT INTO Downloads (vid, uid, downloadDate) VALUES (:vid, :uid, NOW())");
         $query->bindValue(":vid", $this->_Version->getVersionId());
         $query->bindValue(":uid", $this->_User->getUid());
+
         return $query->execute();
     }
 }
