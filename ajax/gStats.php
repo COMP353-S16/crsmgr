@@ -28,8 +28,15 @@ $usedBandwith = $GroupStats->getUsedBandwidth();
 $allowedBandwidth = $Group->getMaxUploadSize();
 
 
+if($allowedBandwidth > 0 )
+{
+    $used = ($usedBandwith / $allowedBandwidth) * 100;
+}
+else
+{
+    $used = 0;
+}
 
-$used = ($usedBandwith / $allowedBandwidth) * 100;
 $free = 100 - $used;
 
 ?>
