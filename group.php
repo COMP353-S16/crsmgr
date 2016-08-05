@@ -124,7 +124,7 @@ else
             <div class="row">
                 <div class="col-lg-12">
                     <h1 class="page-header">Group
-                        <strong><?php echo $Group->getGName() ?><?php echo($isGroupClosed ? "<i>[CLOSED]</i>" : ""); ?></strong>
+                        <strong><?php echo $Group->getGName() ?>  <?php echo($isGroupClosed ? "[CLOSED]" : ""); ?></strong>
                     </h1>
                 </div>
                 <!-- /.col-lg-12 -->
@@ -148,7 +148,7 @@ else
                         </li>
                         <li><a href="#members" data-toggle="tab">Members
                                 <span class="glyphicon glyphicon-user"></span></a></li>
-                        <li><a href="#deliverables" data-toggle="tab">Deliverables
+                        <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>"><a href="#deliverables" data-toggle="tab">Deliverables
                                 <span class="glyphicon glyphicon-info-sign"></span></a></li>
                         <li style="<?php echo($isGroupClosed ? "display:none;" : ""); ?>">
                             <a href="#files" data-toggle="tab">All Files
@@ -275,6 +275,8 @@ else
                                     <th>File Name</th>
                                     <th>Revisions</th>
                                     <th>Size</th>
+                                    <th>Deleted by</th>
+                                    <th>Deleted on</th>
                                     <th>Expires</th>
 
                                 </tr>
@@ -360,7 +362,7 @@ else
                                             <span class="caret"></span>
                                         </button>
                                         <ul class="dropdown-menu pull-right" role="menu">
-                                            <li><a href="#" id="refreshStats">Refresh data <i class="fa fa-refresh fa-fw"></i></a></li>
+                                            <li><a href="#" id="refreshStats"><i class="fa fa-refresh fa-fw"></i> Refresh data</a></li>
                                         </ul>
                                     </div>
                                 </div>
@@ -452,6 +454,8 @@ else
 </div>
 <!-- /#wrapper -->
 
+
+
 <!-- jQuery -->
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 
@@ -467,7 +471,7 @@ else
 <script src="dist/js/sb-admin-2.js"></script>
 
 <!-- File Uploader -->
-<script src="bower_components/fileuploader/liteuploader.js"></script>
+<script src="bower_components/fileuploader/liteuploader.min.js"></script>
 
 <!-- DataTables JavaScript -->
 <script src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
@@ -598,7 +602,7 @@ else
                               .text(0 + '%');
 
             $('#progress').html(0 + "%");
-            $('#uploadResult').html("Upload canceled.");
+            //$('#uploadResult').html("Upload canceled.");
 
         }).on("lu:success", function (e, response)
         {
@@ -643,6 +647,12 @@ else
             output += '</div>';
             $('#uploadResult').html(output);
             $('#fileUpload').prop("disabled", false);
+
+            // reset browse button
+            var e = $('#uploadForm');
+            e.wrap('<form>').closest('form').get(0).reset();
+            e.unwrap();
+
         }).change(function ()
         {
             $(this).data("liteUploader").startUpload();
@@ -922,6 +932,8 @@ else
                 {"data" : "filename"},
                 {"data" : "revisions"},
                 {"data" : "size"},
+                {"data" : "deleterName"},
+                {"data" : "dateDeleted"},
                 {"data" : "expires"}
             ],
             'order' : [[2, "asc"]],
@@ -1082,7 +1094,8 @@ else
 
             e.preventDefault();
 
-            window.location.href = "view.php?vid=" + fileData.vid;
+
+            window.location.href = "view.php?vid=" + fileData.vid + "&gid=" + fileData.gid;
             var dls = parseInt($('#_totalDownloadedFiles').text());
             $('#_totalDownloadedFiles').text(++dls);
 
@@ -1150,6 +1163,10 @@ else
         /*refresh stats */
         $(document).on('click','#refreshStats',loadFileSummary);
 
+
+
+        loadFileSummary();
+
     });
 
 
@@ -1158,7 +1175,7 @@ else
         $button = $('#refreshDeliverablesList');
         var buttonText = $button.text();
         $button.prop("disabled",true).text("Loading...");
-
+        $('#fileUpload').prop("disabled", true);
         $('#noAvailableDeliverables').hide();
         $.ajax({
             url : "ajax/assignedDeliverablesList.php",
@@ -1182,6 +1199,7 @@ else
                 {
                     $('#noAvailableDeliverables').hide();
                     $('#groupDeliverablesListSubmission').show();
+                    $('#fileUpload').prop("disabled", false);
                     $.each(data, function (index, value)
                     {
                         $('#deliverableSelect')
@@ -1200,6 +1218,7 @@ else
             {
                 $('#refreshStatus').html("<p class='text-danger'>An error occured: could not load deliverables list.</p>");
                 $button.prop("disabled",false).text(buttonText);
+
 
             }
         });
@@ -1238,7 +1257,7 @@ else
         });
     }
 
-    loadFileSummary();
+
 
 
 </script>

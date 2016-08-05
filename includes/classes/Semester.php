@@ -15,23 +15,14 @@ class Semester
 
     private $_endDate;
 
-    public function __construct($sid)
+    private $_data;
+
+    public function __construct(array $data)
     {
-        $this->_sid = $sid;
-        $this->extract();
-    }
-
-
-
-    private function extract()
-    {
-        $pdo = Registry::getConnection();
-        $query = $pdo->prepare("SELECT * FROM Semester WHERE sid=:sid LIMIT 1");
-        $query->bindValue(":sid", $this->_sid);
-        $query->execute();
-        $data = $query->fetch();
+        $this->_data = $data;
         $this->_startDate = $data['startDate'];
         $this->_endDate = $data['endDate'];
+        $this->_sid = $data['sid'];
     }
 
     public function getId()

@@ -198,6 +198,18 @@ if (WebUser::getUser()->isStudent())
                                         </div>
                                         <div class="panel-body">
 
+                                            <table width="100%" class="table table-bordered" id="semestersTable">
+                                                <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>Start Date</th>
+                                                    <th>End Date</th>
+                                                </tr>
+
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+
 
                                         </div>
                                     </div>
@@ -319,6 +331,22 @@ if (WebUser::getUser()->isStudent())
             });
 
 
+            semestersTable = $('#semestersTable').DataTable({
+                "processing" : true,
+                "serverSide" : false,
+                "displayLength" : 25,
+                "ajax" : {
+                    "url" : "ajax/semestersList.php",
+                    "type" : "POST"
+                },
+                "columns" : [
+                    {"data" : "sid"},
+                    {"data" : "startDate"},
+                    {"data" : "endDate"}
+                    ]
+            });
+
+
             /* groups table */
             groups = $('#groupsTable').DataTable({
                 "processing" : true,
@@ -348,6 +376,9 @@ if (WebUser::getUser()->isStudent())
                     targets : [6]
                 }],
             });
+
+
+
 
             $(document).on('click', '#groupArchive', function ()
             {

@@ -160,7 +160,7 @@ class Group
      */
     public function getGroupStats()
     {
-        return new GroupStats(this);
+        return new GroupStats($this);
     }
 
     /**
@@ -175,7 +175,9 @@ class Group
 
     private function extractSemester()
     {
-        $this->_Semester = new Semester($this->getSid());
+        $Semesters = new Semesters();
+
+        $this->_Semester = $Semesters->getSemesterById($this->getSid());
     }
 
     /**

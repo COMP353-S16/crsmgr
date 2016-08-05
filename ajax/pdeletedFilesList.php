@@ -21,7 +21,7 @@ foreach($files as $i => $Files)
      * @var $DeletedFiles DeletedFiles
      */
     $DeletedFiles = $GroupFiles->getDeletedFileById($fid);
-    if($GroupFiles->isDeleted($fid) && !$DeletedFiles->isExpired())
+    if($GroupFiles->isDeleted($fid) && $DeletedFiles->isExpired())
     {
         $Deliverable = new Deliverable($Files->getDeliverableId());
 

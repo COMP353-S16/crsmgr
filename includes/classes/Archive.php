@@ -87,7 +87,7 @@ class Archive
              */
             foreach($versions as $Version)
             {
-                $fileName = $Version->getSavedName() . '.' . $Files->getFileExtension();
+                $fileName = $Files->getFileName() . '.' . $Files->getFileExtension();
                 $fileData = null;
                 // here, we check if the file was upload directly into DB or in the File system. In any case, it grabs all of the file whether or not in db or in fs.
                 if($Version->getData() == null)

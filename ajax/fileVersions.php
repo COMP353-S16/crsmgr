@@ -28,6 +28,7 @@ foreach($versions as $Version) {
     $User = new User($Version->getUploaderId());
     $info['data'][] = array(
         "vid" => $Version->getVersionId(),
+        "gid" => $Files->getGroupId(),
         "user" => $User->getFullName(),
         "date" => $Version->getUploadDate(),
         "filename" => $Version->getSavedName(),

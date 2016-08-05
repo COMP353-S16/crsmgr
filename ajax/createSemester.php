@@ -24,6 +24,11 @@ if($CreateSemester->create())
     <div id="responseMessage" class="alert alert-success">
         You have successfully created Semester <strong><?php echo $CreateSemester->getSemesterId(); ?></strong>.
     </div>
+    <script>
+        $(function(){
+            semestersTable.ajax.reload();
+        })
+    </script>
     <?php
 }
 else

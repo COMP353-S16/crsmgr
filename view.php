@@ -3,9 +3,18 @@ session_start();
 if(isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION))
 {
 
-    // TODO Make sure that this person is allowed to view this file!!!
-
     require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
+
+
+    if(WebUser::isLoggedIn() && WebUser::getUser()->isStudent() && isset($_REQUEST['gid']))
+    {
+        $Group = new Group($_REQUEST['gid']);
+        if(!$Group->isInGroup(WebUser::getUser()->getUid()))
+        {
+            exit("You cannot view this file");
+        }
+    }
+
 
     $pdo = Registry::getConnection();
     $query = $pdo->prepare("SELECT f.* FROM Versions v, Files f WHERE v.vid=:vid AND f.fid=v.fid LIMIT 1");

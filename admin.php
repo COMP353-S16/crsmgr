@@ -648,23 +648,131 @@ $semesters = $query->fetchAll();
                 <div class="tab-pane fade" id="editGroupFiles">
                     <h4>Files</h4>
 
-                    <table width="100%" border="0" class="table table-bordered table-hover" id="groupFiles">
-                        <thead>
 
-                        <tr>
 
-                            <th>File ID</th>
-                            <th>Deliverable Name</th>
-                            <th>File Name</th>
-                            <th>Latest Revision</th>
-                            <th>Revisions</th>
-                            <th>Size</th>
-                            <th></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+
+
+
+
+
+
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#allFilesCollapse">All Files</a>
+                                </h4>
+                            </div>
+                            <div id="allFilesCollapse" class="panel-collapse collapse in">
+                                <div class="panel-body">
+
+
+
+
+
+
+
+
+                                    <table width="100%" border="0" class="table table-bordered table-hover" id="groupFiles">
+                                        <thead>
+
+                                        <tr>
+
+                                            <th>File ID</th>
+                                            <th>Deliverable Name</th>
+                                            <th>File Name</th>
+                                            <th>Latest Revision</th>
+                                            <th>Revisions</th>
+                                            <th>Size</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+
+
+
+
+
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#deletedFilesCollapse">Deleted Files</a>
+                                </h4>
+                            </div>
+                            <div id="deletedFilesCollapse" class="panel-collapse collapse">
+                                <div class="panel-body">
+
+
+                                    <table width="100%" border="0" class="table table-bordered table-hover" id="deletedFilesTable">
+                                        <thead>
+                                        <tr>
+
+                                            <th>File ID</th>
+                                            <th>Deliverable Name</th>
+                                            <th>File Name</th>
+                                            <th>Revisions</th>
+                                            <th>Size</th>
+                                            <th>Deleted by</th>
+                                            <th>Deleted on</th>
+                                            <th>Expires</th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#pDeletedFiles">Permanently Deleted Files</a>
+                                </h4>
+                            </div>
+                            <div id="pDeletedFiles" class="panel-collapse collapse">
+                                <div class="panel-body">
+
+                                    <table width="100%" border="0" class="table table-bordered table-hover" id="pdeletedFilesTable">
+                                        <thead>
+                                        <tr>
+
+                                            <th>File ID</th>
+                                            <th>Deliverable Name</th>
+                                            <th>File Name</th>
+                                            <th>Revisions</th>
+                                            <th>Size</th>
+                                            <th>Deleted by</th>
+                                            <th>Deleted on</th>
+                                            <th>Expires</th>
+
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
 
 
                 </div>
@@ -771,6 +879,14 @@ $semesters = $query->fetchAll();
     <script>
         $(function ()
         {
+
+            _tables_ = {
+                groups : null,
+                selectedStudentsTable : null,
+                deliverablesTable : null,
+                selectedStudentsTableEditGroup : null
+            }
+
 
             /* groups table */
             groups = $('#groupstable').DataTable({
@@ -1419,46 +1535,6 @@ $semesters = $query->fetchAll();
                 $('#editGroupGid').val(data.gid);
                 $('#editGroupSid').val(data.sid);
 
-                // INITIALIZA UNASSIGNED GROUP DELIVERABLES
-                unassignedGroupDeliverables = $('#unassignedGroupDeliverables').DataTable({
-                    "processing" : true,
-                    destroy : true,
-                    "pageLength" : 10,
-                    select : {
-                        style : "os"
-                    },
-                    dom : 'Bfrtip',
-                    buttons : [
-                        {
-                            "extend" : "selectAll"
-                        },
-                        {
-                            "extend" : "selectNone"
-                        },
-                        {
-
-                            text : 'Refresh',
-                            action : function (e, dt, node, config)
-                            {
-                                dt.ajax.reload();
-                            }
-                        }
-                    ],
-                    "ajax" : {
-                        "url" : "ajax/unassignedGroupDeliverables.php",
-                        "type" : "POST",
-                        "data" : {
-                            "gid" : gid,
-                            "sid" : sid
-                        }
-                    },
-                    "columns" : [
-                        {"data" : "name"},
-                        {"data" : "datePosted"},
-                        {"data" : "dueDate"}
-                    ]
-                });
-
 
                 // INITIALIZE GROUP FILES
                 groupFiles = $('#groupFiles').DataTable({
@@ -1588,48 +1664,9 @@ $semesters = $query->fetchAll();
 
                 // INITIALIZE GROUP DELIVERABLES
 
-                groupDeliverables = $('#groupDeliverables').DataTable({
-                    "processing" : true,
-                    "pageLength" : 10,
-                    destroy : true,
-                    dom : 'Bfrtip',
-                    buttons : [
-                        {
-                            text : 'Refresh',
-                            action : function (e, dt, node, config)
-                            {
-                                dt.ajax.reload();
-                            }
-                        }
-                    ],
-                    "ajax" : {
-                        "url" : "ajax/deliverablesInfo.php",
-                        "type" : "POST",
-                        "data" : {
-                            "gid" : gid
-                        }
-                    },
-                    "columns" : [
-                        {"data" : "name"},
-                        {"data" : "datePosted"},
-                        {"data" : "dueDate"},
-                        {
-                            'render' : function (colValue, type, row)
-                            {
-                                var deleteB = '<button data-gid="' + data.gid + '" id="deleteDeliverable" title="Delete deliverable" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i></button>&nbsp';
-                                return deleteB;
-                            },
-                            className : "dt-center"
-                        }
-                    ],
-                    'order' : [[1, "asc"]],
-                    columnDefs : [{
-                        orderable : false,
-                        targets : [3]
-                    }],
-                });
 
 
+                /* open the modal window */
                 $('#editGroupModal').dialog({
                     width : 900,
                     height : 700,
@@ -1660,12 +1697,204 @@ $semesters = $query->fetchAll();
                 });
 
 
-
-
-
-
-
             });
+
+
+            /* SEPARATED FILE LOADERS FOR PERFORMANCE INCREASE
+            * It wasn't necessary to load everything when the user opens up group folder
+            * */
+            _groupTabCounters =
+            {
+                _editGroupFilesCounts : 0,
+                _editGroupDeliverables : 0
+            }
+
+            $(document).on('click', 'a[href="#editGroupFiles"]', function(){
+                if(_groupTabCounters._editGroupFilesCounts==1)
+                    return;
+                var gid = $('#editGroupGid').val();
+                var sid = $('#editGroupSid').val();
+                /* deleted files table */
+                deletedFilesTable = $('#deletedFilesTable').DataTable({
+                    processing : true,
+                    "serverSide" : false,
+                    "destroy" : true,
+                    buttons : [
+                        {
+                            "extend" : "selectAll"
+                        },
+                        {
+                            "extend" : "selectNone"
+                        },
+                        {
+                            text : 'Refresh',
+                            action : function (e, dt, node, config)
+                            {
+                                dt.ajax.reload();
+                            }
+                        }
+
+                    ],
+                    "ajax" :
+                    {
+                        "url" : "ajax/deletedFilesList.php",
+                        "type" : "POST",
+                        "data" :
+                        {
+                            "gid" : gid
+                        }
+                    },
+                    "columns" : [
+
+                        {"data" : "fid"},
+                        {"data" : "deliverable"},
+                        {"data" : "filename"},
+                        {"data" : "revisions"},
+                        {"data" : "size"},
+                        {"data" : "deleterName"},
+                        {"data" : "dateDeleted"},
+                        {"data" : "expires"}
+                    ],
+                    'order' : [[2, "asc"]]
+                });
+
+                /* permanently deleted files table */
+                pdeletedFilesTable = $('#pdeletedFilesTable').DataTable({
+                    processing : true,
+                    "serverSide" : false,
+                    "destroy" : true,
+                    buttons : [
+                        {
+                            "extend" : "selectAll"
+                        },
+                        {
+                            "extend" : "selectNone"
+                        },
+                        {
+                            text : 'Refresh',
+                            action : function (e, dt, node, config)
+                            {
+                                dt.ajax.reload();
+                            }
+                        }
+
+                    ],
+                    "ajax" :
+                    {
+                        "url" : "ajax/pdeletedFilesList.php",
+                        "type" : "POST",
+                        "data" :
+                        {
+                            "gid" : gid
+                        }
+                    },
+                    "columns" : [
+
+                        {"data" : "fid"},
+                        {"data" : "deliverable"},
+                        {"data" : "filename"},
+                        {"data" : "revisions"},
+                        {"data" : "size"},
+                        {"data" : "deleterName"},
+                        {"data" : "dateDeleted"},
+                        {"data" : "expires"}
+                    ],
+                    'order' : [[2, "asc"]]
+                });
+                _groupTabCounters._editGroupFilesCounts++;
+            });
+
+            $(document).on('click', 'a[href="#editGroupDeliverables"]', function(){
+                if(_groupTabCounters._editGroupDeliverables==1)
+                    return;
+                var gid = $('#editGroupGid').val();
+                var sid = $('#editGroupSid').val();
+
+                /* group deliverables table */
+                groupDeliverables = $('#groupDeliverables').DataTable({
+                    "processing" : true,
+                    "pageLength" : 10,
+                    destroy : true,
+                    dom : 'Bfrtip',
+                    buttons : [
+                        {
+                            text : 'Refresh',
+                            action : function (e, dt, node, config)
+                            {
+                                dt.ajax.reload();
+                            }
+                        }
+                    ],
+                    "ajax" : {
+                        "url" : "ajax/deliverablesInfo.php",
+                        "type" : "POST",
+                        "data" : {
+                            "gid" : gid
+                        }
+                    },
+                    "columns" : [
+                        {"data" : "name"},
+                        {"data" : "datePosted"},
+                        {"data" : "dueDate"},
+                        {
+                            'render' : function (colValue, type, row)
+                            {
+                                var deleteB = '<button id="deleteDeliverable" title="Delete deliverable" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i></button>&nbsp';
+                                return deleteB;
+                            },
+                            className : "dt-center"
+                        }
+                    ],
+                    'order' : [[1, "asc"]],
+                    columnDefs : [{
+                        orderable : false,
+                        targets : [3]
+                    }],
+                });
+
+                /* unassigned group deliverables table */
+                unassignedGroupDeliverables = $('#unassignedGroupDeliverables').DataTable({
+                    "processing" : true,
+                    destroy : true,
+                    "pageLength" : 10,
+                    select : {
+                        style : "os"
+                    },
+                    dom : 'Bfrtip',
+                    buttons : [
+                        {
+                            "extend" : "selectAll"
+                        },
+                        {
+                            "extend" : "selectNone"
+                        },
+                        {
+
+                            text : 'Refresh',
+                            action : function (e, dt, node, config)
+                            {
+                                dt.ajax.reload();
+                            }
+                        }
+                    ],
+                    "ajax" : {
+                        "url" : "ajax/unassignedGroupDeliverables.php",
+                        "type" : "POST",
+                        "data" : {
+                            "gid" : gid,
+                            "sid" : sid
+                        }
+                    },
+                    "columns" : [
+                        {"data" : "name"},
+                        {"data" : "datePosted"},
+                        {"data" : "dueDate"}
+                    ]
+                });
+
+                _groupTabCounters._editGroupDeliverables++;
+            });
+
 
 
             $("input#studentNameEdit").autocomplete({
@@ -1851,9 +2080,6 @@ $semesters = $query->fetchAll();
 
                 }
             });
-
-
-
 
             // ASSIGN DELIVERABLES
 
