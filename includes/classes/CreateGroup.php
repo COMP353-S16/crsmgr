@@ -29,7 +29,7 @@ class CreateGroup extends NewGroup
         {
             $this->setError( "Group must contain at least one student" );
         }
-        if($this->getLeaderId() == null)
+        if($this->getLeaderId() == null || $this->getErrors() == "")
         {
             $this->setError( "Must provide a leader" );
         }

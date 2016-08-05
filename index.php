@@ -67,7 +67,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <br>
-            <div class="login-panel panel panel-info">
+            <div class="login-panel panel panel-green">
                 <div class="panel-heading">
                     <h3 class="panel-title">Please Sign In</h3>
                 </div>
@@ -90,7 +90,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 </label>
                             </div>
                             <!-- Change this to a button or input when using this as a form -->
-                            <button id="login" name="login" type="submit" class="btn btn-lg btn-info btn-block">
+                            <button id="login" name="login" type="submit" class="btn btn-lg btn-success btn-block">
                                 Login
                             </button>
 
