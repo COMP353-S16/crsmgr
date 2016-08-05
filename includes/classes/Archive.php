@@ -74,6 +74,7 @@ class Archive
     private function createArchive()
     {
         $totalArchive = 0;
+
         $totalNotFound = 0;
         /**
          * @var $Files Files

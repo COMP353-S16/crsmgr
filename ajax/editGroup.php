@@ -29,6 +29,7 @@ if($EditGroup->edit())
         $(function(){
 
             var newName = '<?php echo $EditGroup->getGroupName(); ?>';
+            var newBand = '<?php echo $formData['groupBandwidthEdit']; ?>';
 
             $('#editGroupModal').dialog({
                 title : newName
@@ -44,6 +45,7 @@ if($EditGroup->edit())
                 {
 
                     data.gName = newName;
+                    data.bandwidth = newBand;
                     this.invalidate();
 
                 }
