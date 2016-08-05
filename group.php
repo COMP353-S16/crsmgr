@@ -7,6 +7,7 @@ WebUser::isLoggedIn(true);
 
 if (WebUser::getUser()->isStudent())
 {
+    $Student = WebUser::getUser();
     $Semesters = new Semesters();
     $sid = $Semesters->getSid();
 
