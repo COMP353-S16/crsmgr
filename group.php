@@ -568,7 +568,7 @@ else
             params : {
                 gid : "<?php echo $Group->getGid();?>",  // group id
             },
-            singleFileUploads : false,
+            singleFileUploads : true,
 
             rules : {
                 //allowedFileTypes: "image/jpeg,image/jpg, image/png,image/gif,text/plain, application/msword, application/pdf",  // only mime here
