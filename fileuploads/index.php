@@ -11,8 +11,6 @@ else
     session_start();
     require_once ($_SERVER['DOCUMENT_ROOT'].'/includes/dbc.php');
 
-
-
     $UploadHandler = new UploadHandler($_REQUEST['gid'], $_REQUEST['did'], $_SESSION['uid'], $_FILES['fileUpload']);
 
     
@@ -58,17 +56,14 @@ else
                 $('.progress-bar').removeClass('progress-bar-warning').addClass('progress-bar-success');
                 groupFiles.ajax.reload();
                 loadFileSummary();
-
-                $('#fileUpload').prop("disabled", false);
-
-
             });
         </script>
         <?php
-
-
-
     }
-
-
 }
+?>
+<script>
+    $(function(){
+        $('#fileUpload').prop("disabled", false);
+    })
+</script>

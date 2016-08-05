@@ -29,10 +29,6 @@ class Files
     {
         $this->_file = $file;
         $this->_fid = $this->_file['fid'];
-
-        //echo $this->_fid;
-
-
         $this->getFileVersions();
     }
 
@@ -47,11 +43,7 @@ class Files
         $query->bindValue(":fid", $this->_fid);
         $query->execute();
         $this->_versions = $query->fetchAll();
-
-
     }
-
-
 
     /**
      * @return int returns the file id
@@ -108,9 +100,10 @@ class Files
     }
 
     /**
-     * @return int returns the total numbre of revisions for the file
+     * @return int returns the total number of revisions for the file
      */
-    public function getNbOfVersions() {
+    public function getNbOfVersions()
+    {
         return count($this->_versions);
     }
 

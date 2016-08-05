@@ -31,4 +31,9 @@ class DeletedFiles
     {
         return (strtotime(date("Y-m-d H:i:s")) >= strtotime($this->getExpiryDate()));
     }
+
+    public function getDeleterId()
+    {
+        return $this->_data['uid'];
+    }
 }

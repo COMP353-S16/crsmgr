@@ -275,6 +275,8 @@ else
                                     <th>File Name</th>
                                     <th>Revisions</th>
                                     <th>Size</th>
+                                    <th>Deleted by</th>
+                                    <th>Deleted on</th>
                                     <th>Expires</th>
 
                                 </tr>
@@ -600,7 +602,7 @@ else
                               .text(0 + '%');
 
             $('#progress').html(0 + "%");
-            $('#uploadResult').html("Upload canceled.");
+            //$('#uploadResult').html("Upload canceled.");
 
         }).on("lu:success", function (e, response)
         {
@@ -645,6 +647,12 @@ else
             output += '</div>';
             $('#uploadResult').html(output);
             $('#fileUpload').prop("disabled", false);
+
+            // reset browse button
+            var e = $('#uploadForm');
+            e.wrap('<form>').closest('form').get(0).reset();
+            e.unwrap();
+
         }).change(function ()
         {
             $(this).data("liteUploader").startUpload();
@@ -924,6 +932,8 @@ else
                 {"data" : "filename"},
                 {"data" : "revisions"},
                 {"data" : "size"},
+                {"data" : "deleterName"},
+                {"data" : "dateDeleted"},
                 {"data" : "expires"}
             ],
             'order' : [[2, "asc"]],
@@ -1165,7 +1175,7 @@ else
         $button = $('#refreshDeliverablesList');
         var buttonText = $button.text();
         $button.prop("disabled",true).text("Loading...");
-
+        $('#fileUpload').prop("disabled", true);
         $('#noAvailableDeliverables').hide();
         $.ajax({
             url : "ajax/assignedDeliverablesList.php",
@@ -1189,6 +1199,7 @@ else
                 {
                     $('#noAvailableDeliverables').hide();
                     $('#groupDeliverablesListSubmission').show();
+                    $('#fileUpload').prop("disabled", false);
                     $.each(data, function (index, value)
                     {
                         $('#deliverableSelect')
@@ -1207,6 +1218,7 @@ else
             {
                 $('#refreshStatus').html("<p class='text-danger'>An error occured: could not load deliverables list.</p>");
                 $button.prop("disabled",false).text(buttonText);
+
 
             }
         });

@@ -10,9 +10,9 @@ class UploadHandler
 {
 
 
-    private $_gid;
+    private $_gid = null;
 
-    private $_did;
+    private $_did = null;
 
     private $_uid;
 
@@ -108,13 +108,23 @@ class UploadHandler
 
         $postUploadSize = $usedBandwidth + $fileSize;
 
+        if(is_null($this->_did) || $this->_did == "" || !is_numeric($this->_did))
+        {
+            $this->_errors[] = "No deliverable found";
+            return;
+        }
+        if(is_null($this->_gid) || $this->_gid =="" || !is_numeric($this->_gid))
+        {
+            $this->_errors[] = "No group found";
+            return;
+        }
         if(!Files::isValidFileName($this->_File->getFileName()))
         {
             $this->_errors[] = "Filename invalid. Cannot contain special characters \\ / : * ? \" < > |";
         }
         if (!in_array($this->_File->getFileExtension(), $this->_allowed))
         {
-            $this->_errors[] = "File type not allowed. Allow";
+            $this->_errors[] = "File type not allowed. Allow files: " . implode(", ", $this->_allowed);
         }
         
         if ($postUploadSize > $this->_Group->getMaxUploadSize())
@@ -310,12 +320,7 @@ class UploadHandler
      */
     private function insert()
     {
-        $this->validate();
 
-        if (!empty($this->getErrors()))
-        {
-            return false;
-        }
         // if it's a revision, skip the rest
         if ($this->isRevision())
         {
@@ -323,19 +328,28 @@ class UploadHandler
         }
 
         $pdo = Registry::getConnection();
-        $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType, mime) VALUES (:gid, :did, :fName, :fType, :mime)");
-        $params = array(
-            ":gid"   => $this->_gid,
-            ":did"   => $this->_did,
-            ":fName" => $this->_File->getBaseName(),
-            ":fType" => $this->_File->getFileExtension(),
-            ":mime"  => $this->_File->getMime()
-        );
-        if ($query->execute($params))
+        try
         {
-            $lastInsert = $pdo->lastInsertId();
-            return $this->insertRevision($lastInsert);
+            $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType, mime) VALUES (:gid, :did, :fName, :fType, :mime)");
+            $params = array(
+                ":gid"   => $this->_gid,
+                ":did"   => $this->_did,
+                ":fName" => $this->_File->getBaseName(),
+                ":fType" => $this->_File->getFileExtension(),
+                ":mime"  => $this->_File->getMime()
+            );
+            if ($query->execute($params))
+            {
+                $lastInsert = $pdo->lastInsertId();
+                return $this->insertRevision($lastInsert);
+            }
         }
+        catch(Exception $e)
+        {
+
+            $this->_errors[] =$e->getMessage();
+        }
+
 
         return false;
     }
