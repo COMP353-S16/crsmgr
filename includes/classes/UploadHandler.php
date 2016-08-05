@@ -371,9 +371,9 @@ class UploadHandler
             if(!CoreConfig::settings()['uploads']['storageDB'])
             {
                 $uploadDirectory = $this->getBuildDirectory();
-                $this->createDirectory($uploadDirectory);
+                $this->createDirectory($uploadDirectory, 0755);
                 $fileMoveSuccess = move_uploaded_file($this->_File->getTempName(), $uploadDirectory . $this->getSavedAsName());
-                chmod($uploadDirectory . $this->getSavedAsName(), 0644);
+                chmod($uploadDirectory . $this->getSavedAsName(), 0664);
             }
             // if the file moved succesfully and record inserted into db
             if ($fileMoveSuccess && $this->insert())
