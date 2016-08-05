@@ -1697,118 +1697,8 @@ $semesters = $query->fetchAll();
                 });
 
 
-            });
 
 
-            /* SEPARATED FILE LOADERS FOR PERFORMANCE INCREASE
-            * It wasn't necessary to load everything when the user opens up group folder
-            * */
-            _groupTabCounters =
-            {
-                _editGroupFilesCounts : 0,
-                _editGroupDeliverables : 0
-            }
-
-            $(document).on('click', 'a[href="#editGroupFiles"]', function(){
-                if(_groupTabCounters._editGroupFilesCounts==1)
-                    return;
-                var gid = $('#editGroupGid').val();
-                var sid = $('#editGroupSid').val();
-                /* deleted files table */
-                deletedFilesTable = $('#deletedFilesTable').DataTable({
-                    processing : true,
-                    "serverSide" : false,
-                    "destroy" : true,
-                    buttons : [
-                        {
-                            "extend" : "selectAll"
-                        },
-                        {
-                            "extend" : "selectNone"
-                        },
-                        {
-                            text : 'Refresh',
-                            action : function (e, dt, node, config)
-                            {
-                                dt.ajax.reload();
-                            }
-                        }
-
-                    ],
-                    "ajax" :
-                    {
-                        "url" : "ajax/deletedFilesList.php",
-                        "type" : "POST",
-                        "data" :
-                        {
-                            "gid" : gid
-                        }
-                    },
-                    "columns" : [
-
-                        {"data" : "fid"},
-                        {"data" : "deliverable"},
-                        {"data" : "filename"},
-                        {"data" : "revisions"},
-                        {"data" : "size"},
-                        {"data" : "deleterName"},
-                        {"data" : "dateDeleted"},
-                        {"data" : "expires"}
-                    ],
-                    'order' : [[2, "asc"]]
-                });
-
-                /* permanently deleted files table */
-                pdeletedFilesTable = $('#pdeletedFilesTable').DataTable({
-                    processing : true,
-                    "serverSide" : false,
-                    "destroy" : true,
-                    buttons : [
-                        {
-                            "extend" : "selectAll"
-                        },
-                        {
-                            "extend" : "selectNone"
-                        },
-                        {
-                            text : 'Refresh',
-                            action : function (e, dt, node, config)
-                            {
-                                dt.ajax.reload();
-                            }
-                        }
-
-                    ],
-                    "ajax" :
-                    {
-                        "url" : "ajax/pdeletedFilesList.php",
-                        "type" : "POST",
-                        "data" :
-                        {
-                            "gid" : gid
-                        }
-                    },
-                    "columns" : [
-
-                        {"data" : "fid"},
-                        {"data" : "deliverable"},
-                        {"data" : "filename"},
-                        {"data" : "revisions"},
-                        {"data" : "size"},
-                        {"data" : "deleterName"},
-                        {"data" : "dateDeleted"},
-                        {"data" : "expires"}
-                    ],
-                    'order' : [[2, "asc"]]
-                });
-                _groupTabCounters._editGroupFilesCounts++;
-            });
-
-            $(document).on('click', 'a[href="#editGroupDeliverables"]', function(){
-                if(_groupTabCounters._editGroupDeliverables==1)
-                    return;
-                var gid = $('#editGroupGid').val();
-                var sid = $('#editGroupSid').val();
 
                 /* group deliverables table */
                 groupDeliverables = $('#groupDeliverables').DataTable({
@@ -1892,7 +1782,98 @@ $semesters = $query->fetchAll();
                     ]
                 });
 
-                _groupTabCounters._editGroupDeliverables++;
+
+                /* deleted files table */
+                deletedFilesTable = $('#deletedFilesTable').DataTable({
+                    processing : true,
+                    "serverSide" : false,
+                    "destroy" : true,
+                    buttons : [
+                        {
+                            "extend" : "selectAll"
+                        },
+                        {
+                            "extend" : "selectNone"
+                        },
+                        {
+                            text : 'Refresh',
+                            action : function (e, dt, node, config)
+                            {
+                                dt.ajax.reload();
+                            }
+                        }
+
+                    ],
+                    "ajax" :
+                    {
+                        "url" : "ajax/deletedFilesList.php",
+                        "type" : "POST",
+                        "data" :
+                        {
+                            "gid" : gid
+                        }
+                    },
+                    "columns" : [
+
+                        {"data" : "fid"},
+                        {"data" : "deliverable"},
+                        {"data" : "filename"},
+                        {"data" : "revisions"},
+                        {"data" : "size"},
+                        {"data" : "deleterName"},
+                        {"data" : "dateDeleted"},
+                        {"data" : "expires"}
+                    ],
+                    'order' : [[2, "asc"]]
+                });
+
+
+
+                /* permanently deleted files table */
+                pdeletedFilesTable = $('#pdeletedFilesTable').DataTable({
+                    processing : true,
+                    "serverSide" : false,
+                    "destroy" : true,
+                    buttons : [
+                        {
+                            "extend" : "selectAll"
+                        },
+                        {
+                            "extend" : "selectNone"
+                        },
+                        {
+                            text : 'Refresh',
+                            action : function (e, dt, node, config)
+                            {
+                                dt.ajax.reload();
+                            }
+                        }
+
+                    ],
+                    "ajax" :
+                    {
+                        "url" : "ajax/pdeletedFilesList.php",
+                        "type" : "POST",
+                        "data" :
+                        {
+                            "gid" : gid
+                        }
+                    },
+                    "columns" : [
+
+                        {"data" : "fid"},
+                        {"data" : "deliverable"},
+                        {"data" : "filename"},
+                        {"data" : "revisions"},
+                        {"data" : "size"},
+                        {"data" : "deleterName"},
+                        {"data" : "dateDeleted"},
+                        {"data" : "expires"}
+                    ],
+                    'order' : [[2, "asc"]]
+                });
+
+
             });
 
 
