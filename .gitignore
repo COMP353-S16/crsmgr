@@ -53,3 +53,5 @@ DatabaseManager.php
 
 #don't upload files
 fileuploads/uploads
+
+archives
