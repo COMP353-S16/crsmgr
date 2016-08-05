@@ -34,13 +34,19 @@ class Semesters
     public function getSemesterById($sid)
     {
         $semesters =$this->getSemesters();
+
         /**
          * @var $Semester Semester
          */
         foreach($semesters as $Semester)
         {
+
             if($Semester->getId() == $sid)
+            {
+
                 return $Semester;
+            }
+
 
         }
         return null;
@@ -76,7 +82,12 @@ class Semesters
         }
 
 
-        //$sid = $this->getLastSemesterId();
+        if($sid == null)
+        {
+
+            $sid = $this->getLastSemesterId();
+        }
+        //
 
         return $sid;
     }

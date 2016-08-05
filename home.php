@@ -129,8 +129,10 @@ if(!WebUser::getUser()->isStudent())
                                 }
                                 else
                                 {
-                                    $Semesters = new Semesters();
+                                    $sid = $Semesters->getSid();
+                                    echo $sid;
                                     $Semester = $Semesters->getSemesterById($sid);
+
 
                                     ?>
                                     <h4>You are not part of any groups this semester</h4>
