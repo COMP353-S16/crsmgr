@@ -224,8 +224,8 @@ class UploadHandler
     private function makeUnique()
     {
 
-        $timeparts = explode(" ", microtime());
-        $unique = bcadd(($timeparts[0] * 1000), bcmul($timeparts[1], 1000));
+
+        $unique = time(). '_' . mt_rand();
 
         $this->_file['save_as'] = self::makeSafe($this->_File->getBaseName()) . "_" . $unique . '.' . $this->_File->getFileExtension();
     }
