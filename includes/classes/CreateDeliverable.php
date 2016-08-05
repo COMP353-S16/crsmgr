@@ -101,7 +101,8 @@ class CreateDeliverable
         }
         else
         {
-            $Semester = new Semester($this->_sid);
+            $Semesters = new Semesters();
+            $Semester = $Semesters->getSemesterById($this->_sid);
             if( !(strtotime($this->getStartDate()) >= strtotime($Semester->getSemesterStartDate()) && strtotime($this->getEndDate()) <= strtotime($Semester->getSemseterEndDate())) )
             {
                 $this->_errors[] = "Deliverable date must be within the bounds of semester date: ". $Semester->getSemesterStartDate() . ' and ' . $Semester->getSemseterEndDate();

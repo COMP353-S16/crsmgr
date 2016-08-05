@@ -40,7 +40,7 @@ else
         </div>
 
         <?php
-        exit;
+
     }
     else
     {
