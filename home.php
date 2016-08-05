@@ -130,7 +130,7 @@ if(!WebUser::getUser()->isStudent())
                                 else
                                 {
                                     $sid = $Semesters->getSid();
-                                    echo $sid;
+                                    
                                     $Semester = $Semesters->getSemesterById($sid);
 
 
