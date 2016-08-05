@@ -191,7 +191,7 @@ if (WebUser::getUser()->isStudent())
                                 </div>
 
 
-                                <div class="col-lg-4">
+                                <div class="col-lg-5">
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">
                                             Semester History
@@ -335,6 +335,7 @@ if (WebUser::getUser()->isStudent())
                 "processing" : true,
                 "serverSide" : false,
                 "displayLength" : 25,
+
                 "ajax" : {
                     "url" : "ajax/semestersList.php",
                     "type" : "POST"
@@ -352,6 +353,17 @@ if (WebUser::getUser()->isStudent())
                 "processing" : true,
                 "serverSide" : false,
                 "displayLength" : 25,
+                dom : 'Bfrtip',
+                buttons : [
+
+                    {
+                        text : 'Refresh',
+                        action : function (e, dt, node, config)
+                        {
+                            dt.ajax.reload();
+                        }
+                    }
+                ],
                 "ajax" : {
                     "url" : "ajax/groupsInfo.php",
                     "type" : "POST"

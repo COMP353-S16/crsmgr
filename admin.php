@@ -74,6 +74,22 @@ $semesters = $query->fetchAll();
             background: url('images/ajax.gif') no-repeat right center
         }
 
+
+        /* THIS IS TO HAVE SCROLLABLE RESULTS IN AUTOCOMPLETES */
+
+        .ui-autocomplete {
+            max-height: 100px;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+        }
+        /* IE 6 doesn't support max-height
+         * we use height instead, but this forces the menu to always be this tall
+         */
+        * html .ui-autocomplete {
+            height: 100px;
+        }
+
         th.dt-center, td.dt-center {
             text-align: center;
         }
@@ -902,6 +918,17 @@ $semesters = $query->fetchAll();
                 "processing" : true,
                 "serverSide" : false,
                 "displayLength" : 25,
+                dom : 'Bfrtip',
+                buttons : [
+
+                    {
+                        text : 'Refresh',
+                        action : function (e, dt, node, config)
+                        {
+                            dt.ajax.reload();
+                        }
+                    }
+                ],
                 "ajax" : {
                     "url" : "ajax/groupsInfo.php",
                     "type" : "POST"
@@ -1288,6 +1315,17 @@ $semesters = $query->fetchAll();
                 "processing" : true,
                 "serverSide" : false,
                 "displayLength" : 25,
+                dom : 'Bfrtip',
+                buttons : [
+
+                    {
+                        text : 'Refresh',
+                        action : function (e, dt, node, config)
+                        {
+                            dt.ajax.reload();
+                        }
+                    }
+                ],
                 "ajax" : {
                     "url" : "ajax/adminDeliverableList.php",
                     "type" : "POST",
