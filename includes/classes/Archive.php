@@ -25,6 +25,8 @@ class Archive
     private $_dir = 'archives/';
 
 
+    private $_unique;
+
     /**
      * Archive constructor.
      *
@@ -35,6 +37,8 @@ class Archive
         $this->_Group = $group;
         $this->_ZipArchive = new ZipArchive();
         $this->_GroupFiles = $this->_Group->getGroupFiles();
+
+        $this->_unique = time();
     }
 
     public function getGroup()
@@ -52,6 +56,7 @@ class Archive
         return $this->_dir;
     }
 
+
     private function validate()
     {
         if($this->_GroupFiles->getNumberOfFiles() == 0)
@@ -63,7 +68,7 @@ class Archive
     private function getZipName()
     {
         // can add a microtime at the end of this to make it unique every time we archive, though that wastes some space.
-        return   "group_" . $this->_Group->getGid();
+        return   "group_" . $this->_Group->getGid() . '_' . $this->_unique;
     }
 
     private function createArchive()
@@ -87,7 +92,7 @@ class Archive
              */
             foreach($versions as $Version)
             {
-                $fileName = $Files->getFileName() . '.' . $Files->getFileExtension();
+                $fileName = $Version->getSavedName();
                 $fileData = null;
                 // here, we check if the file was upload directly into DB or in the File system. In any case, it grabs all of the file whether or not in db or in fs.
                 if($Version->getData() == null)
@@ -159,7 +164,10 @@ class Archive
 
             //echo $_SERVER['DOCUMENT_ROOT']. '/'. $this->getZipLocation();
             // give where the folder will be store and what the zip file will be called.
-            $res = $this->_ZipArchive->open($_SERVER['DOCUMENT_ROOT']. '/'.$this->getZipLocation(), ZipArchive::CREATE);
+
+            $location  = $_SERVER['DOCUMENT_ROOT']. '/'.$this->getZipLocation();
+
+            $res = $this->_ZipArchive->open($location , ZipArchive::CREATE);
             if($res !== TRUE)
                 throw new Exception("Could not archive");
 
@@ -169,7 +177,11 @@ class Archive
 
             $this->_ZipArchive->close();
 
+            if(!file_exists($location))
+                throw new Exception("File does not exist or could not write to destination. Check folder permissions.");
+
             return true;
+
         }
         catch(Exception $e)
         {
