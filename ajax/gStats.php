@@ -3,7 +3,11 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 //header("Content-type: text/json");
 $k = array();
 
-$Group = new Group(62);
+if(empty($_REQUEST) || !isset($_REQUEST['gid']))
+    exit("<p class='text-danger'>No statistics found. Missing information.</p>");
+
+
+$Group = new Group($_REQUEST['gid']);
 $GroupStats = new GroupStats($Group );
 $stats = $GroupStats->getStats();
 

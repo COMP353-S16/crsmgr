@@ -554,7 +554,7 @@ else
                         }
                         else
                         {
-                            return "<p class='text-danger'>OPEN</p>";
+                            return "<p class='text-danger'>CLOSED</p>";
                         }
                     },
                     className : "dt-center"
