@@ -21,6 +21,7 @@ return array (
             'png')
     ),
     'timezone' => 'America/Montreal',
+    'maxGroupQuota' => 2048,
     'archive' => array(
         'dir' => 'archives/'
     )
