@@ -29,7 +29,7 @@ foreach($files as $i => $Files)
             "ldate" => $Files->getLatestVersion()->getUploadDate(),
             "deliverable" => $Deliverable->getDName(),
             "revisions" => $Files->getNumberOfRevisions(),
-            "size" => round($Files->getSize(),2) . " KB",
+            "size" => round($Files->getSize(),2) . " MB",
             "isDeleted" => $GroupFiles->isDeleted($Files->getId()),
             "url" => $Files->getLatestVersion()->getUrl()
 
