@@ -837,6 +837,12 @@ $semesters = $query->fetchAll();
 
         <div id="studentPoolContainer" style="display: none;"></div>
 
+        <!-- No students selected -->
+        <div id="studentsRequired" style="display: none;"></div>
+
+        <!-- No deliverables selected for assignment -->
+        <div id="noSelectedDeliverables" style="display: none;"></div>
+
 
     </div>
     <!-- /#wrapper -->
@@ -1156,6 +1162,13 @@ $semesters = $query->fetchAll();
 
                     if (added.length == 0)
                     {
+                        $('#studentsRequired').html("<p class='text-danger text-center'>Please choose from the list of students you've selected.<p>")
+                            .dialog({
+                                modal : true,
+                                resizable: false,
+                                draggable: false,
+                                title : 'Error'
+                            });
                         return false;
                     }
                     // send data to server to check for credentials
@@ -1524,6 +1537,10 @@ $semesters = $query->fetchAll();
             /* edit group */
             $(document).on('click', '#groupEdit', function ()
             {
+
+                // make sure to remove stats data in case other window was open
+                $('#groupCharts').html('');
+
 
                 var data = groups.row($(this).closest('tr')).data();
                 var gid = data.gid;
@@ -2079,6 +2096,13 @@ $semesters = $query->fetchAll();
                 // if no deliverable selected
                 if (added.length == 0)
                 {
+                    $('#noSelectedDeliverables').html("<p class='text-danger text-center'>Please choose from the list of deliverables you've selected.<p>")
+                        .dialog({
+                            modal : true,
+                            resizable: false,
+                            draggable: false,
+                            title : 'Error'
+                        });
                     return false;
                 }
 
@@ -2124,7 +2148,15 @@ $semesters = $query->fetchAll();
                 // if no one is selected
                 if (added.length == 0)
                 {
+                    $('#studentsRequired').html("<p class='text-danger text-center'>Please choose from the list of students you've selected.<p>")
+                        .dialog({
+                            modal : true,
+                            resizable: false,
+                            draggable: false,
+                            title : 'Error'
+                        });
                     return false;
+
                 }
 
                 $addMembersButton.html("Adding...").prop('disabled', true);
