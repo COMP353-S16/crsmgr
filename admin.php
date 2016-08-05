@@ -1131,7 +1131,7 @@ $semesters = $query->fetchAll();
                         required : true,
                         number : true,
                         min : 1,
-                        max : "<?php echo CoreConfig::settings()['maxGroupQuota'] ; ?>"  //TODO These values should be given through some PHP setting
+                        max : <?php echo CoreConfig::settings()['maxGroupQuota'] ; ?>  //TODO These values should be given through some PHP setting
                     }
                 },
                 messages : {
