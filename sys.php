@@ -22,7 +22,7 @@ if (WebUser::getUser()->isStudent())
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title><?php echo CoreConfig::settings()['appname']; ?></title>
+    <title><?php echo CoreConfig::settings()['appname']; ?> :: System Administration</title>
 
     <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
 

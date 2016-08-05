@@ -24,7 +24,7 @@ if (!WebUser::getUser()->isStudent())
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title><?php echo CoreConfig::settings()['appname']; ?></title>
+    <title><?php echo CoreConfig::settings()['appname']; ?> :: Home</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">

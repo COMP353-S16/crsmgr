@@ -5,8 +5,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 WebUser::isLoggedIn(true);
 
 
-$Student = WebUser::getUser();
-if ($Student instanceof Student)
+if (WebUser::getUser()->isStudent())
 {
     $Semesters = new Semesters();
     $sid = $Semesters->getSid();
@@ -44,7 +43,7 @@ else
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title><?php echo CoreConfig::settings()['appname']; ?></title>
+    <title><?php echo CoreConfig::settings()['appname']; ?> :: <?php echo $Group->getGName() ?><?php echo($isGroupClosed ? "[CLOSED]" : ""); ?></title>
 
     <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
 
