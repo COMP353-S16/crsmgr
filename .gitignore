@@ -52,6 +52,7 @@ fabric.properties
 DatabaseManager.php
 
 #don't upload files
-fileuploads/uploads
+fileuploads/uploads/*
 
 archives/*
+
