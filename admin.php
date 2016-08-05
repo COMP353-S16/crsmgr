@@ -245,6 +245,7 @@ $semesters = $query->fetchAll();
                                     <th>CreatorName</th>
                                     <th>Semester</th>
                                     <th>Members</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -943,6 +944,19 @@ $semesters = $query->fetchAll();
                     {
                         'render' : function (data, type, row)
                         {
+                            if (!row.isClosed)
+                            {
+                                return "<p class='text-success'><strong>OPEN</strong></p>";
+                            }
+                            else
+                            {
+                                return "<p class='text-danger'><strong>CLOSED</strong></p>";
+                            }
+                        }
+                    },
+                    {
+                        'render' : function (data, type, row)
+                        {
                             var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-square btn-sm"><i class="fa fa-pencil"></i></button>&nbsp';
                             var deleteB = '<button data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i> </button>';
                             return edit + deleteB;
@@ -952,7 +966,7 @@ $semesters = $query->fetchAll();
                 ],
                 columnDefs : [{
                     orderable : false,
-                    targets : [6]
+                    targets : [7]
                 }],
             });
 

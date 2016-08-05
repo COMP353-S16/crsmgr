@@ -122,6 +122,7 @@ if (WebUser::getUser()->isStudent())
                                     <th>Creator Name</th>
                                     <th>Semester</th>
                                     <th>Members</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -378,6 +379,19 @@ if (WebUser::getUser()->isStudent())
                     {
                         'render' : function (data, type, row)
                         {
+                            if (!row.isClosed)
+                            {
+                                return "<p class='text-success'><strong>OPEN</strong></p>";
+                            }
+                            else
+                            {
+                                return "<p class='text-danger'><strong>CLOSED</strong></p>";
+                            }
+                        }
+                    },
+                    {
+                        'render' : function (data, type, row)
+                        {
                             var archive = '<button id="groupArchive" title="Archive group files" type="button" class="btn btn-success btn-outline"><i class="fa fa-save"> Archive</i></button>&nbsp';
                             return archive;
                         }
@@ -385,7 +399,7 @@ if (WebUser::getUser()->isStudent())
                 ],
                 columnDefs : [{
                     orderable : false,
-                    targets : [6]
+                    targets : [7]
                 }],
             });
 
