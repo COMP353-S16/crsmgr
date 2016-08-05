@@ -40,36 +40,59 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
     <![endif]-->
     <style>
     body {
-        background: #2C3E50; /* fallback for old browsers */
-        background: -webkit-linear-gradient(to left, #2C3E50 , #4CA1AF); /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(to left, #2C3E50 , #4CA1AF); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+
+
+
+        background: #1e3c72; /* fallback for old browsers */
+        background: -webkit-linear-gradient(to left, rgba(30, 60, 114,.98) , rgba(42, 82, 152, .98)); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to left, rgba(30, 60, 114, .98), rgba(42, 82, 152, .98)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
     }
     .AppName {
         position: absolute;
         font-size: 72px;;
         color: #FFF;
         cursor: default;
+        margin-left: 20px;
+        margin-top: 10px;
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         -khtml-user-select: none;
         -moz-user-select: none;
+        font-family: Gill Sans, Verdana;
         -ms-user-select: none;
         user-select: none;
     }
+    .AppName .logo {
+        content: url('images/favicon.png');
+        position: relative;
+        margin: inherit;
+        width:80px;
+
+    }
+        .clear
+        {
+            padding-top: 70px;
+        }
     </style>
 </head>
 <body>
 
-<div class="AppName"><span id="name"><?php echo CoreConfig::settings()['appname']; ?></span>
-</div>
+<div class="AppName">    <span id="name"><?php echo CoreConfig::settings()['appname']; ?><span class="logo"></span></span>
 
+</div>
+<div class="clear"></div>
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <br>
-            <div class="login-panel panel panel-green">
+            <div class="login-panel panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Please Sign In</h3>
+
+                    <h3 class="panel-title"><i class="glyphicon glyphicon-log-in"></i> Please Sign In</h3>
                 </div>
 
                 <div class="panel-body">
@@ -84,13 +107,15 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                                 <input class="form-control" placeholder="Password" name="password" type="password">
                                 <span class="help-block"></span>
                             </div>
+                            <!-- not working
                             <div class="checkbox">
                                 <label>
                                     <input name="remember" type="checkbox" value="Remember Me">Remember Me
                                 </label>
                             </div>
+                            -->
                             <!-- Change this to a button or input when using this as a form -->
-                            <button id="login" name="login" type="submit" class="btn btn-lg btn-success btn-block">
+                            <button id="login" name="login" type="submit" class="btn btn-lg btn-primary btn-block">
                                 Login
                             </button>
 

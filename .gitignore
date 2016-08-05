@@ -53,6 +53,7 @@ DatabaseManager.php
 
 #don't upload files
 fileuploads/uploads/*
+!fileuploads/uploads/.htaccess
 
 archives/*
-
+!/archives/.htaccess
