@@ -131,7 +131,6 @@ class Version
         return $protocol . $_SERVER['HTTP_HOST'] . '/fileuploads/' . $this->getUploadDir() . $this->getSavedName();
     }
 
-
     /**
      * @return mixed
      */

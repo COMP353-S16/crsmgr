@@ -223,4 +223,8 @@ class Files
         return count($this->_versions);
     }
 
+    public function getMime()
+    {
+        return $this->_file['mime'];
+    }
 }

@@ -46,7 +46,16 @@ if (isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION)
             $filedata = fread($fr, filesize($file));
 
             header('Content-Description: File Transfer');
-            header('Content-Type: application/octet-stream');
+
+            if($Files->getMime() != "")
+            {
+                header('Content-Type: application/octet-stream');
+            }
+            else
+            {
+                header('Content-Type: '. $Files->getMime());
+            }
+
             header('Content-Disposition: attachment; filename=' . basename($file));
             header('Content-Transfer-Encoding: binary');
             header('Expires: 0');
@@ -60,8 +69,17 @@ if (isset($_REQUEST['vid']) && is_numeric($_REQUEST['vid']) && !empty($_SESSION)
         else
         {
             $length = strlen($Files->getLatestVersion()->getData());
-            //header('Content-Type: application/octet-stream');
-            //header("Content-Transfer-Encoding: Binary");
+
+            if($Files->getMime() != "")
+            {
+                header('Content-Type: application/octet-stream');
+            }
+            else
+            {
+                header('Content-Type: '. $Files->getMime());
+            }
+
+
             header("Content-Length: " . $length);
             header("Content-disposition: attachment; filename=\"" . basename($file) . "\"");
             echo $Files->getLatestVersion()->getData();
