@@ -246,7 +246,8 @@ $semesters = $query->fetchAll();
                                     <th>Semester</th>
                                     <th>Members</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -957,16 +958,25 @@ $semesters = $query->fetchAll();
                     {
                         'render' : function (data, type, row)
                         {
-                            var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit group" type="button" class="btn btn-warning btn-square btn-sm"><i class="fa fa-pencil"></i></button>&nbsp';
                             var deleteB = '<button data-gid="' + row.gid + '" data-gname="' + row.gName + '"  id="groupDelete" title="Delete group" type="button" class="btn btn-danger btn-square btn-sm"><i class="fa fa-times"></i> </button>';
-                            return edit + deleteB;
+                            return deleteB;
                         },
                         className : "dt-center"
+                    },
+
+                    {
+                        'render' : function (data, type, row)
+                        {
+                            var edit = '<button data-gname="' + row.gName + '" data-gid="' + row.gid + '" id="groupEdit" title="Edit/View group" type="button" class="btn btn-warning btn-square btn-sm"><i class="fa fa-pencil"></i></button>&nbsp';
+                            return edit;
+                        },
+                        className : "dt-center"
+
                     }
                 ],
                 columnDefs : [{
                     orderable : false,
-                    targets : [7]
+                    targets : [7,8]
                 }],
             });
 

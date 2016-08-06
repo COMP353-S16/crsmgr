@@ -135,7 +135,7 @@ if (WebUser::getUser()->isStudent())
 
 
                             <div class="row">
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
 
 
                                     <form role="form" id="newSemesterForm">
@@ -192,7 +192,7 @@ if (WebUser::getUser()->isStudent())
                                 </div>
 
 
-                                <div class="col-lg-5">
+                                <div class="col-lg-6">
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">
                                             Semester History
