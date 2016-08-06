@@ -1,25 +1,39 @@
 <?php
 
 /**
- * Created by PhpStorm.
- * User: Server
- * Date: 7/14/2016
- * Time: 12:29 PM
+ * Class UploadHandler
  */
 class UploadHandler
 {
 
-
+    /**
+     * @var group|null
+     */
     private $_gid = null;
 
+    /**
+     * @var deliverable|null
+     */
     private $_did = null;
 
+    /**
+     * @var user
+     */
     private $_uid;
 
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * @var string
+     */
     protected $_directory = 'uploads/';
 
+    /**
+     * @var array
+     */
     protected $_allowed = array();
 
     /**
@@ -32,18 +46,23 @@ class UploadHandler
      */
     private $_Group;
 
-
-    private $_file = array(
-        "save_as" => ""
-    );
-
     /**
      * @var File
      */
     private $_File;
 
 
+    /**
+     * @var
+     */
     private $_fid; // if the file already exists, store its id
+
+    /**
+     * @var array
+     */
+    private $_file = array(
+        "save_as" => ""
+    );
 
     /**
      * UploadHandler constructor.
@@ -51,15 +70,13 @@ class UploadHandler
      * @param $gid group id
      * @param $did deliverable id
      * @param $uid user id
-     * @param $file file
+     * @param $file array
      */
-    public function __construct($gid, $did, $uid, $file)
+    public function __construct($gid, $did, $uid, array $file)
     {
         $this->_gid = $gid;
-
         $this->_did = $did;
         $this->_uid = $uid;
-
 
         $this->setFile($file);
 
@@ -71,10 +88,12 @@ class UploadHandler
 
         // check to see if this file exists
         $this->extractFileId();
+
+
     }
 
     /**
-     * @param $dir sets the main directory in which all group folders will be located
+     * @param $dir string set the main directory in which all group folders will be located
      */
     public function setUploadDirectory($dir)
     {
@@ -84,20 +103,25 @@ class UploadHandler
         }
     }
 
+    /**
+     * @return string
+     */
     public function getUploadDirectory()
     {
         return $this->_directory;
     }
 
+    /**
+     * @param $file
+     */
     private function setFile($file)
     {
         $this->_File = new File($file);
         $this->_file['save_as'] = $this->_File->getFileName();
-
     }
 
     /**
-     *
+     * Performs validations
      */
     protected function validate()
     {
@@ -145,7 +169,7 @@ class UploadHandler
 
 
     /**
-     * @return mixed returns null if no FID exists for certain file. This should be in its own class.
+     * @return mixed|null returns null if no file id exists for the file being uploaded.
      */
     private function extractFileId()
     {
@@ -167,13 +191,17 @@ class UploadHandler
     }
 
     /**
-     * @return File
+     * @return File returns the File object where it contains specific information about the file
      */
     public function getFile()
     {
         return $this->_File;
     }
 
+
+    /**
+     * This checks for any File errors depending on the upload error
+     */
     private function getFileErrors()
     {
         switch ($this->_File->getFileError())
@@ -205,29 +233,36 @@ class UploadHandler
         }
     }
 
+    /**
+     * @param $file string the file name
+     *
+     * @return string simply returns a safer file name
+     */
     public static function makeSafe($file)
     {
-        // Remove any trailing dots, as those aren't ever valid file names.
         $file = rtrim($file, '.');
-
         $regex = array('#(\.){2,}#', '#[^A-Za-z0-9\.\_\- ]#', '#^\.#');
-
         return trim(preg_replace($regex, '', $file));
     }
 
+    /**
+     * @return mixed this returns the file's name as it is saved in the upload directory or in the versions table
+     */
     public function getSavedAsName()
     {
         return $this->_file['save_as'];
     }
 
 
+    /**
+     * Makes the filename unique by adding a timestamp at the end of its name
+     * @See
+     */
     private function makeUnique()
     {
-
-
         $unique = time() . '_' . mt_rand();
-
         $this->_file['save_as'] = self::makeSafe($this->_File->getBaseName()) . "_" . $unique . '.' . $this->_File->getFileExtension();
+    
     }
 
     /**
@@ -271,6 +306,11 @@ class UploadHandler
     }
 
 
+    /**
+     * @param $fid
+     *
+     * @return bool
+     */
     private function insertRevision($fid)
     {
 
@@ -301,10 +341,14 @@ class UploadHandler
             $this->_errors[] = $e->getMessage();
         }
 
+        return false;
 
     }
 
 
+    /**
+     * @return mixed
+     */
     public function getFileId()
     {
         return $this->_fid;
@@ -390,6 +434,9 @@ class UploadHandler
         return false;
     }
 
+    /**
+     * @return string
+     */
     private function get_client_ip()
     {
         $ip = getenv('HTTP_CLIENT_IP') ?:
