@@ -1080,13 +1080,8 @@ else
         $(document).on('click', '#downloadButton', function (e)
         {
             var fileData = groupFiles.row($(this).closest('tr')).data();
-
             e.preventDefault();
-
-
-            window.location.href = "view.php?vid=" + fileData.vid + "&gid=" + fileData.gid;
-            var dls = parseInt($('#_totalDownloadedFiles').text());
-            $('#_totalDownloadedFiles').text(++dls);
+            downloadFile(fileData);
 
         });
 
@@ -1094,8 +1089,16 @@ else
         {
             var fileData = versionsTable.row($(this).closest('tr')).data();
             e.preventDefault();
-            window.location.href = "view.php?vid=" + fileData.vid;
+            downloadFile(fileData);
+
         });
+
+        function downloadFile(fileData)
+        {
+            window.location.href = "view.php?vid=" + fileData.vid + "&gid=" + fileData.gid;
+            var dls = parseInt($('#_totalDownloadedFiles').text());
+            $('#_totalDownloadedFiles').text(++dls);
+        }
 
         /* refresh deliverable list for file submission */
         $(document).on('click', '#refreshDeliverablesList', loadDeliverablesList);
