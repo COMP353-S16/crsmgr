@@ -141,14 +141,7 @@ class File
      */
     public function getMime()
     {
-
-        if (!function_exists('mime_content_type'))
-        {
-            return self::mime_content_type($this->getFileExtension());
-        }
-
-        return "";
-
+        return self::getMimeContent($this->getFileExtension());
     }
 
     /**
@@ -156,7 +149,7 @@ class File
      *
      * @return mixed
      */
-    public static function mime_content_type($extension)
+    public static function getMimeContent($extension)
     {
 
 
