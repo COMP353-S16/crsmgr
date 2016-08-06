@@ -1,24 +1,29 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: dimitri
- * Date: 2016-07-17
- * Time: 10:24 PM
- */
 class DeleteFiles
 {
 
+    /**
+     * @var array
+     */
     private $_fids;
 
+    /**
+     * @var \user
+     */
     private $_uid;
 
-    private $_errors;
+    /**
+     * @var array
+     */
+    private $_errors = array();
+
 
     /**
      * DeleteFiles constructor.
      *
-     * @param $uid user id deleting files
+     * @param $uid        user id
+     * @param array $fids a list of file ids to be deleted
      */
     public function __construct($uid, array $fids)
     {
@@ -26,11 +31,17 @@ class DeleteFiles
         $this->_fids = $fids;
     }
 
+    /**
+     * @param array $fids
+     */
     public function setFiles(array $fids)
     {
         $this->_fids = $fids;
     }
 
+    /**
+     * @return bool returns true if the given files were successfully deleted
+     */
     public function delete()
     {
         $pdo = Registry::getConnection();
@@ -59,6 +70,9 @@ class DeleteFiles
         return false;
     }
 
+    /**
+     * @return array returns a list of errors
+     */
     public function getErrors()
     {
         return $this->_errors;

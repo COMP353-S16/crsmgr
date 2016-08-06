@@ -1,13 +1,24 @@
 <?php
 
+/**
+ * Class Student
+ */
 class Student extends User
 {
+
+    /**
+     * @var
+     */
     protected $_gid;
 
-    private $_sectionName;
-
+    /**
+     * @var array
+     */
     private $_semesters = array();
 
+    /**
+     * @var array
+     */
     private $_groups = array();
 
     /**

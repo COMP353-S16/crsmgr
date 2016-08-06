@@ -1,24 +1,42 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: josep
- * Date: 7/14/2016
- * Time: 10:08 PM
- */
 class Course
 {
+
+    /**
+     * @var
+     */
     protected $_cid;
+
+    /**
+     * @var
+     */
     protected $_cName;
+
+    /**
+     * @var
+     */
     protected $_startDate;
+
+    /**
+     * @var
+     */
     protected $_endDate;
 
+    /**
+     * Course constructor.
+     *
+     * @param $cid
+     */
     public function __construct($cid)
     {
         $this->cid = $cid;
         $this->fetchCourseInfo();
     }
 
+    /**
+     *
+     */
     private function fetchCourseInfo()
     {
         $pdo = Registry::getConnection();
@@ -32,21 +50,33 @@ class Course
         $this->_startDate = $course['endDate'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getCourseId()
     {
         return $this->cid;
     }
 
+    /**
+     * @return mixed
+     */
     public function getCourseName()
     {
         return $this->_cName;
     }
 
+    /**
+     * @return mixed
+     */
     public function getStartDate()
     {
         return $this->_startDate;
     }
 
+    /**
+     * @return mixed
+     */
     public function getEndDate()
     {
         return $this->_endDate;

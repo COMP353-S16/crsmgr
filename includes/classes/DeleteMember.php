@@ -1,17 +1,41 @@
 <?php
 
+/**
+ * Class DeleteMember
+ */
 class DeleteMember
 {
+
+    /**
+     * @var
+     */
     private $_uid;
+
+    /**
+     * @var
+     */
     private $_gid;
+
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * DeleteMember constructor.
+     *
+     * @param $uid
+     * @param $gid
+     */
     public function __construct($uid, $gid)
     {
         $this->_gid = $gid;
         $this->_uid = $uid;
     }
 
+    /**
+     * @return bool
+     */
     public function delete()
     {
         $pdo = Registry::getConnection();
@@ -22,6 +46,9 @@ class DeleteMember
         return $query->execute();
     }
 
+    /**
+     * @return array
+     */
     public function getErrors()
     {
         return $this->_errors;

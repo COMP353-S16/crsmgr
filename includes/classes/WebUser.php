@@ -1,18 +1,16 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: josep
- * Date: 7/20/2016
- * Time: 12:05 PM
- */
 class WebUser
 {
+
     /**
      * @var User
      */
     static private $_User;
 
+    /**
+     * WebUser constructor.
+     */
     private function __construct()
     {
     }
@@ -27,13 +25,18 @@ class WebUser
 
 
     /**
-     * @return User
+     * @return User returns the user
      */
     public static function getUser()
     {
         return self::$_User;
     }
 
+    /**
+     * @param bool $redirect if redirect is set to true, the user will be redirected to the home page. To be used on HTML pages.
+     *
+     * @return bool returns true if the user is still logged in
+     */
     public static function isLoggedIn($redirect = false)
     {
         $root = (!empty($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/';

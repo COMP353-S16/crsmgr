@@ -8,21 +8,32 @@
  */
 class DownloadFile
 {
+
     /**
      * @var Version
      */
     private $_Version;
+
     /**
      * @var User
      */
     private $_User;
 
+    /**
+     * DownloadFile constructor.
+     *
+     * @param \Version $version
+     * @param \User $user
+     */
     public function __construct(Version $version, User $user)
     {
         $this->_Version = $version;
         $this->_User = $user;
     }
 
+    /**
+     * @return bool
+     */
     public function download()
     {
         $pdo = Registry::getConnection();

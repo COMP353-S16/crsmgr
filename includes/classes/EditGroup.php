@@ -8,13 +8,25 @@
  */
 class EditGroup extends NewGroup
 {
+
+    /**
+     * @var
+     */
     private $_gid;
 
+    /**
+     * EditGroup constructor.
+     *
+     * @param $gid
+     */
     public function __construct($gid)
     {
         $this->_gid = $gid;
     }
 
+    /**
+     *
+     */
     public function validate()
     {
         if (empty($this->getGroupName()))
@@ -31,6 +43,9 @@ class EditGroup extends NewGroup
         }
     }
 
+    /**
+     * @return bool
+     */
     public function edit()
     {
         $this->validate();

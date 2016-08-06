@@ -8,6 +8,10 @@
  */
 class Files
 {
+
+    /**
+     * @var mixed
+     */
     private $_fid;
 
     /**
@@ -192,6 +196,11 @@ class Files
     }
 
 
+    /**
+     * @param $name
+     *
+     * @return bool
+     */
     public static function isValidFileName($name)
     {
         return (strpbrk($name, "\\/?*:|\"<>") === FALSE);

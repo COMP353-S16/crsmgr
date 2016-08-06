@@ -1,23 +1,32 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: fatin
- * Date: 2016-07-18
- * Time: 8:11 PM
- */
 class DeleteGroup
 {
 
+    /**
+     * @var
+     */
     private $_gid;
+
+    /**
+     * @var array
+     */
     private $_errors = array();
 
 
+    /**
+     * DeleteGroup constructor.
+     *
+     * @param $gid group id
+     */
     public function __construct($gid)
     {
         $this->_gid = $gid;
     }
 
+    /**
+     * @return bool returns true if the group deletion was successful
+     */
     public function deleteGroup()
     {
         $pdo = Registry::getConnection();
@@ -41,6 +50,9 @@ class DeleteGroup
         return false;
     }
 
+    /**
+     * @return array returns an array of errors
+     */
     public function getErrors()
     {
         return $this->_errors;

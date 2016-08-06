@@ -9,12 +9,26 @@
 class GroupFiles
 {
 
+    /**
+     * @var
+     */
     private $_gid;
 
+    /**
+     * @var
+     */
     private $_files;
 
+    /**
+     * @var
+     */
     private $_deletedFiles;
 
+    /**
+     * GroupFiles constructor.
+     *
+     * @param $gid
+     */
     public function __construct($gid)
     {
         $this->_gid = $gid;
@@ -24,6 +38,9 @@ class GroupFiles
     }
 
 
+    /**
+     *
+     */
     private function extractFiles()
     {
         $pdo = Registry::getConnection();
@@ -34,6 +51,9 @@ class GroupFiles
 
     }
 
+    /**
+     *
+     */
     private function extractDeletedFiles()
     {
         $pdo = Registry::getConnection();
@@ -42,6 +62,11 @@ class GroupFiles
         $this->_deletedFiles = $query->fetchAll();
     }
 
+    /**
+     * @param $fid
+     *
+     * @return \Files|null
+     */
     public function getFileById($fid)
     {
         foreach ($this->_files as $i => $file)
@@ -80,6 +105,9 @@ class GroupFiles
     }
 
 
+    /**
+     * @return array
+     */
     public function getFiles()
     {
         $files = array();
@@ -91,6 +119,9 @@ class GroupFiles
         return $files;
     }
 
+    /**
+     * @return array
+     */
     public function getFileIds()
     {
         $fids = array();
@@ -104,6 +135,9 @@ class GroupFiles
         return $fids;
     }
 
+    /**
+     * @return array
+     */
     public function getDeletedFileIds()
     {
         $fids = array();
@@ -116,6 +150,9 @@ class GroupFiles
         return $fids;
     }
 
+    /**
+     * @return array
+     */
     public function getDeletedFiles()
     {
         $files = array();
@@ -127,6 +164,11 @@ class GroupFiles
         return $files;
     }
 
+    /**
+     * @param $fid
+     *
+     * @return bool
+     */
     public function isDeleted($fid)
     {
         foreach ($this->_deletedFiles as $i => $fileData)

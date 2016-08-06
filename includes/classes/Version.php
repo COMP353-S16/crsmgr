@@ -9,16 +9,22 @@
 class Version
 {
 
+    /**
+     * @var mixed
+     */
     private $_version;
 
+    /**
+     * @var array
+     */
     private $_data;
 
 
     /**
      * Version constructor.
      *
-     * @param array $versionsData
-     * @param $id
+     * @var array $versionsData
+     * @var $id int
      *
      * @throws Exception
      */
@@ -58,6 +64,9 @@ class Version
         return $this->_version['size'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getFileId()
     {
         return $this->_version['fid'];
@@ -79,16 +88,25 @@ class Version
         return $this->_version['uploaderId'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getVersionId()
     {
         return $this->_version['vid'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getUploadDir()
     {
         return $this->_version['upload_dir'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getData()
     {
 
@@ -114,6 +132,9 @@ class Version
     }
 
 
+    /**
+     * @return mixed
+     */
     public function getIp()
     {
         return $this->_version['ip'];

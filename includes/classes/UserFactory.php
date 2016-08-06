@@ -1,19 +1,21 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: dimitri
- * Date: 2016-08-03
- * Time: 1:09 AM
- */
 class UserFactory
 {
 
+    /**
+     * UserFactory constructor.
+     */
     private function __construct()
     {
 
     }
 
+    /**
+     * @param $uid
+     *
+     * @return \Student|\User returns the proper user type based on privilege
+     */
     public static function create($uid)
     {
         $pdo = Registry::getConnection();

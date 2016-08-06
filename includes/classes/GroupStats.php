@@ -1,32 +1,36 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: fatin
- * Date: 2016-08-02
- * Time: 7:57 PM
- */
 class GroupStats
 {
+
     /**
      * @var Group
      */
     private $_group;
+
+    /**
+     * @var array
+     */
     protected $_GroupStats;
 
 
+    /**
+     * GroupStats constructor.
+     *
+     * @param \Group $group
+     */
     public function __construct(Group $group)
     {
         $this->_group = $group;
         $this->_GroupStats = array(
-            "usedBandwidth"                   => 0,
-            "numberOfFiles"                   => 0,
-            "numberOfDeletedFiles"            => 0,
+            "usedBandwidth" => 0,
+            "numberOfFiles" => 0,
+            "numberOfDeletedFiles" => 0,
             "numberOfPermanentlyDeletedFiles" => 0,
-            "numberOfUploads"                 => 0,
-            "numberOfDownloads"               => 0,
-            "files"                           => array(),
-            "members"                         => array()
+            "numberOfUploads" => 0,
+            "numberOfDownloads" => 0,
+            "files" => array(),
+            "members" => array()
         );
 
         $this->getMembers();
@@ -37,36 +41,57 @@ class GroupStats
 
     }
 
+    /**
+     * @return mixed
+     */
     public function getTotalPermanentDelete()
     {
         return $this->_GroupStats['numberOfPermanentlyDeletedFiles'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getTotalDeletedFiles()
     {
         return $this->_GroupStats['numberOfDeletedFiles'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getTotalFiles()
     {
         return $this->_GroupStats['numberOfFiles'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getUsedBandwidth()
     {
         return $this->_GroupStats['usedBandwidth'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getNbOfUploadedFiles()
     {
         return $this->_GroupStats['numberOfUploads'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getNumberOfDownloads()
     {
         return $this->_GroupStats['numberOfDownloads'];
     }
 
+    /**
+     *
+     */
     private function getFileStats()
     {
         $GroupFiles = $this->_group->getGroupFiles();
@@ -78,12 +103,12 @@ class GroupStats
         foreach ($files as $i => $Files)
         {
             $fileArray[$i] = array(
-                "numberOfVersions"     => 0,
-                "fileName"             => $Files->getFileName(),
-                "totalFileSize"        => 0,
+                "numberOfVersions" => 0,
+                "fileName" => $Files->getFileName(),
+                "totalFileSize" => 0,
                 "isPermanentlyDeleted" => $this->_group->getGroupFiles()->isPermanentDeleted($Files->getId()),
-                "isDeleted"            => $this->_group->getGroupFiles()->isDeleted($Files->getId()),
-                "versions"             => array(),
+                "isDeleted" => $this->_group->getGroupFiles()->isDeleted($Files->getId()),
+                "versions" => array(),
             );
             $versions = $Files->getVersions();
 
@@ -94,10 +119,10 @@ class GroupStats
             {
                 $vid = $Version->getVersionId();
                 $fileArray[$i]["versions"][$v] = array(
-                    "vid"       => $vid,
-                    "size"      => $Version->getSize(),
-                    "uploader"  => $Version->getUploaderId(),
-                    "date"      => $Version->getUploadDate(),
+                    "vid" => $vid,
+                    "size" => $Version->getSize(),
+                    "uploader" => $Version->getUploaderId(),
+                    "date" => $Version->getUploadDate(),
                     "downloads" => array()
                 );
 
@@ -150,7 +175,7 @@ class GroupStats
         while ($data = $query->fetch())
         {
             $downloads[] = array(
-                "uid"          => $data['uid'],
+                "uid" => $data['uid'],
                 "downloadDate" => $data['downloadDate']
 
             );
@@ -172,14 +197,14 @@ class GroupStats
         {
             $uid = $Student->getUid();
             $this->_GroupStats['members'][] = array(
-                "uid"                => $uid,
-                "name"               => $Student->getFullName(),
-                "totalUploadsSize"   => 0,
+                "uid" => $uid,
+                "name" => $Student->getFullName(),
+                "totalUploadsSize" => 0,
                 "totalDownloadsSize" => 0,
-                "numberOfUploads"    => 0,
-                "numberOfDownloads"  => 0,
+                "numberOfUploads" => 0,
+                "numberOfDownloads" => 0,
                 "versionsDownloaded" => array(),
-                "versionsUploaded"   => array()
+                "versionsUploaded" => array()
             );
         }
     }

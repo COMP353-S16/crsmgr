@@ -1,17 +1,39 @@
 <?php
 
+/**
+ * Class MySqlConfig
+ */
 class MySqlConfig implements PDOConfig
 {
+
+    /**
+     * @var
+     */
     private $_username;
 
+    /**
+     * @var
+     */
     private $_password;
 
+    /**
+     * @var
+     */
     private $_db;
 
+    /**
+     * @var string
+     */
     private $_host = 'localhost';
 
+    /**
+     * @var int
+     */
     private $_port = 3306;
 
+    /**
+     * @var string
+     */
     private $_charset = 'utf8';
 
     /**
@@ -63,8 +85,8 @@ class MySqlConfig implements PDOConfig
     public function getDriverOptions()
     {
         return [
-            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_EMULATE_PREPARES   => false,
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
         ];
     }

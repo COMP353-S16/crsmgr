@@ -1,17 +1,43 @@
 <?php
 
+/**
+ * Class CreateSemester
+ */
 class CreateSemester
 {
 
 
+    /**
+     * @var
+     */
     private $_start;
+
+    /**
+     * @var
+     */
     private $_end;
+
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * @var array
+     */
     private $_Semester = array();
 
+    /**
+     * @var
+     */
     private $_newId;
 
+    /**
+     * CreateSemester constructor.
+     *
+     * @param $start string semester start date
+     * @param $end   string semester end date
+     */
     public function __construct($start, $end)
     {
         $this->_start = $start;
@@ -19,6 +45,9 @@ class CreateSemester
         $this->getSemesters();
     }
 
+    /**
+     *
+     */
     private function getSemesters()
     {
         $pdo = Registry::getConnection();
@@ -30,6 +59,11 @@ class CreateSemester
         }
     }
 
+    /**
+     * @param $date string date to evaluate
+     *
+     * @return bool returns true if date is valid
+     */
     private function isValidDate($date)
     {
         $d = DateTime::createFromFormat('Y-m-d', $date);
@@ -37,7 +71,9 @@ class CreateSemester
         return $d && $d->format('Y-m-d') === $date;
     }
 
-    //TODO Must add some validation here since we need to check whether the semester start and end dates conflict with others
+    /**
+     * Validate information
+     */
     private function validate()
     {
         if (!$this->isValidDate($this->_end) || !$this->isValidDate($this->_start))
@@ -56,6 +92,9 @@ class CreateSemester
 
     }
 
+    /**
+     * This is part of the validation and it checks whether the new semester conflicts within the dates of an existing semester
+     */
     private function conflictCheck()
     {
         $msg = "Date conflicts";
@@ -97,16 +136,25 @@ class CreateSemester
     }
 
 
+    /**
+     * @return array returns an array of errors
+     */
     public function getErrors()
     {
         return $this->_errors;
     }
 
+    /**
+     * @return int returns the semester id
+     */
     public function getSemesterId()
     {
         return $this->_newId;
     }
 
+    /**
+     * @return bool returns true if the semester was successully created
+     */
     public function create()
     {
 

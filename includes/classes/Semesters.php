@@ -1,15 +1,27 @@
 <?php
 
+/**
+ * Class Semesters
+ */
 class Semesters
 {
 
+    /**
+     * @var array
+     */
     private $_semesters = array();
 
+    /**
+     * Semesters constructor.
+     */
     public function __construct()
     {
         $this->extract();
     }
 
+    /**
+     *
+     */
     private function extract()
     {
         $pdo = Registry::getConnection();
@@ -19,19 +31,10 @@ class Semesters
     }
 
     /**
-     * @return array returns an array of all semesters
+     * @param $sid
+     *
+     * @return null|\Semester
      */
-    public function getSemesters()
-    {
-        $t = array();
-        foreach ($this->_semesters as $data)
-        {
-            $t[] = new Semester($data);
-        }
-
-        return $t;
-    }
-
     public function getSemesterById($sid)
     {
         $semesters = $this->getSemesters();
@@ -54,9 +57,22 @@ class Semesters
         return null;
     }
 
+    /**
+     * @return array returns an array of all semesters
+     */
+    public function getSemesters()
+    {
+        $t = array();
+        foreach ($this->_semesters as $data)
+        {
+            $t[] = new Semester($data);
+        }
+
+        return $t;
+    }
 
     /**
-     * @return bool if semester actually exist
+     * @return bool returns true if semester actually exist
      */
     public function exist()
     {
@@ -95,6 +111,9 @@ class Semesters
         return $sid;
     }
 
+    /**
+     * @return null
+     */
     public function getLastSemesterId()
     {
         $last = null;

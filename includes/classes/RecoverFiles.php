@@ -9,15 +9,29 @@
 class RecoverFiles
 {
 
+    /**
+     * @var array
+     */
     private $_fids;
 
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * RecoverFiles constructor.
+     *
+     * @param array $fids
+     */
     public function __construct(array $fids)
     {
         $this->_fids = $fids;
     }
 
+    /**
+     * @return bool
+     */
     public function recover()
     {
         $pdo = Registry::getConnection();
@@ -30,7 +44,7 @@ class RecoverFiles
                 $query = $pdo->prepare("SELECT f.* FROM Files f, DeletedFiles d WHERE f.fid=d.fid AND f.fid = :fid AND d.expiresOn > :d");
                 $query->execute(array(
                     ":fid" => $fid,
-                    ":d"   => date("Y-m-d H:i:s")
+                    ":d" => date("Y-m-d H:i:s")
                 ));
 
                 $this->moveFile($query->fetch());
@@ -49,6 +63,11 @@ class RecoverFiles
     }
 
 
+    /**
+     * @param $fileData
+     *
+     * @return bool
+     */
     private function moveFile($fileData)
     {
         $Files = new Files($fileData);
@@ -67,8 +86,8 @@ class RecoverFiles
             */
             $query = $pdo->prepare("SELECT fid FROM Files WHERE fName=:fName AND fType=:fType AND did=:did AND gid=:gid AND fid ORDER BY  fid DESC LIMIT 1");
             $params = array(
-                ":did"   => $did,
-                ":gid"   => $gid,
+                ":did" => $did,
+                ":gid" => $gid,
                 ":fName" => $Files->getFileName(),
                 ":fType" => $Files->getFileExtension()
             );
@@ -117,6 +136,9 @@ class RecoverFiles
 
     }
 
+    /**
+     * @return array
+     */
     public function getErrors()
     {
         return $this->_errors;

@@ -1,63 +1,117 @@
 <?php
 
+/**
+ * Class CreateDeliverable
+ */
 class CreateDeliverable
 {
+
+    /**
+     * @var
+     */
     private $_name;
 
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * @var
+     */
     private $_startDate;
 
+    /**
+     * @var
+     */
     private $_endDate;
 
+    /**
+     * @var array
+     */
     private $_gids = array();
 
+    /**
+     * @var
+     */
     private $_sid;
 
+    /**
+     * CreateDeliverable constructor.
+     */
     public function __construct()
     {
     }
 
+    /**
+     * @param $name
+     */
     public function setName($name)
     {
         $this->_name = $name;
     }
 
+    /**
+     * @param array $gids
+     */
     public function setGroupIds(array $gids)
     {
         $this->_gids = $gids;
     }
 
+    /**
+     * @param $sid
+     */
     public function setSemester($sid)
     {
         $this->_sid = $sid;
     }
 
+    /**
+     * @param $start
+     */
     public function setStartDate($start)
     {
         $this->_startDate = $start;
     }
 
+    /**
+     * @param $end
+     */
     public function setEndDate($end)
     {
         $this->_endDate = $end;
     }
 
+    /**
+     * @return mixed
+     */
     public function getStartDate()
     {
         return $this->_startDate;
     }
 
+    /**
+     * @return mixed
+     */
     public function getEndDate()
     {
         return $this->_endDate;
     }
 
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this->_name;
     }
 
+    /**
+     * @param $date
+     *
+     * @return bool
+     */
     private function isValidDate($date)
     {
         $d = DateTime::createFromFormat('Y-m-d', $date);
@@ -65,11 +119,17 @@ class CreateDeliverable
         return $d && $d->format('Y-m-d') === $date;
     }
 
+    /**
+     * @return bool
+     */
     private function isValidName()
     {
         return Files::isValidFileName($this->_name);
     }
 
+    /**
+     *
+     */
     private function validate()
     {
         if ($this->_name == "" || $this->_name == null)
@@ -115,6 +175,9 @@ class CreateDeliverable
 
     }
 
+    /**
+     * @return mixed
+     */
     public function getSemesterId()
     {
         return $this->_sid;
@@ -148,6 +211,9 @@ class CreateDeliverable
         return $groupIds;
     }
 
+    /**
+     * @return bool
+     */
     public function create()
     {
         $this->validate();

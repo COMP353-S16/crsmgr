@@ -67,9 +67,9 @@ class UploadHandler
     /**
      * UploadHandler constructor.
      *
-     * @param $gid group id
-     * @param $did deliverable id
-     * @param $uid user id
+     * @param $gid  group id
+     * @param $did  deliverable id
+     * @param $uid  user id
      * @param $file array
      */
     public function __construct($gid, $did, $uid, array $file)
@@ -177,9 +177,9 @@ class UploadHandler
         // does this file name already exist?
         $query = $pdo->prepare("SELECT fid FROM Files WHERE gid=:gid AND did=:did AND fName = :name AND fType=:ftype AND fid NOT IN (SELECT fid FROM DeletedFiles) LIMIT 1");
         $params = array(
-            ":did"   => $this->_did,
-            ":gid"   => $this->_gid,
-            ":name"  => $this->_File->getBaseName(),
+            ":did" => $this->_did,
+            ":gid" => $this->_gid,
+            ":name" => $this->_File->getBaseName(),
             ":ftype" => $this->_File->getFileExtension()
         );
 
@@ -262,7 +262,7 @@ class UploadHandler
     {
         $unique = time() . '_' . mt_rand();
         $this->_file['save_as'] = self::makeSafe($this->_File->getBaseName()) . "_" . $unique . '.' . $this->_File->getFileExtension();
-    
+
     }
 
     /**
@@ -274,7 +274,7 @@ class UploadHandler
     }
 
     /**
-     * @param $dir directory name
+     * @param $dir             directory name
      * @param int $permissions directory permissions
      */
     protected function createDirectory($dir, $permissions = 0777)
@@ -372,11 +372,11 @@ class UploadHandler
         {
             $query = $pdo->prepare("INSERT INTO Files (gid, did, fName, fType, mime) VALUES (:gid, :did, :fName, :fType, :mime)");
             $params = array(
-                ":gid"   => $this->_gid,
-                ":did"   => $this->_did,
+                ":gid" => $this->_gid,
+                ":did" => $this->_did,
                 ":fName" => $this->_File->getBaseName(),
                 ":fType" => $this->_File->getFileExtension(),
-                ":mime"  => $this->_File->getMime()
+                ":mime" => $this->_File->getMime()
             );
             if ($query->execute($params))
             {

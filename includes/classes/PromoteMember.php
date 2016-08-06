@@ -1,17 +1,41 @@
 <?php
 
+/**
+ * Class PromoteMember
+ */
 class PromoteMember
 {
+
+    /**
+     * @var
+     */
     private $_uid;
+
+    /**
+     * @var
+     */
     private $_gid;
+
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * PromoteMember constructor.
+     *
+     * @param $uid
+     * @param $gid
+     */
     public function __construct($uid, $gid)
     {
         $this->_gid = $gid;
         $this->_uid = $uid;
     }
 
+    /**
+     *
+     */
     private function validate()
     {
         if ($this->_gid == "" || $this->_uid == "")
@@ -21,12 +45,18 @@ class PromoteMember
     }
 
 
+    /**
+     * @return array
+     */
     public function getErrors()
     {
         return $this->_errors;
     }
 
 
+    /**
+     * @return bool
+     */
     public function promote()
     {
         $this->validate();

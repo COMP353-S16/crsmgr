@@ -1,23 +1,48 @@
 <?php
 
+/**
+ * Class AssignDeliverables
+ */
 class AssignDeliverables
 {
 
+    /**
+     * @var array
+     */
     private $_dids = array();
+
+    /**
+     * @var
+     */
     private $_gid;
+
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * AssignDeliverables constructor.
+     *
+     * @param $gid
+     */
     public function __construct($gid)
     {
 
         $this->_gid = $gid;
     }
 
+    /**
+     * @param $did
+     */
     public function addDid($did)
     {
         $this->_dids[] = $did;
     }
 
+    /**
+     *
+     */
     private function validate()
     {
         if (empty($this->_dids))
@@ -32,16 +57,25 @@ class AssignDeliverables
         }
     }
 
+    /**
+     * @param array $dids
+     */
     public function setDids(array $dids)
     {
         $this->_dids = $dids;
     }
 
+    /**
+     * @return array
+     */
     public function getErrors()
     {
         return $this->_errors;
     }
 
+    /**
+     * @return bool
+     */
     public function assign()
     {
         $pdo = Registry::getConnection();

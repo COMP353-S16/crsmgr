@@ -8,14 +8,40 @@
  */
 class Group
 {
+
+    /**
+     * @var \Group
+     */
     protected $_gid;
+
+    /**
+     * @var
+     */
     protected $_leaderId;
 
+    /**
+     * @var
+     */
     protected $_creatorId;
+
+    /**
+     * @var
+     */
     protected $_gName;
+
+    /**
+     * @var
+     */
     protected $_maxSize;
+
+    /**
+     * @var array
+     */
     protected $_groupStudents = array();
 
+    /**
+     * @var
+     */
     private $_sid;
 
     /**
@@ -36,6 +62,9 @@ class Group
         $this->populateGroupMembers();
     }
 
+    /**
+     *
+     */
     private function fetchGroupInfo()
     {
         $pdo = Registry::getConnection();
@@ -55,7 +84,7 @@ class Group
     }
 
     /**
-     * @return mixed
+     * @return int returns the group id
      */
     public function getGid()
     {
@@ -64,7 +93,7 @@ class Group
 
 
     /**
-     * @return int
+     * @return int returns the creator id
      */
     public function getCreatorId()
     {
@@ -72,7 +101,7 @@ class Group
     }
 
     /**
-     * @return string
+     * @return string returns group name
      */
     public function getGName()
     {
@@ -80,13 +109,18 @@ class Group
     }
 
     /**
-     * @return int
+     * @return int returns the leader id
      */
     public function getLeaderId()
     {
         return $this->_leaderId;
     }
 
+    /**
+     * @param $uid int
+     *
+     * @return bool returns true if the user is the leader of group
+     */
     public function isLeader($uid)
     {
         return $this->_leaderId == $uid;
@@ -101,13 +135,16 @@ class Group
     }
 
     /**
-     * @return array
+     * @return array returns an array of students from the database
      */
     public function getGroupStudents()
     {
         return $this->_groupStudents;
     }
 
+    /**
+     *
+     */
     private function populateGroupMembers()
     {
         $pdo = Registry::getConnection();
@@ -117,11 +154,19 @@ class Group
         $this->_groupStudents = $query->fetchAll();
     }
 
+    /**
+     * @return int
+     */
     public function getTotalMembers()
     {
         return count($this->_groupStudents);
     }
 
+    /**
+     * @param $uid int user id
+     *
+     * @return bool returns true if the user is in this group
+     */
     public function isInGroup($uid)
     {
         foreach ($this->_groupStudents as $student)
@@ -176,6 +221,9 @@ class Group
     }
 
 
+    /**
+     *
+     */
     private function extractSemester()
     {
         $Semesters = new Semesters();
@@ -191,6 +239,9 @@ class Group
         return $this->_Semester;
     }
 
+    /**
+     * @return bool returns true if the group can no longer access anything. This is based on today's date and the semester end date.
+     */
     public function isGroupClosed()
     {
 

@@ -1,10 +1,19 @@
 <?php
 
+/**
+ * Class Login
+ */
 class Login
 {
 
+    /**
+     * @var array
+     */
     protected $_credentials;
 
+    /**
+     * @var
+     */
     protected $_error_messages;
 
     /**
@@ -12,6 +21,11 @@ class Login
      */
     protected $_user;
 
+    /**
+     * Login constructor.
+     *
+     * @param array $credentials
+     */
     public function __construct(array $credentials)
     {
 
@@ -27,6 +41,9 @@ class Login
         }
     }
 
+    /**
+     * @return bool
+     */
     private function checkUser()
     {
         $pdo = Registry::getConnection();
@@ -48,11 +65,17 @@ class Login
         return false;
     }
 
+    /**
+     * @return mixed
+     */
     public function getErrors()
     {
         return $this->_error_messages;
     }
 
+    /**
+     * @return bool
+     */
     public function login()
     {
         $this->checkUser();

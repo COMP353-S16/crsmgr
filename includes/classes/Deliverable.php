@@ -1,20 +1,38 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: josep
- * Date: 7/15/2016
- * Time: 12:36 AM
- */
 class Deliverable
 {
+
+    /**
+     * @var
+     */
     protected $_did;
 
+    /**
+     * @var
+     */
     protected $_dName;
+
+    /**
+     * @var
+     */
     protected $_startDate;
+
+    /**
+     * @var
+     */
     protected $_endDate;
+
+    /**
+     * @var
+     */
     protected $_sid;
 
+    /**
+     * Deliverable constructor.
+     *
+     * @param $did
+     */
     public function __construct($did)
     {
         $this->_did = $did;
@@ -39,6 +57,9 @@ class Deliverable
         $this->_sid = $deliverable['sid'];
     }
 
+    /**
+     * @return int returns the semester id
+     */
     public function getSemesterId()
     {
         return $this->_sid;

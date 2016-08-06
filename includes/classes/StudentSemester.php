@@ -1,8 +1,14 @@
 <?php
 
+/**
+ * Class StudentSemester
+ */
 class StudentSemester
 {
 
+    /**
+     * @var array
+     */
     private $_data = array();
 
     /**

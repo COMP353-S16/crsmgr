@@ -8,17 +8,41 @@
  */
 class Section
 {
+
+    /**
+     * @var
+     */
     protected $_sid;
+
+    /**
+     * @var
+     */
     protected $_sectionName;
+
+    /**
+     * @var
+     */
     protected $_startDate;
+
+    /**
+     * @var
+     */
     protected $_endDate;
 
+    /**
+     * Section constructor.
+     *
+     * @param $sid
+     */
     public function __construct($sid)
     {
         $this->_sid = $sid;
         $this->fetchSectionInfo();
     }
 
+    /**
+     *
+     */
     private function fetchSectionInfo()
     {
         $pdo = Registry::getConnection();

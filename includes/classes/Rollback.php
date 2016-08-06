@@ -9,8 +9,14 @@
 class Rollback
 {
 
+    /**
+     * @var \file
+     */
     private $_fid;
 
+    /**
+     * @var \to
+     */
     private $_vid;
 
     /**
@@ -25,6 +31,9 @@ class Rollback
         $this->_vid = $vid;
     }
 
+    /**
+     * @return bool
+     */
     public function rollback()
     {
         $pdo = Registry::getConnection();

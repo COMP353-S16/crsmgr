@@ -1,26 +1,50 @@
 <?php
 
+/**
+ * Class DeleteDeliverable
+ */
 class DeleteDeliverable
 {
 
+    /**
+     * @var array
+     */
     private $_dids = array();
+
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * DeleteDeliverable constructor.
+     *
+     * @param array $did
+     */
     public function __construct($did = array())
     {
         $this->s = $did;
     }
 
+    /**
+     * @param array $dids
+     */
     public function setDids(array $dids)
     {
         $this->_dids = $dids;
     }
 
+    /**
+     * @param $did
+     */
     public function addDid($did)
     {
         $this->_dids[] = $did;
     }
 
+    /**
+     *
+     */
     private function validate()
     {
         if (empty($this->_dids))
@@ -30,11 +54,17 @@ class DeleteDeliverable
 
     }
 
+    /**
+     * @return array
+     */
     public function getErrors()
     {
         return $this->_errors;
     }
 
+    /**
+     * @return bool
+     */
     public function delete()
     {
         $pdo = Registry::getConnection();
@@ -62,6 +92,9 @@ class DeleteDeliverable
 
     }
 
+    /**
+     * @return array
+     */
     public function getDids()
     {
         return $this->_dids;

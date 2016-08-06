@@ -1,21 +1,26 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Dimitri
- * Date: 7/27/2016
- * Time: 10:27 PM
- */
 class AddMembers extends NewGroup
 {
 
+    /**
+     * @var
+     */
     private $_gid;
 
+    /**
+     * AddMembers constructor.
+     *
+     * @param $gid
+     */
     public function __construct($gid)
     {
         $this->_gid = $gid;
     }
 
+    /**
+     *
+     */
     public function validate()
     {
         if (empty($this->getUids()))
@@ -24,6 +29,9 @@ class AddMembers extends NewGroup
         }
     }
 
+    /**
+     * @return bool
+     */
     public function add()
     {
         $this->validate();

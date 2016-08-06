@@ -1,20 +1,23 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Server
- * Date: 7/21/2016
- * Time: 12:46 PM
- */
 class CreateGroup extends NewGroup
 {
 
+    /**
+     * @var
+     */
     private $_creatorId;
 
+    /**
+     * CreateGroup constructor.
+     */
     public function __construct()
     {
     }
 
+    /**
+     *
+     */
     public function validate()
     {
         if ($this->getSemesterId() == null)
@@ -43,12 +46,18 @@ class CreateGroup extends NewGroup
         }
     }
 
+    /**
+     * @param $id
+     */
     public function setCreatorId($id)
     {
         $this->_creatorId = $id;
     }
 
 
+    /**
+     * @return bool
+     */
     public function create()
     {
         $pdo = Registry::getConnection();

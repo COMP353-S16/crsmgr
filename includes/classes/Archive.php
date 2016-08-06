@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class Archive
+ */
 class Archive
 {
 
@@ -18,13 +21,25 @@ class Archive
      */
     private $_GroupFiles;
 
+    /**
+     * @var array
+     */
     private $_errors = array();
 
+    /**
+     * @var array
+     */
     private $_notices = array();
 
+    /**
+     * @var string
+     */
     private $_dir = 'archives/';
 
 
+    /**
+     * @var int
+     */
     private $_unique;
 
     /**
@@ -35,28 +50,42 @@ class Archive
     public function __construct(Group $group)
     {
         $this->_Group = $group;
+
+
         $this->_ZipArchive = new ZipArchive();
         $this->_GroupFiles = $this->_Group->getGroupFiles();
 
         $this->_unique = time();
     }
 
+    /**
+     * @return \Group
+     */
     public function getGroup()
     {
         return $this->_Group;
     }
 
+    /**
+     * @param $dir
+     */
     public function setUploadDirectory($dir)
     {
         $this->_dir = $dir;
     }
 
+    /**
+     * @return string
+     */
     public function getUploadDirectory()
     {
         return $this->_dir;
     }
 
 
+    /**
+     *
+     */
     private function validate()
     {
         if ($this->_GroupFiles->getNumberOfFiles() == 0)
@@ -65,12 +94,18 @@ class Archive
         }
     }
 
+    /**
+     * @return string
+     */
     private function getZipName()
     {
         // can add a microtime at the end of this to make it unique every time we archive, though that wastes some space.
         return "group_" . $this->_Group->getGid() . '_' . $this->_unique;
     }
 
+    /**
+     *
+     */
     private function createArchive()
     {
         $totalArchive = 0;
@@ -134,27 +169,42 @@ class Archive
 
     }
 
+    /**
+     * @return array
+     */
     public function getErrors()
     {
         return $this->_errors;
     }
 
+    /**
+     * @return array
+     */
     public function getNotices()
     {
         return $this->_notices;
     }
 
+    /**
+     * @return string
+     */
     public function getZipLocation()
     {
         return $this->getUploadDirectory() . $this->getZipName() . '.zip';
     }
 
+    /**
+     *
+     */
     private function addNotices()
     {
         // add notices
         $this->_ZipArchive->addFromString("notices.txt", implode($this->_notices, "\r\n"));
     }
 
+    /**
+     * @return bool
+     */
     public function archive()
     {
         $this->validate();

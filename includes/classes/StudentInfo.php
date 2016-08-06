@@ -1,20 +1,26 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: josep
- * Date: 7/18/2016
- * Time: 7:11 PM
- */
 class StudentInfo extends Student
 {
+
+    /**
+     * @var
+     */
     protected $_nb_files_uploaded;
 
+    /**
+     * StudentInfo constructor.
+     *
+     * @param \user $uid
+     */
     public function __construct($uid)
     {
         parent::__construct($uid);
     }
 
+    /**
+     * @return mixed
+     */
     public function getNbOfFilesUploaded()
     {
         $pdo = Registry::getConnection();
@@ -26,6 +32,9 @@ class StudentInfo extends Student
         return $data["TOTAL"];
     }
 
+    /**
+     * @return mixed
+     */
     public function getNbOfFilesDownloaded()
     {
         $pdo = Registry::getConnection();
@@ -37,6 +46,9 @@ class StudentInfo extends Student
         return $data["TOTAL"];
     }
 
+    /**
+     * @return string
+     */
     public function getLastUploadedFile()
     {
         $pdo = Registry::getConnection();
