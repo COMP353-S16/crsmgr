@@ -33,6 +33,7 @@ foreach ($versions as $Version)
         "user"     => $User->getFullName(),
         "date"     => $Version->getUploadDate(),
         "filename" => $Version->getSavedName(),
+        "ip"       => $Version->getIp(),
         "size"     => round($Version->getSize(), 2) . " MB",
 
     );

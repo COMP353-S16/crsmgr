@@ -426,6 +426,7 @@ else
                 <th>ID</th>
                 <th>User</th>
                 <th>Date</th>
+                <th>IP</th>
                 <th>Size</th>
                 <th></th>
             </tr>
@@ -530,10 +531,12 @@ else
                     }
                 }
             ],
-            "ajax" : {
+            "ajax" :
+            {
                 "url" : "ajax/deliverablesInfo.php",
                 "type" : "POST",
-                "data" : {
+                "data" :
+                {
                     "gid" : '<?php echo $Group->getGid(); ?>',
                 }
             },
@@ -669,7 +672,8 @@ else
             "destroy" : true,
             "displayLength" : 10,
             dom : 'Bfrtip',
-            select : {
+            select :
+            {
                 style : "os",
                 selector : "td:not(:has(:button))" // a row can be selected that doesn't have a button on it
             },
@@ -772,10 +776,6 @@ else
 
                 // display
                 $(api.column(5).footer()).html(pageTotal.toFixed(2) + ' of  ' + total.toFixed(2) + ' MB');
-            },
-            "drawCallback" : function (settings)
-            {
-
             }
         });
 
@@ -809,6 +809,7 @@ else
                     {"data" : "vid"},
                     {"data" : "user"},
                     {"data" : "date"},
+                    {"data" : "ip" },
                     {"data" : "size"},
                     {
                         'render' : function (data, type, row)
@@ -823,7 +824,7 @@ else
                 'order' : [[0, "asc"]],
                 columnDefs : [{
                     orderable : false,
-                    targets : [4]
+                    targets : [5]
                 }],
             });
 
@@ -831,11 +832,13 @@ else
             /* open rollback modal window */
             $("#versionsModal").dialog({
                 modal : true,
-                width : 600,
+                width : 730,
                 height : 600,
                 title : "File: " + fileData.filename,
                 show : "fade",
-                buttons : {
+                hide : "fade",
+                buttons :
+                {
                     "Rollback" : function ()
                     {
                         var versionData = versionsTable.row('.selected').data();
@@ -871,21 +874,7 @@ else
                     versionsTable.destroy();
                 }
             });
-
-
-            $(document).on('click', '#versionsTable  tbody tr', function ()
-            {
-                var versionData = versionsTable.row(this).data();
-                //console.log(versionData);
-
-
-            });
-
         });
-
-        // get files summary
-        //loadFileSummary();
-
 
         /* deleted files table */
         deletedFilesTable = $('#deletedFilesTable').DataTable({
@@ -893,7 +882,8 @@ else
             dom : 'Bfrtip',
             "serverSide" : false,
             "destroy" : true,
-            select : {
+            select :
+            {
                 style : "os"
             },
             buttons : [
@@ -916,10 +906,12 @@ else
                 }
 
             ],
-            "ajax" : {
+            "ajax" :
+            {
                 "url" : "ajax/deletedFilesList.php",
                 "type" : "POST",
-                "data" : {
+                "data" :
+                {
                     "gid" : "<?php echo $Group->getGid(); ?>"
                 }
             },
@@ -954,7 +946,6 @@ else
             });
             if (ids.length == 0)
             {
-                alert('nothing to delete!');
                 return false;
             }
 
@@ -1102,12 +1093,9 @@ else
         $(document).on('click', '#downloadVersionButton', function (e)
         {
             var fileData = versionsTable.row($(this).closest('tr')).data();
-
             e.preventDefault();
-
             window.location.href = "view.php?vid=" + fileData.vid;
         });
-
 
         /* refresh deliverable list for file submission */
         $(document).on('click', '#refreshDeliverablesList', loadDeliverablesList);
@@ -1118,24 +1106,31 @@ else
 
 
         usedBand = new Highcharts.Chart({
-            chart : {
+            chart :
+            {
                 renderTo : 'usedba',
                 type : 'pie',
             },
             credits : false,
-            title : {
+            title :
+            {
                 text : 'Storage',
 
             },
-            tooltip : {
+            tooltip :
+            {
                 pointFormat : '<b>{point.percentage:.3f}%</b>'
             },
-            plotOptions : {
-                pie : {
-                    dataLabels : {
+            plotOptions :
+            {
+                pie :
+                {
+                    dataLabels :
+                    {
                         enabled : true,
                         format : '<b>{point.name}</b>: {point.percentage:.3f} %',
-                        style : {
+                        style :
+                        {
                             color : (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
                         }
                     }
@@ -1155,10 +1150,8 @@ else
             }]
         });
 
-
         /*refresh stats */
         $(document).on('click', '#refreshStats', loadFileSummary);
-
 
         loadFileSummary();
 
@@ -1177,7 +1170,8 @@ else
             type : "POST",
             dataType : "json",
             cache : false,
-            data : {
+            data :
+            {
                 gid : "<?php echo $Group->getGid();?>"
             },
             success : function (data)
@@ -1204,17 +1198,12 @@ else
                             }).prop('selected', true));
                     });
                 }
-
                 $button.prop("disabled", false).text(buttonText);
-
-
             },
             error : function ()
             {
                 $('#refreshStatus').html("<p class='text-danger'>An error occured: could not load deliverables list.</p>");
                 $button.prop("disabled", false).text(buttonText);
-
-
             }
         });
 
@@ -1249,7 +1238,6 @@ else
                     }
 
                 });
-
             }
         });
     }
