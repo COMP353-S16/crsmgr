@@ -1,13 +1,14 @@
--- phpMyAdmin SQL Dump
--- version 4.0.10.14
--- http://www.phpmyadmin.net
---
--- Host: localhost:3306
--- Generation Time: Aug 07, 2016 at 11:43 PM
--- Server version: 5.5.45-cll-lve
--- PHP Version: 5.4.31
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+  -- phpMyAdmin SQL Dump
+  -- version 4.0.10.14
+  -- http://www.phpmyadmin.net
+  --
+  -- Host: localhost:3306
+  -- Generation Time: Aug 07, 2016 at 11:43 PM
+  -- Server version: 5.5.45-cll-lve
+  -- PHP Version: 5.4.31
+
+  SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 
@@ -43,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `DeletedFiles` (
 DROP TRIGGER IF EXISTS `ins_expiry`;
 DELIMITER //
 CREATE TRIGGER `ins_expiry` BEFORE INSERT ON `DeletedFiles`
- FOR EACH ROW SET NEW.expiresOn = NEW.dateDelete + INTERVAL 1 DAY
+FOR EACH ROW SET NEW.expiresOn = NEW.dateDelete + INTERVAL 1 DAY
 //
 DELIMITER ;
 
@@ -61,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `Deliverables` (
   `endDate` datetime DEFAULT NULL,
   `sid` int(11) NOT NULL,
   PRIMARY KEY (`did`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=53 ;
 
 -- --------------------------------------------------------
 
@@ -78,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `Downloads` (
   PRIMARY KEY (`dlid`),
   KEY `Downloads_Users_uid_fk` (`uid`),
   KEY `Downloads_Versions_vid_fk` (`vid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
@@ -97,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `Files` (
   PRIMARY KEY (`fid`),
   KEY `Files_Groups_gid_fk` (`gid`),
   KEY `Files_Deliverables_did_fk` (`did`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=123 ;
 
 -- --------------------------------------------------------
 
@@ -146,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `Groups` (
   PRIMARY KEY (`gid`),
   KEY `Group_Users_uid_fk` (`creatorId`),
   KEY `leaderId` (`leaderId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=67 ;
 
 -- --------------------------------------------------------
 
@@ -155,19 +156,19 @@ CREATE TABLE IF NOT EXISTS `Groups` (
 --
 DROP VIEW IF EXISTS `RegisteredStudentsInGroup`;
 CREATE TABLE IF NOT EXISTS `RegisteredStudentsInGroup` (
-`uid` int(11)
-,`firstName` varchar(20)
-,`lastName` text
-,`email` varchar(100)
-,`privilege` tinyint(4)
-,`username` varchar(30)
-,`password` text
-,`gid` int(11)
-,`leaderId` int(11)
-,`gName` text
-,`creatorId` int(11)
-,`maxUploadsSize` text
-,`sid` int(11)
+   `uid` int(11)
+  ,`firstName` varchar(20)
+  ,`lastName` text
+  ,`email` varchar(100)
+  ,`privilege` tinyint(4)
+  ,`username` varchar(30)
+  ,`password` text
+  ,`gid` int(11)
+  ,`leaderId` int(11)
+  ,`gName` text
+  ,`creatorId` int(11)
+  ,`maxUploadsSize` text
+  ,`sid` int(11)
 );
 -- --------------------------------------------------------
 
@@ -181,7 +182,7 @@ CREATE TABLE IF NOT EXISTS `Semester` (
   `startDate` datetime DEFAULT NULL,
   `endDate` datetime DEFAULT NULL,
   PRIMARY KEY (`sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -227,7 +228,7 @@ CREATE TABLE IF NOT EXISTS `Users` (
   `password` text,
   PRIMARY KEY (`uid`),
   UNIQUE KEY `Users_username_uindex` (`username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=26 ;
 
 -- --------------------------------------------------------
 
@@ -249,7 +250,7 @@ CREATE TABLE IF NOT EXISTS `Versions` (
   PRIMARY KEY (`vid`),
   KEY `Versions_Users_uid_fk` (`uploaderId`),
   KEY `Versions_Files_fid_fk` (`fid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=173 ;
 
 -- --------------------------------------------------------
 
