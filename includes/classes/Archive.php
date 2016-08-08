@@ -152,6 +152,7 @@ class Archive
                 // if file contents exist, add to zip folder.
                 if ($fileData != null)
                 {
+
                     $this->_ZipArchive->addFromString($path . '/' . $fileName, $fileData);
                     $totalArchive++;
                 }
@@ -215,15 +216,18 @@ class Archive
         try
         {
 
+
             //echo $_SERVER['DOCUMENT_ROOT']. '/'. $this->getZipLocation();
             // give where the folder will be store and what the zip file will be called.
 
             $location = $_SERVER['DOCUMENT_ROOT'] . '/' . $this->getZipLocation();
 
+
             $res = $this->_ZipArchive->open($location, ZipArchive::CREATE);
             if ($res !== TRUE)
             {
-                throw new Exception("Could not archive");
+                $m = $this->_ZipArchive->getStatusString();
+                throw new Exception("Could not archive. " . $m);
             }
 
             $this->createArchive();
@@ -234,7 +238,7 @@ class Archive
 
             if (!file_exists($location))
             {
-                throw new Exception("File does not exist or could not write to destination. Check folder permissions.");
+                throw new Exception("File does not exist or could not write to destination. Check folder permissions. " );
             }
 
             return true;

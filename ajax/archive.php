@@ -10,6 +10,7 @@ if (!WebUser::getUser()->isSysAdmin())
 
 $gid = $_REQUEST['gid'];
 
+
 $Archive = new Archive(new Group($gid));
 
 if ($Archive->archive())
