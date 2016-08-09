@@ -96,18 +96,7 @@ if (!WebUser::getUser()->isStudent())
                             $sid = $Semesters->getSid();
 
                             $Semester = $Semesters->getSemesterById($sid);
-                            if(!$Semesters->isOpen($sid)) // well we found a semester, but is it open yet? Is today's date within its range?
-                            {
-                                ?>
-                                <h4>Semester either hasn't started yet or has ended.</h4>
-                                <p class="text-danger">
-                                    Current: Semester <strong><?php echo $Semester->getId(); ?></strong> <br> From:
-                                    <strong><?php echo date("D, M j, Y @ H:i:s", strtotime($Semester->getSemesterStartDate())); ?></strong> until
-                                    <strong><?php echo date("D, M j, Y @ H:i:s", strtotime($Semester->getSemseterEndDate())); ?></strong> <br>
-                                </p>
-                                <?php
-                            }
-                            else if ($Student->isRegistered()) // is student registered for ANY semester?
+                            if ($Student->isRegistered()) // is student registered for ANY semester?
                             {
                                 if ($Student->isInGroupFromSid($sid)) // is he in a group in this semester?
                                 {
