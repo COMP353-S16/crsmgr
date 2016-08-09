@@ -16,12 +16,28 @@ if(!$Group->isLeader($uid))
     $User = new User($Group->getLeaderId());
     ?>
     <p class="text-danger text-center">Only <?php echo $User->getFullName();?>, the leader of the group, may rollback files.</p>
+
+    <script>
+
+        $(function ()
+        {
+            $('#rollbackResponse').dialog({
+                modal : true,
+                title : "Error!",
+                resizable : false,
+                draggable : false,
+                width : 350,
+                height : 150
+
+            });
+        });
+    </script>
     <?php
 
-    exit;
+
 }
 
-if ($rollback->rollback())
+else if ($rollback->rollback())
 {
     ?>
     <div class="alert alert-success">
