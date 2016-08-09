@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dimitri
- * Date: 2016-07-20
- * Time: 7:57 PM
- */
 session_start();
 require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
 
@@ -12,6 +6,17 @@ $fid = $_REQUEST['fid'];
 $vid = $_REQUEST['vid'];
 
 $rollback = new Rollback($fid, $vid);
+
+$uid = WebUser::getUser()->getUid();
+
+$Group = new Group($_REQUEST['gid']);
+
+if(!$Group->isLeader($uid))
+{ ?>
+    <p class="text-warning">Only the leader of the group may rollback files</p>
+    <?php
+
+}
 
 if ($rollback->rollback())
 {

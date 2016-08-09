@@ -175,7 +175,7 @@ else
                                 </tr>
                                 <tr>
 
-                                    <td>Group name</td>
+                                    <td>Group leader</td>
                                     <td><?php $group_leader = new User($Group->getLeaderId());
                                         echo $group_leader->getFirstName() . ' ' . $group_leader->getLastName(); ?></td>
                                 </tr>
@@ -852,7 +852,9 @@ else
                         $.ajax({
                             data : {
                                 fid : fileData.fid,
-                                vid : versionData.vid
+                                vid : versionData.vid,
+                                gid : versionData.gid
+
                             },
                             url : "ajax/rollback.php",
                             cache : false,
