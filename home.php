@@ -99,7 +99,7 @@ if (!WebUser::getUser()->isStudent())
                             if(!$Semesters->isOpen($sid)) // well we found a semester, but is it open yet? Is today's date within its range?
                             {
                                 ?>
-                                <h4>Semester hasn't started yet</h4>
+                                <h4>Semester either hasn't started yet or has ended.</h4>
                                 <p class="text-danger">
                                     Current: Semester <strong><?php echo $Semester->getId(); ?></strong> <br> From:
                                     <strong><?php echo date("D, M j, Y @ H:i:s", strtotime($Semester->getSemesterStartDate())); ?></strong> until
