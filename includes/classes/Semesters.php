@@ -105,7 +105,7 @@ class Semesters
     // TODO this needs to be fixed since the current semester creation allows for semesters to be created in the past. This is not good and might return a false semester id.
 
     /**
-     * @return int|null This method returns the current semester's id depending on the day. It returns null if nothing was found
+     * @return int|null This method returns the current semester's id assuming that each sid holds a semester later than the previous! (IMPORTANT)
      */
     public function getLastSemesterId()
     {
@@ -114,14 +114,10 @@ class Semesters
         if(!$this->exist())
             return $last;
 
-        $date = strtotime(date("Y-m-d H:i:s"));
         // find the first semester whose date starts after today's date. In essence, the next semester
         foreach ($this->_semesters as $Semester)
         {
-            if(strtotime($Semester['startDate']) >= $date)
-            {
-                return $Semester['sid'];
-            }
+            $last = $Semester['sid'];
         }
 
         return $last;

@@ -94,6 +94,7 @@ if (!WebUser::getUser()->isStudent())
                         {
                             // get the semester id we're currently on
                             $sid = $Semesters->getSid();
+
                             $Semester = $Semesters->getSemesterById($sid);
                             if(!$Semesters->isOpen($sid)) // well we found a semester, but is it open yet? Is today's date within its range?
                             {

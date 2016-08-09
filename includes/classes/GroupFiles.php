@@ -10,7 +10,7 @@ class GroupFiles
 {
 
     /**
-     * @var
+     * @var int
      */
     private $_gid;
 

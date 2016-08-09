@@ -10,7 +10,7 @@ class Group
 {
 
     /**
-     * @var \Group
+     * @var int
      */
     protected $_gid;
 
