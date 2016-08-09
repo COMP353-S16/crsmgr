@@ -12,10 +12,13 @@ $uid = WebUser::getUser()->getUid();
 $Group = new Group($_REQUEST['gid']);
 
 if(!$Group->isLeader($uid))
-{ ?>
-    <p class="text-warning">Only the leader of the group may rollback files</p>
+{
+    $User = new User($Group->getLeaderId());
+    ?>
+    <p class="text-danger text-center">Only <?php echo $User->getFullName();?>, the leader of the group, may rollback files.</p>
     <?php
 
+    exit;
 }
 
 if ($rollback->rollback())
