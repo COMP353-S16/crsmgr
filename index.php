@@ -30,8 +30,8 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         body
         {
             background: #1e3c72; /* fallback for old browsers */
-            background: -webkit-linear-gradient(to left, rgba(30, 60, 114, .98), rgba(42, 82, 152, .98)); /* Chrome 10-25, Safari 5.1-6 */
-            background: linear-gradient(to left, rgba(30, 60, 114, .98), rgba(42, 82, 152, .98)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: -webkit-linear-gradient(to left, rgba(30, 60, 114, .98), rgba(0, 98, 152, 0.98)); /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to left, rgba(30, 60, 114, .98), rgba(0, 98, 152, 0.98)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
         }
 
@@ -136,10 +136,12 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
         // Validate the login form
         $('form#loginForm').validate({
             rules : {
-                username : {
+                username :
+                {
                     required : true
                 },
-                password : {
+                password :
+                {
                     required : true
                 }
             },
@@ -147,7 +149,7 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
             {
 
                 $clicker = $('#login');
-                var serialized = $('#loginForm :input').serialize();
+                var serialized = $(form).find(':input').serialize();
                 var originalText = $clicker.text();
                 $clicker.text('Logging in...');
                 // send data to server to check for credentials
@@ -157,15 +159,14 @@ require_once($_SERVER['DOCUMENT_ROOT'] . '/includes/dbc.php');
                     type : 'POST',
                     error : function ()
                     {
-                        console.log('An error occured');
                         $clicker.text(originalText);
                     },
                     dataType : 'html',
                     success : function (data)
                     {
-                        $clicker.text(originalText);
-                        $('#results').html(data);
 
+                        $('#results').html(data);
+                        $clicker.text(originalText);
                     }
                 });
             }

@@ -79,72 +79,86 @@ if (!WebUser::getUser()->isStudent())
 
                         $Semesters = new Semesters();
 
+                        /**
+                         * @var $Student Student
+                         */
+
+
                         if (!$Semesters->exist())
                         {
                             ?>
-                            <h5>There are no existing semesters.</h5>
+                            <h4>There are no existing semesters.</h4>
                             <?php
                         }
-                        else if ($Student->isRegistered())
+                        else
                         {
+                            // get the semester id we're currently on
                             $sid = $Semesters->getSid();
-                            // is he in a group in this semester?
-                            if ($Student->isInGroupFromSid($sid))
+                            $Semester = $Semesters->getSemesterById($sid);
+                            if(!$Semesters->isOpen($sid)) // well we found a semester, but is it open yet? Is today's date within its range?
                             {
-                                $Student_Info = $Student->getStudentInfo();
-                                $gid = $Student->getGroupIdFromSid($sid);
-                                $group = new Group($gid);
-                                $isGroupClosed = $group->isGroupClosed();
-
-
                                 ?>
-                                <blockquote>
-                                    <p>Email: <strong><?php echo $Student->getEmail() ?></strong></p>
-                                    <p>Section:
-                                        <strong><?php echo $Student->getSemesters()->getSectionName($sid); ?></strong>
-                                    </p>
-                                    <p>Course ends on:
-                                        <strong><?php echo $group->getSemester()->getSemseterEndDate(); ?></strong></p>
-                                    <p>Group ID: <strong><?php echo $group->getGid() ?></strong></p>
-                                    <p>Group name: <strong><?php echo $group->getGName() ?></strong></p>
-                                    <p>Number of files uploaded:
-                                        <strong><?php echo $Student_Info->getNbOfFilesUploaded() ?></strong></p>
-                                    <p>Number of files downloaded:
-                                        <strong><?php echo $Student_Info->getNbOfFilesDownloaded() ?></strong>
-                                    </p>
-                                    <p>Last uploaded file:
-                                        <strong><?php echo $Student_Info->getLastUploadedFile(); ?></strong></p>
-                                    <p class="<?php echo($isGroupClosed ? 'text-danger' : 'text-success'); ?>">
-                                        Status: <?php echo($isGroupClosed ? "[CLOSED]" : "[OPEN]"); ?>
-                                    </p>
-                                </blockquote>
-                                <div class="col-md-10"></div>
-                                <button type="button" id="view" class="btn btn-primary">View Group</button>
-                                <?php
-
-                            }
-                            else
-                            {
-                                $sid = $Semesters->getSid();
-
-                                $Semester = $Semesters->getSemesterById($sid);
-
-
-                                ?>
-                                <h4>You are not part of any groups this semester</h4>
-                                <p class="text-primary">
+                                <h4>Semester hasn't started yet</h4>
+                                <p class="text-danger">
                                     Current: Semester <strong><?php echo $Semester->getId(); ?></strong> <br> From:
-                                    <strong><?php echo $Semester->getSemesterStartDate(); ?></strong> to
-                                    <strong><?php echo $Semester->getSemseterEndDate(); ?></strong> <br>
+                                    <strong><?php echo date("D, M j, Y @ H:i:s", strtotime($Semester->getSemesterStartDate())); ?></strong> until
+                                    <strong><?php echo date("D, M j, Y @ H:i:s", strtotime($Semester->getSemseterEndDate())); ?></strong> <br>
                                 </p>
                                 <?php
                             }
+                            else if ($Student->isRegistered()) // is student registered for ANY semester?
+                            {
+                                if ($Student->isInGroupFromSid($sid)) // is he in a group in this semester?
+                                {
+                                    $Student_Info = $Student->getStudentInfo();
+                                    $gid = $Student->getGroupIdFromSid($sid);
+                                    $group = new Group($gid);
+                                    $isGroupClosed = $group->isGroupClosed();
+                                    ?>
+                                    <blockquote>
+                                        <p>Email: <strong><?php echo $Student->getEmail() ?></strong></p>
+                                        <p>Section:
+                                            <strong><?php echo $Student->getSemesters()->getSectionName($sid); ?></strong>
+                                        </p>
+                                        <p>Course ends on:
+                                            <strong><?php echo $group->getSemester()->getSemseterEndDate(); ?></strong></p>
+                                        <p>Group ID: <strong><?php echo $group->getGid() ?></strong></p>
+                                        <p>Group name: <strong><?php echo $group->getGName() ?></strong></p>
+                                        <p>Number of files uploaded:
+                                            <strong><?php echo $Student_Info->getNbOfFilesUploaded() ?></strong></p>
+                                        <p>Number of files downloaded:
+                                            <strong><?php echo $Student_Info->getNbOfFilesDownloaded() ?></strong>
+                                        </p>
+                                        <p>Last uploaded file:
+                                            <strong><?php echo $Student_Info->getLastUploadedFile(); ?></strong></p>
+                                        <p class="<?php echo($isGroupClosed ? 'text-danger' : 'text-success'); ?>">
+                                            Status: <?php echo($isGroupClosed ? "[CLOSED]" : "[OPEN]"); ?>
+                                        </p>
+                                    </blockquote>
+                                    <div class="col-md-10"></div>
+                                    <button type="button" id="view" class="btn btn-primary">View Group</button>
+                                    <?php
+
+                                }
+                                else // Student is registered for the semester, but doesn't have a group yet
+                                {
+                                    ?>
+                                    <h4>You are not part of any groups this semester</h4>
+                                    <p class="text-primary">
+                                        Current: Semester <strong><?php echo $Semester->getId(); ?></strong> <br> From:
+                                        <strong><?php echo date("D, M j, Y @ H:i:s", strtotime($Semester->getSemesterStartDate())); ?></strong> until
+                                        <strong><?php echo date("D, M j, Y @ H:i:s", strtotime($Semester->getSemseterEndDate())); ?></strong> <br>
+                                    </p>
+                                    <?php
+                                }
+                            }
+                            else
+                            { ?>
+                                <h4>You are not yet registered in any semester.</h4>
+                                <?php
+                            }
                         }
-                        else
-                        { ?>
-                            <h4>You are not yet registered.</h4>
-                            <?php
-                        }
+
                         ?>
                     </div>
                 </div>

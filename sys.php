@@ -392,7 +392,11 @@ if (WebUser::getUser()->isStudent())
                     {
                         'render' : function (data, type, row)
                         {
-                            var archive = '<button id="groupArchive" title="Archive group files" type="button" class="btn btn-success btn-outline"><i class="fa fa-save"> Archive</i></button>&nbsp';
+                            var archive = '';
+                            if(row.isClosed)
+                            {
+                                archive = '<button id="groupArchive" title="Archive group files" type="button" class="btn btn-success btn-outline"><i class="fa fa-save"> Archive</i></button>&nbsp';
+                            }
                             return archive;
                         }
                     }
@@ -414,6 +418,7 @@ if (WebUser::getUser()->isStudent())
                     height : 200,
                     modal : true,
                     draggable : false,
+                    hide: 'fade',
                     show : 'fade',
                     resizabled : false,
                     buttons : {
@@ -426,6 +431,7 @@ if (WebUser::getUser()->isStudent())
                                 height : 192,
                                 modal : true,
                                 draggable : false,
+                                hide : 'show',
                                 show : 'fade',
                                 resizabled : false,
                             }).append('<span id="archiveTimer"></span>');

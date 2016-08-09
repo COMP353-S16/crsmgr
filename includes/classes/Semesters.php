@@ -85,46 +85,66 @@ class Semesters
     public function getSid()
     {
         $date = strtotime(date("Y-m-d H:i:s"));
-
         $sid = null;
         foreach ($this->_semesters as $Semester)
         {
-
-
             if ($date >= strtotime($Semester['startDate']) && $date <= strtotime($Semester['endDate']))
             {
-
-
                 $sid = $Semester['sid'];
             }
         }
 
-
         if ($sid == null)
         {
-
             $sid = $this->getLastSemesterId();
         }
-
-        //
 
         return $sid;
     }
 
+    // TODO this needs to be fixed since the current semester creation allows for semesters to be created in the past. This is not good and might return a false semester id.
+
     /**
-     * @return null
+     * @return int|null This method returns the current semester's id depending on the day. It returns null if nothing was found
      */
     public function getLastSemesterId()
     {
         $last = null;
+        // if no semesters, then return null
+        if(!$this->exist())
+            return $last;
+
+        $date = strtotime(date("Y-m-d H:i:s"));
+        // find the first semester whose date starts after today's date. In essence, the next semester
         foreach ($this->_semesters as $Semester)
         {
-            $last = $Semester['sid'];
-
+            if(strtotime($Semester['startDate']) >= $date)
+            {
+                return $Semester['sid'];
+            }
         }
 
         return $last;
     }
 
+    /**
+     * @param $sid semester id
+     *
+     * @return bool returns true if the semester is open, i.e. if today's date falls within the semester's date bounds.
+     */
+    public function isOpen($sid)
+    {
+        if($sid == null)
+        {
+            return false;
+        }
+        $date = strtotime(date("Y-m-d H:i:s"));
+        /**
+         * @var $Semester Semester
+         */
+        $Semester = $this->getSemesterById($sid);
+        return ($date >= strtotime($Semester->getSemesterStartDate()) && $date <= strtotime($Semester->getSemseterEndDate()));
+
+    }
 
 }
