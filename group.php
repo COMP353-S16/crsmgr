@@ -1122,7 +1122,7 @@ else
             },
             tooltip :
             {
-                pointFormat : '<b>{point.percentage:.3f}%</b>'
+                pointFormat : '<b>{point.percentage:.1f}%</b>'
             },
             plotOptions :
             {
@@ -1131,7 +1131,7 @@ else
                     dataLabels :
                     {
                         enabled : true,
-                        format : '<b>{point.name}</b>: {point.percentage:.3f} %',
+                        format : '<b>{point.name}</b>: {point.percentage:.1f} %',
                         style :
                         {
                             color : (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
